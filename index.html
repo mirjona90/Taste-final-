@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7b2d26">
+<title>Taste Home Pro</title>
+<style>
+:root{
+  --brand:#7b2d26;--green:#176b45;--orange:#c87913;--red:#b3261e;
+  --bg:#f6f1ea;--card:#fff;--muted:#756d66
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:#241f1c}
+header{position:sticky;top:0;z-index:10;background:var(--brand);color:#fff;padding:14px 16px;box-shadow:0 2px 9px #0003}
+header h1{margin:0;font-size:21px} header small{opacity:.9}
+nav{display:flex;gap:8px;padding:10px 12px;position:sticky;top:68px;background:var(--bg);z-index:9}
+button,input,textarea{font:inherit}
+button{border:0;border-radius:11px;padding:11px 12px;font-weight:700;cursor:pointer}
+.navbtn{flex:1;background:#e8ded4}.navbtn.active{background:var(--brand);color:#fff}
+main{max-width:760px;margin:auto;padding:0 12px 28px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 2px 9px #0001}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.table{background:#fff;border:2px solid transparent;border-radius:16px;padding:15px 10px;text-align:center;box-shadow:0 2px 9px #0001}
+.table.active{border-color:var(--green)}
+.table.waiting{border-color:var(--orange)}
+.table.payment{border-color:var(--red)}
+.table h3{margin:0 0 4px}
+.table .sub{font-size:12px;color:var(--muted);min-height:18px}
+.amount{font-size:20px;color:var(--green);font-weight:900}
+.statusline{font-size:12px;margin-top:4px}
+.row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
+.row:last-child{border-bottom:0}.name{font-weight:800}.price{font-size:13px;color:var(--muted)}
+.counter{display:flex;align-items:center;gap:8px}.counter b{min-width:26px;text-align:center;font-size:18px}
+.minus,.plus{width:42px;height:42px;padding:0;font-size:24px}.minus{background:#eee}.plus{background:var(--brand);color:#fff}
+input,textarea{width:100%;padding:11px;border:1px solid #d5ccc3;border-radius:10px;background:#fff}
+label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.total{font-size:24px;font-weight:900;color:var(--green);margin:10px 0}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.share{background:#25D366}
+.print{background:#34495e;color:#fff}
+.close{background:var(--green);color:#fff}
+.delete{background:#f4d7d4;color:var(--red)}
+.back{background:#e8ded4}
+.meta{font-size:13px;color:var(--muted)}.hidden{display:none}
+.invoice h3{margin:0}.invoice-line{display:flex;justify-content:space-between;margin:5px 0}
+.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px}.empty{text-align:center;color:var(--muted);padding:28px}
+.badge{display:inline-block;background:#eee;border-radius:999px;padding:4px 8px;font-size:12px;margin:3px 5px 3px 0}
+.status-grid,.request-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.status-btn,.request-btn{background:#eee;color:#241f1c}
+.status-btn.selected{background:var(--brand);color:#fff}
+.request-btn.selected{background:var(--orange);color:#fff}
+.next{width:100%;background:var(--orange);color:#fff;margin-top:10px}
+.kitchen-card{border-left:6px solid var(--green)}
+.kitchen-card.waiting{border-left-color:var(--orange)}
+.kitchen-card.payment{border-left-color:var(--red)}
+.kitchen-title{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.kitchen-title h3{margin:0}
+#printArea{display:none}
+@media(min-width:600px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media print{
+  body *{visibility:hidden!important}
+  #printArea,#printArea *{visibility:visible!important}
+  #printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:20px;background:#fff}
+}
+</style>
+</head>
+<body>
+<header><h1>Taste Home Pro</h1><small>Tavolina, kuzhina, fatura dhe xhiro</small></header>
+
+<nav>
+<button id="tabTables" class="navbtn active" onclick="showTables()">Tavolinat</button>
+<button id="tabKitchen" class="navbtn" onclick="showKitchen()">Kuzhina</button>
+<button id="tabHistory" class="navbtn" onclick="showHistory()">Historia</button>
+</nav>
+
+<main>
+<section id="tablesView">
+  <div class="card">
+    <label>Data e punës</label>
+    <input id="workDate" type="date" value="2026-08-04" onchange="saveWorkDate()">
+  </div>
+  <div id="tables" class="grid"></div>
+</section>
+
+<section id="tableView" class="hidden">
+  <button class="back" onclick="showTables()">← Tavolinat</button>
+
+  <div class="card">
+    <div class="two">
+      <div>
+        <label>Emri i tavolinës</label>
+        <input id="tableName" placeholder="p.sh. Family Smith" oninput="updateDetails()">
+      </div>
+      <div>
+        <label>Numri i personave</label>
+        <input id="persons" type="number" min="0" placeholder="0" oninput="updateDetails()">
+      </div>
+    </div>
+    <label>Shënime</label>
+    <textarea id="notes" rows="2" placeholder="p.sh. pa alkool, vegjetarian..." oninput="updateDetails()"></textarea>
+  </div>
+
+  <h2 id="tableTitle"></h2>
+
+  <div class="card">
+    <h3>Statusi i shërbimit</h3>
+    <div id="statusButtons" class="status-grid"></div>
+    <button class="next" onclick="nextStage()">NEXT →</button>
+  </div>
+
+  <div class="card">
+    <h3>Kërkesa për stafin</h3>
+    <div id="requestButtons" class="request-grid"></div>
+  </div>
+
+  <div id="items" class="card"></div>
+
+  <div class="card">
+    <div id="updated" class="meta"></div>
+    <div id="tableTotal" class="total"></div>
+    <div class="actions">
+      <button class="share" onclick="sendKitchenUpdate()">Kitchen Update</button>
+      <button class="share" onclick="shareCurrent()">Dërgo faturën</button>
+      <button class="print" onclick="printCurrent()">Printo faturën</button>
+      <button class="close" onclick="closeCurrent()">Mbyll tavolinën</button>
+      <button class="delete" onclick="clearCurrent()">Fshij pa ruajtur</button>
+      <button class="back" onclick="showTables()">Kthehu</button>
+    </div>
+  </div>
+</section>
+
+<section id="kitchenView" class="hidden">
+  <div id="kitchenList"></div>
+</section>
+
+<section id="historyView" class="hidden">
+  <div class="card">
+    <label>Shfaq faturat për datën</label>
+    <input id="historyDate" type="date" value="2026-08-04" onchange="drawHistory()">
+  </div>
+  <div class="toolbar">
+    <button class="share" onclick="shareDaily()">Share xhiron</button>
+    <button class="delete" onclick="clearHistoryForDate()">Fshij datën</button>
+  </div>
+  <div id="dailyTotal" class="card total"></div>
+  <div id="history"></div>
+</section>
+
+<div id="printArea"></div>
+</main>
+
+<script>
+const ITEMS=[
+ {k:"menu",n:"Menu",p:25},
+ {k:"kids",n:"Menu Kids",p:15},
+ {k:"beer",n:"Birrë",p:3.5},
+ {k:"red",n:"Verë e kuqe",p:2.5},
+ {k:"white",n:"Verë e bardhë",p:2.5},
+ {k:"juice",n:"Grape Juice",p:2.5}
+];
+
+const STAGES=[
+ "Përgatit Aperitiv 1",
+ "Përgatit Aperitiv 2",
+ "Përgatit Supën",
+ "Përgatit Qofte + Imam",
+ "Përgatit Ëmbëlsirë"
+];
+
+const REQUESTS=[
+ "💧 Ujë",
+ "🍞 Bukë"
+];
+
+const TABLES=15;
+const DB_KEY="taste_home_tables_v9";
+const HIST_KEY="taste_home_history_v9";
+const DATE_KEY="taste_home_workdate_v9";
+
+let db=JSON.parse(localStorage.getItem(DB_KEY)||"{}");
+let history=JSON.parse(localStorage.getItem(HIST_KEY)||"[]");
+let current=1;
+
+function blank(t){
+ const q={},sent={};
+ ITEMS.forEach(i=>{q[i.k]=0;sent[i.k]=0});
+ return {q,sent,name:"Tavolina "+t,persons:0,notes:"",updated:null,stage:0,requests:{}};
+}
+
+for(let t=1;t<=TABLES;t++){
+ if(!db[t]) db[t]=blank(t);
+ if(!db[t].sent){
+  db[t].sent={};
+  ITEMS.forEach(i=>db[t].sent[i.k]=0);
+ }
+ if(typeof db[t].stage!=="number") db[t].stage=0;
+ if(!db[t].requests) db[t].requests={};
+}
+
+function save(){
+ localStorage.setItem(DB_KEY,JSON.stringify(db));
+ localStorage.setItem(HIST_KEY,JSON.stringify(history));
+}
+
+function money(v){return "€"+Number(v).toFixed(2)}
+function total(t){return ITEMS.reduce((s,i)=>s+(db[t].q[i.k]||0)*i.p,0)}
+function stamp(){return new Date().toLocaleString("sq-AL")}
+function isoDate(){return workDate.value || "2026-08-04"}
+function hasRequests(t){return Object.values(db[t].requests||{}).some(Boolean)}
+
+workDate.value=localStorage.getItem(DATE_KEY)||"2026-08-04";
+historyDate.value=workDate.value;
+
+function hideAll(){
+ document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));
+ tabTables.classList.remove("active");
+ tabKitchen.classList.remove("active");
+ tabHistory.classList.remove("active");
+}
+
+function saveWorkDate(){
+ localStorage.setItem(DATE_KEY,workDate.value);
+ historyDate.value=workDate.value;
+}
+
+function showTables(){
+ hideAll();
+ tablesView.classList.remove("hidden");
+ tabTables.classList.add("active");
+ drawTables();
+}
+
+function showKitchen(){
+ hideAll();
+ kitchenView.classList.remove("hidden");
+ tabKitchen.classList.add("active");
+ drawKitchen();
+}
+
+function showHistory(){
+ hideAll();
+ historyView.classList.remove("hidden");
+ tabHistory.classList.add("active");
+ historyDate.value=workDate.value;
+ drawHistory();
+}
+
+function drawTables(){
+ tables.innerHTML="";
+ for(let t=1;t<=TABLES;t++){
+  const el=document.createElement("button");
+  let cls="";
+  if(db[t].stage===STAGES.length-1) cls="payment";
+  else if(hasRequests(t)) cls="waiting";
+  else if(total(t)>0 || db[t].persons>0) cls="active";
+
+  el.className="table "+cls;
+  const n=db[t].name||("Tavolina "+t);
+  el.innerHTML=
+   `<h3>${n}</h3>
+    <div class="sub">${db[t].persons?db[t].persons+" persona":""}</div>
+    <div class="amount">${money(total(t))}</div>
+    <div class="statusline">${STAGES[db[t].stage]}</div>`;
+  el.onclick=()=>openTable(t);
+  tables.appendChild(el);
+ }
+}
+
+function openTable(t){
+ current=t;
+ hideAll();
+ tableView.classList.remove("hidden");
+ tableTitle.textContent="Tavolina "+t;
+ tableName.value=db[t].name||"";
+ persons.value=db[t].persons||"";
+ notes.value=db[t].notes||"";
+ drawCurrent();
+}
+
+function updateDetails(){
+ db[current].name=tableName.value.trim()||("Tavolina "+current);
+ db[current].persons=Math.max(0,Number(persons.value)||0);
+ db[current].notes=notes.value.trim();
+ db[current].updated=stamp();
+ save();
+}
+
+function drawCurrent(){
+ statusButtons.innerHTML="";
+ STAGES.forEach((stage,index)=>{
+  const b=document.createElement("button");
+  b.className="status-btn "+(db[current].stage===index?"selected":"");
+  b.textContent=stage;
+  b.onclick=()=>{
+   db[current].stage=index;
+   db[current].updated=stamp();
+   save();
+   drawCurrent();
+  };
+  statusButtons.appendChild(b);
+ });
+
+ requestButtons.innerHTML="";
+ REQUESTS.forEach(req=>{
+  const b=document.createElement("button");
+  b.className="request-btn "+(db[current].requests[req]?"selected":"");
+  b.textContent=req;
+  b.onclick=()=>{
+   db[current].requests[req]=!db[current].requests[req];
+   db[current].updated=stamp();
+   save();
+   drawCurrent();
+  };
+  requestButtons.appendChild(b);
+ });
+
+ items.innerHTML="";
+ ITEMS.forEach(i=>{
+  const r=document.createElement("div");
+  r.className="row";
+  r.innerHTML=
+   `<div>
+      <div class="name">${i.n}</div>
+      <div class="price">${money(i.p)}</div>
+    </div>
+    <div class="counter">
+      <button class="minus" onclick="change('${i.k}',-1)">−</button>
+      <b>${db[current].q[i.k]}</b>
+      <button class="plus" onclick="change('${i.k}',1)">+</button>
+    </div>`;
+  items.appendChild(r);
+ });
+
+ tableTotal.textContent="Totali: "+money(total(current));
+ updated.textContent=db[current].updated?"Përditësuar: "+db[current].updated:"Ende pa artikuj";
+}
+
+function change(k,d){
+ db[current].q[k]=Math.max(0,(db[current].q[k]||0)+d);
+ db[current].updated=stamp();
+ save();
+ drawCurrent();
+}
+
+function nextStage(){
+ if(db[current].stage<STAGES.length-1){
+  db[current].stage++;
+  db[current].updated=stamp();
+  save();
+  drawCurrent();
+ }
+}
+
+function linesForTable(t){
+ return ITEMS
+  .filter(i=>db[t].q[i.k]>0)
+  .map(i=>({key:i.k,name:i.n,qty:db[t].q[i.k],price:i.p,subtotal:db[t].q[i.k]*i.p}));
+}
+
+function shareText(txt){
+ window.location.href="https://wa.me/?text="+encodeURIComponent(txt);
+}
+
+function invoiceText(t){
+ let txt=`Taste Home\nData: ${isoDate()}\n${db[t].name||("Tavolina "+t)}\n`;
+ if(db[t].persons) txt+=`Persona: ${db[t].persons}\n`;
+ if(db[t].notes) txt+=`Shënime: ${db[t].notes}\n`;
+ linesForTable(t).forEach(x=>{
+  txt+=`${x.name}: ${x.qty} × ${money(x.price)} = ${money(x.subtotal)}\n`;
+ });
+ txt+=`----------------\nTOTALI: ${money(total(t))}`;
+ return txt;
+}
+
+function sendKitchenUpdate(){
+ const t=db[current];
+ const changes=[];
+
+ ITEMS.forEach(i=>{
+  const diff=(t.q[i.k]||0)-(t.sent[i.k]||0);
+  if(diff>0) changes.push(`+${diff} ${i.n}`);
+ });
+
+ const activeRequests=Object.keys(t.requests||{}).filter(k=>t.requests[k]);
+
+ let txt=`👨‍🍳 TASTE HOME — KITCHEN UPDATE\n\n`;
+ txt+=`🪑 ${t.name||("Tavolina "+current)}`;
+ if(t.persons) txt+=` (${t.persons} persona)`;
+ txt+=`\n\n➡️ ${STAGES[t.stage]}\n`;
+
+ if(changes.length) txt+=`\nShtesa:\n${changes.join("\n")}\n`;
+ if(activeRequests.length) txt+=`\nPër stafin:\n${activeRequests.join("\n")}\n`;
+ if(t.notes) txt+=`\nShënime: ${t.notes}\n`;
+ if(!changes.length && !activeRequests.length && !t.notes) txt+=`\nPa shtesa të reja.\n`;
+
+ ITEMS.forEach(i=>t.sent[i.k]=t.q[i.k]||0);
+ t.requests={};
+ t.updated=stamp();
+ save();
+ drawCurrent();
+ shareText(txt);
+}
+
+function shareCurrent(){
+ if(total(current)<=0){
+  alert("Tavolina është bosh.");
+  return;
+ }
+ shareText(invoiceText(current));
+}
+
+function printCurrent(){
+ if(total(current)<=0){
+  alert("Tavolina është bosh.");
+  return;
+ }
+ const t=db[current];
+ const rows=linesForTable(current).map(x=>
+   `<div style="display:flex;justify-content:space-between;margin:8px 0">
+      <span>${x.name} × ${x.qty}</span>
+      <strong>${money(x.subtotal)}</strong>
+    </div>`).join("");
+
+ printArea.innerHTML=
+  `<div style="font-family:Arial;max-width:420px;margin:auto">
+    <h2 style="text-align:center">Taste Home</h2>
+    <div>Data: ${isoDate()}</div>
+    <div>${t.name||("Tavolina "+current)}</div>
+    ${t.persons?`<div>Persona: ${t.persons}</div>`:""}
+    <hr>
+    ${rows}
+    <hr>
+    <h3 style="display:flex;justify-content:space-between">
+      <span>TOTALI</span><span>${money(total(current))}</span>
+    </h3>
+  </div>`;
+ window.print();
+}
+
+function closeCurrent(){
+ if(total(current)<=0){
+  alert("Tavolina është bosh.");
+  return;
+ }
+
+ history.unshift({
+  id:Date.now(),
+  table:current,
+  name:db[current].name,
+  persons:db[current].persons,
+  notes:db[current].notes,
+  date:isoDate(),
+  closedAt:stamp(),
+  stage:db[current].stage,
+  lines:linesForTable(current),
+  total:total(current)
+ });
+
+ db[current]=blank(current);
+ save();
+ alert("Tavolina u ruajt në histori.");
+ showTables();
+}
+
+function clearCurrent(){
+ if(confirm("Ta fshij pa e ruajtur si faturë?")){
+  db[current]=blank(current);
+  save();
+  showTables();
+ }
+}
+
+function drawKitchen(){
+ kitchenList.innerHTML="";
+ let activeCount=0;
+
+ for(let t=1;t<=TABLES;t++){
+  const active=total(t)>0 || db[t].persons>0 || hasRequests(t);
+  if(!active) continue;
+  activeCount++;
+
+  const c=document.createElement("div");
+  let cls="kitchen-card";
+  if(db[t].stage===STAGES.length-1) cls+=" payment";
+  else if(hasRequests(t)) cls+=" waiting";
+  c.className="card "+cls;
+
+  const reqs=Object.keys(db[t].requests||{}).filter(k=>db[t].requests[k]);
+
+  c.innerHTML=
+   `<div class="kitchen-title">
+      <h3>${db[t].name||("Tavolina "+t)}</h3>
+      <span class="badge">${db[t].persons||0} persona</span>
+    </div>
+    <div style="margin-top:8px"><b>${STAGES[db[t].stage]}</b></div>
+    ${reqs.length?`<div style="margin-top:8px">${reqs.map(r=>`<span class="badge">${r}</span>`).join("")}</div>`:""}
+    ${db[t].notes?`<div class="meta" style="margin-top:8px">Shënime: ${db[t].notes}</div>`:""}`;
+
+  kitchenList.appendChild(c);
+ }
+
+ if(!activeCount){
+  kitchenList.innerHTML='<div class="card empty">Nuk ka tavolina aktive.</div>';
+ }
+}
+
+function filtered(){
+ return history.filter(x=>x.date===historyDate.value);
+}
+
+function drawHistory(){
+ const day=filtered();
+ dailyTotal.textContent=`Xhiro: ${money(day.reduce((s,x)=>s+x.total,0))} · ${day.length} fatura`;
+
+ const box=document.getElementById("history");
+ box.innerHTML="";
+
+ if(!day.length){
+  box.innerHTML='<div class="empty">Nuk ka fatura për këtë datë.</div>';
+  return;
+ }
+
+ day.forEach(inv=>{
+  const c=document.createElement("div");
+  c.className="card invoice";
+  c.innerHTML=
+   `<h3>${inv.name||("Tavolina "+inv.table)} — ${money(inv.total)}</h3>
+    <div class="meta">${inv.date} · ${inv.closedAt}</div>
+    <div>
+      ${inv.persons?`<span class="badge">${inv.persons} persona</span>`:""}
+      ${inv.notes?`<span class="badge">${inv.notes}</span>`:""}
+    </div>
+    ${inv.lines.map(x=>`<div class="invoice-line"><span>${x.name} × ${x.qty}</span><b>${money(x.subtotal)}</b></div>`).join("")}
+    <div class="actions" style="margin-top:10px">
+      <button class="share" onclick="shareInvoice(${inv.id})">WhatsApp</button>
+      <button class="delete" onclick="deleteInvoice(${inv.id})">Fshij</button>
+    </div>`;
+  box.appendChild(c);
+ });
+}
+
+function shareInvoice(id){
+ const inv=history.find(x=>x.id===id);
+ if(!inv) return;
+
+ let txt=`Taste Home\nData: ${inv.date}\n${inv.name||("Tavolina "+inv.table)}\n`;
+ if(inv.persons) txt+=`Persona: ${inv.persons}\n`;
+ if(inv.notes) txt+=`Shënime: ${inv.notes}\n`;
+ inv.lines.forEach(x=>{
+  txt+=`${x.name}: ${x.qty} × ${money(x.price)} = ${money(x.subtotal)}\n`;
+ });
+ txt+=`----------------\nTOTALI: ${money(inv.total)}`;
+ shareText(txt);
+}
+
+function deleteInvoice(id){
+ if(confirm("Ta fshij këtë faturë?")){
+  history=history.filter(x=>x.id!==id);
+  save();
+  drawHistory();
+ }
+}
+
+function clearHistoryForDate(){
+ const d=historyDate.value;
+ if(confirm("T'i fshij të gjitha faturat e datës "+d+"?")){
+  history=history.filter(x=>x.date!==d);
+  save();
+  drawHistory();
+ }
+}
+
+function shareDaily(){
+ const day=filtered();
+ let txt=`Taste Home — Xhiro ${historyDate.value}\nFatura: ${day.length}\n`;
+
+ ITEMS.forEach(i=>{
+  const q=day.reduce((s,inv)=>s+inv.lines.filter(x=>x.name===i.n).reduce((a,x)=>a+x.qty,0),0);
+  if(q) txt+=`${i.n}: ${q}\n`;
+ });
+
+ txt+=`----------------\nTOTALI: ${money(day.reduce((s,x)=>s+x.total,0))}`;
+ shareText(txt);
+}
+
+drawTables();
+</script>
+</body>
+</html>

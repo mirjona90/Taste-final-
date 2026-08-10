@@ -27,7 +27,7 @@ input,textarea,select{width:100%;padding:11px;border:1px solid #d5ccc3;border-ra
 .status-grid,.request-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.status-btn,.request-btn{background:#eee}.status-btn.selected{background:var(--brand);color:#fff}.request-btn.selected{background:var(--orange);color:#fff}
 .next{width:100%;background:var(--orange);color:#fff;margin-top:10px}.paybtn{background:#eee}.paybtn.selected{background:var(--green);color:#fff}
 .people{font-size:24px;font-weight:900;text-align:center;color:var(--brand);padding:4px}
-.drink{border-bottom:1px solid #eee;padding:12px 0}.drink:last-child{border:0}.drinktop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.drink{border:1px solid #eadfd6;border-left:7px solid #999;border-radius:14px;padding:12px;margin:10px 0;background:#fff}.drink:last-child{border-bottom:1px solid #eadfd6}.drink.beer{border-left-color:#c87913;background:#fffaf0}.drink.red{border-left-color:#8b1e2d;background:#fff5f6}.drink.white{border-left-color:#c8a84e;background:#fffdf3}.drink.juice{border-left-color:#6f4b8b;background:#faf6ff}.drinkicon{font-size:24px;margin-right:7px}.drinktop{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .delivery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px;text-align:center;font-size:12px}.delivery b{display:block;font-size:18px}.pending{color:var(--red)}
 .delivered{width:100%;margin-top:8px;background:var(--orange);color:#fff}.delivered:disabled{background:#ddd;color:#888}
 .kitchen-card{border-left:6px solid var(--green)}.kitchen-card.waiting{border-left-color:var(--orange)}.kitchen-card.payment{border-left-color:var(--red)}
@@ -70,7 +70,18 @@ input,textarea,select{width:100%;padding:11px;border:1px solid #d5ccc3;border-ra
 
 <section id="kitchenView" class="hidden"><div id="kitchenList"></div></section>
 <section id="historyView" class="hidden"><div class="card"><label>Shfaq faturat për datën</label><input id="historyDate" type="date" onchange="drawHistory()"></div><div class="toolbar"><button class="share" onclick="shareDaily()">Share xhiron</button><button class="delete" onclick="clearHistoryForDate()">Fshij datën</button></div><div id="dailyTotal" class="card total"></div><div id="historyBox"></div></section>
-<section id="statsView" class="hidden"><div class="card"><label>Viti</label><select id="statsYear" onchange="drawStats()"></select></div><div id="statsCards" class="statsgrid"></div><div class="card"><h3>Persona sipas muajit</h3><div id="peopleChart" class="chart"></div></div><div class="card"><h3>Xhiro sipas muajit</h3><div id="revenueChart" class="chart"></div></div></section>
+<section id="statsView" class="hidden"><div class="card">
+<label>Shfaq statistikat</label>
+<div class="status-grid">
+<button id="statsAnnualBtn" class="status-btn selected" onclick="setStatsMode('year')">Vjetore</button>
+<button id="statsMonthlyBtn" class="status-btn" onclick="setStatsMode('month')">Mujore</button>
+<button id="statsWeeklyBtn" class="status-btn" onclick="setStatsMode('week')">Javore</button>
+</div>
+<div id="statsYearBox"><label>Viti</label><select id="statsYear" onchange="drawStats()"></select></div>
+<div id="statsMonthBox" class="hidden"><label>Muaji</label><input id="statsMonth" type="month" onchange="drawStats()"></div>
+<div id="statsWeekBox" class="hidden"><label>Java</label><input id="statsWeek" type="week" onchange="drawStats()"></div>
+<div id="statsPeriodLabel" class="meta" style="margin-top:10px"></div>
+</div><div id="statsCards" class="statsgrid"></div><div class="card"><h3>Persona sipas muajit</h3><div id="peopleChart" class="chart"></div></div><div class="card"><h3>Xhiro sipas muajit</h3><div id="revenueChart" class="chart"></div></div></section>
 <div id="printArea"></div>
 </main>
 <script>
@@ -121,7 +132,7 @@ function drawCurrent(){
  $("statusButtons").innerHTML="";STAGES.forEach((s,n)=>{const b=document.createElement("button");b.className="status-btn "+(db[current].stage===n?"selected":"");b.textContent=s;b.onclick=()=>{db[current].stage=n;db[current].updated=stamp();save();drawCurrent()};$("statusButtons").appendChild(b)});
  $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="request-btn "+(db[current].requests[r]?"selected":"");b.textContent=r;b.onclick=()=>{db[current].requests[r]=!db[current].requests[r];db[current].updated=stamp();save();drawCurrent()};$("requestButtons").appendChild(b)});
  $("menus").innerHTML="";ITEMS.filter(i=>i.type==="menu").forEach(i=>{const r=document.createElement("div");r.className="row";r.innerHTML=`<div><div class="name">${i.n}</div><div class="price">${money(i.p)}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${db[current].q[i.k]}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div>`;$("menus").appendChild(r)});
- $("drinks").innerHTML="";ITEMS.filter(i=>i.type==="drink").forEach(i=>{const q=db[current].q[i.k]||0,s=Math.min(db[current].served[i.k]||0,q),p=Math.max(0,q-s);const r=document.createElement("div");r.className="drink";r.innerHTML=`<div class="drinktop"><div><div class="name">${i.n}</div><div class="price">${money(i.p)}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${q}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div></div><div class="delivery"><div>Porositur<b>${q}</b></div><div>Çuar<b>${s}</b></div><div class="pending">Për t'u çuar<b>${p}</b></div></div><button class="delivered" ${p===0?"disabled":""} onclick="markDelivered('${i.k}')">✓ U ÇUAN ${p||""}</button>`;$("drinks").appendChild(r)});
+ $("drinks").innerHTML="";ITEMS.filter(i=>i.type==="drink").forEach(i=>{const q=db[current].q[i.k]||0,s=Math.min(db[current].served[i.k]||0,q),p=Math.max(0,q-s);const r=document.createElement("div");r.className="drink "+i.k;const icons={beer:"🍺",red:"🍷",white:"🥂",juice:"🍇"};r.innerHTML=`<div class="drinktop"><div><div class="name"><span class="drinkicon">${icons[i.k]||"🥤"}</span>${i.n}</div><div class="price">${money(i.p)}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${q}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div></div><div class="delivery"><div>Porositur<b>${q}</b></div><div>Çuar<b>${s}</b></div><div class="pending">Për t'u çuar<b>${p}</b></div></div><button class="delivered" ${p===0?"disabled":""} onclick="markDelivered('${i.k}')">✓ U ÇUAN ${p||""}</button>`;$("drinks").appendChild(r)});
  $("tableTotal").textContent="Totali: "+money(total(current));$("updated").textContent=db[current].updated?"Përditësuar: "+db[current].updated:"Ende pa artikuj"
 }
 function change(k,d){db[current].q[k]=Math.max(0,(db[current].q[k]||0)+d);if((db[current].served[k]||0)>db[current].q[k])db[current].served[k]=db[current].q[k];db[current].persons=people(current);db[current].updated=stamp();save();drawCurrent()}
@@ -144,9 +155,55 @@ function clearHistoryForDate(){const d=$("historyDate").value;if(confirm("T'i fs
 function shareDaily(){const day=filtered(),grand=day.reduce((s,x)=>s+x.total,0),cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+x.total,0),card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+x.total,0);let x=`Taste Home — Xhiro ${$("historyDate").value}\nFatura: ${day.length}\nCash: ${money(cash)}\nCard: ${money(card)}\n\n`;ITEMS.forEach(i=>{const q=qtyHistory(day,i);if(q)x+=`${i.n}: ${q}\n`});x+=`Persona: ${day.reduce((s,a)=>s+(Number(a.persons)||inferPeople(a)),0)}\n----------------\nTOTALI: ${money(grand)}`;shareText(x)}
 function qtyHistory(arr,i){return arr.reduce((s,inv)=>s+(inv.lines||[]).filter(x=>x.name===i.n||(i.k==="normal"&&x.name==="Menu")).reduce((a,x)=>a+(Number(x.qty)||0),0),0)}
 function inferPeople(inv){return (inv.lines||[]).filter(x=>["Menu","Menu Normale","Menu Vegjet","Menu Kids"].includes(x.name)).reduce((s,x)=>s+(Number(x.qty)||0),0)}
-function fillYears(){const ys=[...new Set(history.map(x=>(x.date||"").slice(0,4)).filter(Boolean))].sort().reverse();const now=String(new Date().getFullYear());if(!ys.includes(now))ys.unshift(now);$("statsYear").innerHTML=ys.map(y=>`<option>${y}</option>`).join("");if(!$("statsYear").value)$("statsYear").value=now}
-function chart(el,vals,kind){const max=Math.max(...vals,1),months=["J","S","M","P","M","Q","K","G","S","T","N","D"];$ (el).innerHTML=vals.map((v,i)=>`<div class="barwrap"><div class="barval">${kind==="money"?"€"+Math.round(v):v}</div><div class="bar" style="height:${Math.max(2,(v/max)*150)}px"></div><div>${months[i]}</div></div>`).join("")}
-function drawStats(){const y=$("statsYear").value,arr=history.filter(x=>(x.date||"").startsWith(y));const persons=arr.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0),revenue=arr.reduce((s,x)=>s+(Number(x.total)||0),0),cash=arr.filter(x=>x.payment==="Cash").reduce((s,x)=>s+x.total,0),card=arr.filter(x=>x.payment==="Card").reduce((s,x)=>s+x.total,0);let cards=[["👥 Persona",persons],["Menu Normale",qtyHistory(arr,ITEMS[0])],["🥬 Vegjet",qtyHistory(arr,ITEMS[1])],["🧒 Kids",qtyHistory(arr,ITEMS[2])],["🍺 Birrë",qtyHistory(arr,ITEMS[3])],["🍷 Verë e kuqe",qtyHistory(arr,ITEMS[4])],["🥂 Verë e bardhë",qtyHistory(arr,ITEMS[5])],["🍇 Grape Juice",qtyHistory(arr,ITEMS[6])],["💰 Xhiro",money(revenue)],["💵 Cash",money(cash)],["💳 Card",money(card)],["Mes./person",persons?money(revenue/persons):money(0)]];$("statsCards").innerHTML=cards.map(a=>`<div class="stat"><span>${a[0]}</span><b>${a[1]}</b></div>`).join("");const pv=Array(12).fill(0),rv=Array(12).fill(0);arr.forEach(x=>{const m=Number((x.date||"").slice(5,7))-1;if(m>=0&&m<12){pv[m]+=Number(x.persons)||inferPeople(x);rv[m]+=Number(x.total)||0}});chart("peopleChart",pv,"num");chart("revenueChart",rv,"money")}
+let statsMode="year";
+function setStatsMode(mode){
+ statsMode=mode;
+ $("statsAnnualBtn").classList.toggle("selected",mode==="year");
+ $("statsMonthlyBtn").classList.toggle("selected",mode==="month");
+ $("statsWeeklyBtn").classList.toggle("selected",mode==="week");
+ $("statsYearBox").classList.toggle("hidden",mode!=="year");
+ $("statsMonthBox").classList.toggle("hidden",mode!=="month");
+ $("statsWeekBox").classList.toggle("hidden",mode!=="week");
+ drawStats();
+}
+function fillYears(){
+ const ys=[...new Set(history.map(x=>(x.date||"").slice(0,4)).filter(Boolean))].sort().reverse();
+ const now=String(new Date().getFullYear());if(!ys.includes(now))ys.unshift(now);
+ $("statsYear").innerHTML=ys.map(y=>`<option>${y}</option>`).join("");
+ $("statsYear").value=now;
+ const today=new Date();$("statsMonth").value=today.toISOString().slice(0,7);
+ const d=new Date(Date.UTC(today.getFullYear(),today.getMonth(),today.getDate()));const dn=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-dn);
+ const ys0=new Date(Date.UTC(d.getUTCFullYear(),0,1));const wn=Math.ceil((((d-ys0)/86400000)+1)/7);
+ $("statsWeek").value=`${d.getUTCFullYear()}-W${String(wn).padStart(2,"0")}`;
+}
+function weekRange(v){
+ if(!v)return null;const [y,w]=v.split("-W").map(Number),j=new Date(y,0,4),jd=j.getDay()||7;
+ const mon=new Date(y,0,4-(jd-1)+(w-1)*7);mon.setHours(0,0,0,0);const sun=new Date(mon);sun.setDate(mon.getDate()+6);sun.setHours(23,59,59,999);return[mon,sun];
+}
+function statsFiltered(){
+ if(statsMode==="month"){const m=$("statsMonth").value;return history.filter(x=>(x.date||"").startsWith(m))}
+ if(statsMode==="week"){const r=weekRange($("statsWeek").value);if(!r)return[];return history.filter(x=>{const d=new Date((x.date||"")+"T12:00:00");return d>=r[0]&&d<=r[1]})}
+ return history.filter(x=>(x.date||"").startsWith($("statsYear").value));
+}
+function chart(el,vals,kind,labels){
+ const max=Math.max(...vals,1),labs=labels||["J","S","M","P","M","Q","K","G","S","T","N","D"];
+ $(el).innerHTML=vals.map((v,i)=>`<div class="barwrap"><div class="barval">${kind==="money"?"€"+Math.round(v):v}</div><div class="bar" style="height:${Math.max(2,(v/max)*150)}px"></div><div>${labs[i]||""}</div></div>`).join("");
+}
+function drawStats(){
+ const arr=statsFiltered();let period="";
+ if(statsMode==="year")period="Viti "+$("statsYear").value;
+ if(statsMode==="month")period="Muaji "+($("statsMonth").value||"");
+ if(statsMode==="week"){const r=weekRange($("statsWeek").value);period=r?`Java ${$("statsWeek").value.split("-W")[1]} · ${r[0].toLocaleDateString("sq-AL")} – ${r[1].toLocaleDateString("sq-AL")}`:"";}
+ $("statsPeriodLabel").textContent=period+" · "+arr.length+" fatura";
+ const persons=arr.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0),revenue=arr.reduce((s,x)=>s+(Number(x.total)||0),0),cash=arr.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),card=arr.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0);
+ const cards=[["👥 Persona",persons],["🍽️ Normale",qtyHistory(arr,ITEMS[0])],["🥬 Vegjet",qtyHistory(arr,ITEMS[1])],["🧒 Kids",qtyHistory(arr,ITEMS[2])],["🍺 Birrë",qtyHistory(arr,ITEMS[3])],["🍷 Verë e kuqe",qtyHistory(arr,ITEMS[4])],["🥂 Verë e bardhë",qtyHistory(arr,ITEMS[5])],["🍇 Grape Juice",qtyHistory(arr,ITEMS[6])],["💰 Xhiro",money(revenue)],["💵 Cash",money(cash)],["💳 Card",money(card)],["Mes./person",persons?money(revenue/persons):money(0)]];
+ $("statsCards").innerHTML=cards.map(a=>`<div class="stat"><span>${a[0]}</span><b>${a[1]}</b></div>`).join("");
+ let pv=[],rv=[],labels=[];
+ if(statsMode==="year"){pv=Array(12).fill(0);rv=Array(12).fill(0);labels=["J","S","M","P","M","Q","K","G","S","T","N","D"];arr.forEach(x=>{const m=Number((x.date||"").slice(5,7))-1;if(m>=0&&m<12){pv[m]+=Number(x.persons)||inferPeople(x);rv[m]+=Number(x.total)||0}})}
+ else if(statsMode==="month"){const [yy,mm]=($("statsMonth").value||"0-0").split("-").map(Number),days=new Date(yy,mm,0).getDate();pv=Array(days).fill(0);rv=Array(days).fill(0);labels=Array.from({length:days},(_,i)=>String(i+1));arr.forEach(x=>{const d=Number((x.date||"").slice(8,10))-1;if(d>=0){pv[d]+=Number(x.persons)||inferPeople(x);rv[d]+=Number(x.total)||0}})}
+ else{pv=Array(7).fill(0);rv=Array(7).fill(0);labels=["H","M","M","E","P","S","D"];const r=weekRange($("statsWeek").value);if(r)arr.forEach(x=>{const d=new Date((x.date||"")+"T12:00:00"),idx=Math.floor((d-r[0])/86400000);if(idx>=0&&idx<7){pv[idx]+=Number(x.persons)||inferPeople(x);rv[idx]+=Number(x.total)||0}})}
+ chart("peopleChart",pv,"num",labels);chart("revenueChart",rv,"money",labels);
+}
 save();drawTables();
 </script>
 </body>

@@ -33,7 +33,7 @@ main{max-width:760px;margin:auto;padding:0 12px 28px}
 .row:last-child{border-bottom:0}.name{font-weight:800}.price{font-size:13px;color:var(--muted)}
 .counter{display:flex;align-items:center;gap:8px}.counter b{min-width:26px;text-align:center;font-size:18px}
 .minus,.plus{width:42px;height:42px;padding:0;font-size:24px}.minus{background:#eee}.plus{background:var(--brand);color:#fff}
-input,textarea{width:100%;padding:11px;border:1px solid #d5ccc3;border-radius:10px;background:#fff}
+input,textarea,select{width:100%;padding:11px;border:1px solid #d5ccc3;border-radius:10px;background:#fff}
 label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .total{font-size:24px;font-weight:900;color:var(--green);margin:10px 0}
@@ -100,6 +100,8 @@ label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
     </div>
     <label>Shënime</label>
     <textarea id="notes" rows="2" placeholder="p.sh. pa alkool, vegjetarian..." oninput="updateDetails()"></textarea>
+    <label>Mënyra e pagesës</label>
+    <select id="payment" onchange="updateDetails()"><option>Cash</option><option>Card</option></select>
   </div>
 
   <h2 id="tableTitle"></h2>
@@ -153,7 +155,8 @@ label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
 
 <script>
 const ITEMS=[
- {k:"menu",n:"Menu",p:25},
+ {k:"normal",n:"Menu Normale",p:25},
+ {k:"veg",n:"Menu Vegjet",p:25},
  {k:"kids",n:"Menu Kids",p:15},
  {k:"beer",n:"Birrë",p:3.5},
  {k:"red",n:"Verë e kuqe",p:2.5},
@@ -186,11 +189,16 @@ let current=1;
 function blank(t){
  const q={},sent={};
  ITEMS.forEach(i=>{q[i.k]=0;sent[i.k]=0});
- return {q,sent,name:"Tavolina "+t,persons:0,notes:"",updated:null,stage:0,requests:{}};
+ return {q,sent,name:"Tavolina "+t,persons:0,notes:"",updated:null,stage:0,requests:{},payment:"Cash"};
 }
 
 for(let t=1;t<=TABLES;t++){
  if(!db[t]) db[t]=blank(t);
+ // Migrim pa humbur të dhëna nga versioni i vjetër
+ if(db[t].q && db[t].q.menu!=null && db[t].q.normal==null) db[t].q.normal=db[t].q.menu||0;
+ if(db[t].sent && db[t].sent.menu!=null && db[t].sent.normal==null) db[t].sent.normal=db[t].sent.menu||0;
+ if(db[t].q && db[t].q.veg==null) db[t].q.veg=0;
+ if(!db[t].payment) db[t].payment="Cash";
  if(!db[t].sent){
   db[t].sent={};
   ITEMS.forEach(i=>db[t].sent[i.k]=0);
@@ -276,6 +284,7 @@ function openTable(t){
  tableName.value=db[t].name||"";
  persons.value=db[t].persons||"";
  notes.value=db[t].notes||"";
+ payment.value=db[t].payment||"Cash";
  drawCurrent();
 }
 
@@ -283,6 +292,7 @@ function updateDetails(){
  db[current].name=tableName.value.trim()||("Tavolina "+current);
  db[current].persons=Math.max(0,Number(persons.value)||0);
  db[current].notes=notes.value.trim();
+ db[current].payment=document.getElementById("payment").value;
  db[current].updated=stamp();
  save();
 }
@@ -367,6 +377,7 @@ function invoiceText(t){
  let txt=`Taste Home\nData: ${isoDate()}\n${db[t].name||("Tavolina "+t)}\n`;
  if(db[t].persons) txt+=`Persona: ${db[t].persons}\n`;
  if(db[t].notes) txt+=`Shënime: ${db[t].notes}\n`;
+  txt+=`Pagesa: ${db[t].payment||"Cash"}\n`;
  linesForTable(t).forEach(x=>{
   txt+=`${x.name}: ${x.qty} × ${money(x.price)} = ${money(x.subtotal)}\n`;
  });
@@ -429,6 +440,7 @@ function printCurrent(){
     <div>Data: ${isoDate()}</div>
     <div>${t.name||("Tavolina "+current)}</div>
     ${t.persons?`<div>Persona: ${t.persons}</div>`:""}
+    <div>Pagesa: ${t.payment||"Cash"}</div>
     <hr>
     ${rows}
     <hr>
@@ -451,6 +463,7 @@ function closeCurrent(){
   name:db[current].name,
   persons:db[current].persons,
   notes:db[current].notes,
+  payment:db[current].payment||"Cash",
   date:isoDate(),
   closedAt:stamp(),
   stage:db[current].stage,
@@ -512,7 +525,11 @@ function filtered(){
 
 function drawHistory(){
  const day=filtered();
- dailyTotal.textContent=`Xhiro: ${money(day.reduce((s,x)=>s+x.total,0))} · ${day.length} fatura`;
+ const grand=day.reduce((s,x)=>s+x.total,0);
+ const cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+x.total,0);
+ const card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+x.total,0);
+ const oldPay=day.filter(x=>!x.payment).reduce((s,x)=>s+x.total,0);
+ dailyTotal.innerHTML=`Xhiro: ${money(grand)} · ${day.length} fatura<br><span style="font-size:16px">Cash: ${money(cash)} · Card: ${money(card)}${oldPay?` · Pa specifikuar: ${money(oldPay)}`:""}</span>`;
 
  const box=document.getElementById("history");
  box.innerHTML="";
@@ -548,6 +565,7 @@ function shareInvoice(id){
  let txt=`Taste Home\nData: ${inv.date}\n${inv.name||("Tavolina "+inv.table)}\n`;
  if(inv.persons) txt+=`Persona: ${inv.persons}\n`;
  if(inv.notes) txt+=`Shënime: ${inv.notes}\n`;
+ txt+=`Pagesa: ${inv.payment||"Pa specifikuar"}\n`;
  inv.lines.forEach(x=>{
   txt+=`${x.name}: ${x.qty} × ${money(x.price)} = ${money(x.subtotal)}\n`;
  });
@@ -574,14 +592,21 @@ function clearHistoryForDate(){
 
 function shareDaily(){
  const day=filtered();
+ const grand=day.reduce((s,x)=>s+x.total,0);
+ const cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+x.total,0);
+ const card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+x.total,0);
+ const oldPay=day.filter(x=>!x.payment).reduce((s,x)=>s+x.total,0);
  let txt=`Taste Home — Xhiro ${historyDate.value}\nFatura: ${day.length}\n`;
+ txt+=`Cash: ${money(cash)}\nCard: ${money(card)}\n`;
+ if(oldPay) txt+=`Pa specifikuar (fatura të vjetra): ${money(oldPay)}\n`;
+ txt+=`\n`;
 
  ITEMS.forEach(i=>{
-  const q=day.reduce((s,inv)=>s+inv.lines.filter(x=>x.name===i.n).reduce((a,x)=>a+x.qty,0),0);
+  const q=day.reduce((s,inv)=>s+inv.lines.filter(x=>x.name===i.n || (i.k==="normal" && x.name==="Menu")).reduce((a,x)=>a+x.qty,0),0);
   if(q) txt+=`${i.n}: ${q}\n`;
  });
 
- txt+=`----------------\nTOTALI: ${money(day.reduce((s,x)=>s+x.total,0))}`;
+ txt+=`----------------\nTOTALI: ${money(grand)}`;
  shareText(txt);
 }
 

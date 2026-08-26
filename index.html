@@ -37,7 +37,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:6px 0 3px}
 input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padding:9px;background:#fff}
 .compact2{display:grid;grid-template-columns:1fr 92px;gap:7px}.notes{height:46px;min-height:46px;resize:vertical}.people{font-size:18px;font-weight:900;color:var(--brand);text-align:center;margin-top:5px}
 .row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eee}.row:last-child{border-bottom:0}.name{font-weight:900}.price{font-size:12px;color:var(--muted)}.counter{display:flex;align-items:center;gap:7px}.counter b{min-width:26px;text-align:center;font-size:19px}.minus,.plus{width:40px;height:40px;border-radius:10px;padding:0;font-size:22px;font-weight:900}.minus{background:#eee}.plus{background:var(--brand);color:#fff}
-.status-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.status-btn{min-height:52px;border-radius:9px;background:#eee;padding:6px 3px;font-size:10px;font-weight:850}.status-btn.selected{background:var(--brand);color:#fff}.next{width:100%;margin-top:7px;background:var(--orange);color:#fff;border-radius:10px;padding:10px;font-weight:900}
+.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.status-btn{min-height:44px;border-radius:9px;background:#eee;padding:5px 3px;font-size:10px;line-height:1.1;font-weight:850}.status-btn.selected{background:var(--brand);color:#fff}.next{width:100%;margin-top:7px;background:var(--orange);color:#fff;border-radius:10px;padding:10px;font-weight:900}
 .reqgrid,.paybuttons,.actions,.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}.reqbtn,.paybtn{background:#eee;border-radius:10px;padding:10px;font-weight:900}.reqbtn.selected{background:var(--orange);color:#fff}.paybtn.selected{background:var(--green);color:#fff}
 .drinktiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.drinktile{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;min-height:100px;padding:10px 7px;text-align:center}.drinktile .ico{font-size:30px}.drinktile .dn{font-size:15px;font-weight:950}.drinktile .dp{font-size:11px;color:var(--muted)}.badgealert{position:absolute;top:6px;right:6px;min-width:24px;height:24px;padding:0 6px;background:var(--red);color:#fff;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:950}
 .drinkdetail{border:1px solid var(--line);border-radius:13px;padding:10px;margin-top:8px}.drinkhead{display:flex;justify-content:space-between;align-items:center}.delivery{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;margin:7px 0;font-size:11px;color:var(--muted)}.delivery b{display:block;font-size:18px;color:var(--text)}.delivery .pending b{color:var(--red)}.deliverBtns{display:grid;grid-template-columns:1fr 1fr;gap:6px}.deliverBtns.single{grid-template-columns:1fr}.deliverBtns.single button{min-height:46px;font-size:14px}.deliverBtns button{border-radius:9px;padding:9px;font-weight:900}.deliverBtns button:not(:disabled){background:var(--orange);color:#fff}.deliverBtns button:disabled{background:#ddd;color:#999}
@@ -95,7 +95,7 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
   </div>
 
   <div class="card"><div class="section-title"><h3>👥 Menu</h3><span class="meta">Personat llogariten vetë</span></div><div id="menus"></div></div>
-  <div class="card"><div class="section-title"><h3>🍽️ Shërbimi</h3><span class="meta">Komandë për kuzhinën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="nextStage()">HAPI TJETËR →</button></div>
+  <div class="card"><div class="section-title"><h3>🍽️ Shërbimi</h3><span class="meta">Komandë për kuzhinën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="sendKitchenUpdate()">👨‍🍳 INFO KUZHINËS</button></div>
   <div class="card"><h3>⚡ Kërkesa të shpejta</h3><div id="requestButtons" class="reqgrid"></div></div>
   <div class="card"><div class="section-title"><h3>🥂 Pijet</h3><span class="meta">Kliko katrorin për +1</span></div><div id="drinkTiles" class="drinktiles"></div><div id="drinkDetails"></div></div>
 
@@ -195,11 +195,10 @@ const ITEMS=[
  {k:"juice",n:"Grape Juice",p:2.5,type:"drink",ico:"🍇"}
 ];
 const STAGES=[
- {short:"1<br>Aper. 1",msg:"APERITIV 1"},
- {short:"2<br>Aper. 2",msg:"APERITIV 2"},
- {short:"3<br>Supë",msg:"SUPA"},
- {short:"4<br>Main",msg:"MAIN"},
- {short:"5<br>Ëmb.",msg:"ËMBËLSIRA"}
+ {short:"Mezet<br>e para",msg:"MEZET E PARA"},
+ {short:"Mezet<br>e dyta",msg:"MEZET E DYTA"},
+ {short:"Imam<br>+ Qofte",msg:"IMAM + QOFTE"},
+ {short:"Ëmbël-<br>sirë",msg:"ËMBËLSIRA"}
 ];
 const REQUESTS=["💧 Ujë","🍞 Bukë"];
 const BASE_POSITIONS=["🥘 Tek Tepsiat","🍇 Tek Hardhia","💧 Tek Çezma","💡 Tek Drita","🍊 Tek Mandarina","🍊 Tek Portokalli","🌳 Nën Fik","🌿 Në Bahçe","🚪 Tek Dera","➕ Tavolinë Extra"];
@@ -214,7 +213,7 @@ let tableCount=Math.max(10,Math.min(13,Number(localStorage.getItem(COUNT_KEY)||1
 const $=id=>document.getElementById(id);
 
 function positionFor(t){return t<=10?BASE_POSITIONS[t-1]:`➕ Tavolinë Shtesë ${t-10}`}
-function blank(t){const q={},sent={},served={};ITEMS.forEach(i=>q[i.k]=sent[i.k]=served[i.k]=0);return{q,sent,served,name:"",reservedPeople:0,notes:"",updated:null,stage:0,requests:{},payment:"Cash",cardPaid:true,cardNote:"",received:"",workDate:"",position:positionFor(t)}}
+function blank(t){const q={},sent={},served={};ITEMS.forEach(i=>q[i.k]=sent[i.k]=served[i.k]=0);return{q,sent,served,name:"",reservedPeople:0,notes:"",updated:null,stage:0,requests:{},groupVeg:0,payment:"Cash",cardPaid:true,cardNote:"",received:"",workDate:"",position:positionFor(t)}}
 function normalize(t){
  if(!db[t])db[t]=blank(t);
  const b=db[t];b.q=b.q||{};b.sent=b.sent||{};b.served=b.served||{};
@@ -225,7 +224,7 @@ function normalize(t){
  if(b.reservedPeople==null)b.reservedPeople=Number(b.persons)||0;
  if(!b.payment)b.payment="Cash";if(typeof b.cardPaid!=="boolean")b.cardPaid=b.payment==="Cash";
  if(b.cardNote==null)b.cardNote="";if(b.received==null)b.received=b.receivedAmount??"";
- if(typeof b.stage!=="number")b.stage=0;if(!b.requests)b.requests={};if(b.workDate==null)b.workDate="";
+ if(typeof b.stage!=="number")b.stage=0;if(!b.requests)b.requests={};if(b.groupVeg==null)b.groupVeg=0;b.groupVeg=Math.max(0,Math.min(Number(b.groupVeg)||0,Number(b.q.group)||0));if(b.workDate==null)b.workDate="";
 }
 for(let t=1;t<=MAX_TABLES;t++)normalize(t);
 history.forEach(x=>{
@@ -316,6 +315,11 @@ function drawCurrent(){
  $("statusButtons").innerHTML="";STAGES.forEach((s,n)=>{const b=document.createElement("button");b.className="status-btn "+(db[current].stage===n?"selected":"");b.innerHTML=s.short;b.onclick=()=>{db[current].stage=n;db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawCurrent()};$("statusButtons").appendChild(b)});
  $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="reqbtn";b.textContent=r;b.onclick=()=>sendQuickRequest(r);$("requestButtons").appendChild(b)});
  $("menus").innerHTML="";ITEMS.filter(i=>i.type==="menu").forEach(i=>{const r=document.createElement("div");r.className="row";r.innerHTML=`<div><div class="name">${i.n}</div><div class="price">${money(i.p)}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${db[current].q[i.k]}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div>`;$("menus").appendChild(r)});
+ if((db[current].q.group||0)>0){
+   const gv=document.createElement("div");gv.className="row";
+   gv.innerHTML=`<div><div class="name">🥬 Vegjetarianë në grup</div><div class="price">Vetëm për kuzhinën</div></div><div class="counter"><button class="minus" onclick="changeGroupVeg(-1)">−</button><b>${db[current].groupVeg||0}</b><button class="plus" onclick="changeGroupVeg(1)">+</button></div>`;
+   $("menus").appendChild(gv);
+ }
  drawDrinks();
 }
 function drawDrinks(){
@@ -328,17 +332,44 @@ function change(k,d){
  db[current].q[k]=Math.max(0,before+d);
  if((db[current].served[k]||0)>db[current].q[k])db[current].served[k]=db[current].q[k];
  db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();
+ if(k==="group" && (db[current].groupVeg||0)>db[current].q.group)db[current].groupVeg=db[current].q.group;
  if(item&&item.type==="drink"&&d>0&&db[current].q[k]>before)sendDrinkToKitchen(item);
  drawCurrent();drawLive();
 }
+function changeGroupVeg(d){
+ const max=Number(db[current].q.group)||0;
+ db[current].groupVeg=Math.max(0,Math.min(max,(Number(db[current].groupVeg)||0)+d));
+ db[current].updated=stamp();save();drawCurrent();
+}
 
+function drinkKitchenLabel(item,qty){
+ const q=Number(qty)||1;
+ if(item.k==="beer")return `🍺 ${q} ${q===1?"BIRRË":"BIRRA"}`;
+ if(item.k==="red")return `🍷 ${q} ${q===1?"GOTË":"GOTA"} VERË E KUQE`;
+ if(item.k==="white")return `🥂 ${q} ${q===1?"GOTË":"GOTA"} VERË E BARDHË`;
+ if(item.k==="juice")return `🍇 ${q} ${q===1?"GOTË":"GOTA"} GRAPE JUICE`;
+ return `🥤 ${q} ${item.n.toUpperCase()}`;
+}
 function sendDrinkToKitchen(item){
  if(!firebaseReady||!fbdb)return;
  const b=db[current];
+ const existing=Object.values(kitchenOrders||{}).find(o=>
+   o && o.status!=="ready" && Number(o.table)===Number(current) &&
+   o.stageLabel==="PIJE" && o.drinkKey===item.k
+ );
+ if(existing&&existing.id){
+   const newQty=(Number(existing.drinkQty)||1)+1;
+   fbdb.ref("kitchenOrders/"+existing.id).update({
+     drinkQty:newQty,
+     instruction:drinkKitchenLabel(item,newQty),
+     updatedAt:Date.now()
+   }).catch(e=>console.error("Pija nuk u përditësua në kuzhinë",e));
+   return;
+ }
  const order={
    table:current,position:b.position,name:b.name||"",people:people(current),
-   stageLabel:"PIJE",instruction:`🥂 PIJE: 1 ${item.n.toUpperCase()}`,
-   notes:b.notes||"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:1,
+   stageLabel:"PIJE",instruction:drinkKitchenLabel(item,1),
+   notes:"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:1,
    status:"pending",createdAt:Date.now()
  };
  const ref=fbdb.ref("kitchenOrders").push();
@@ -346,13 +377,13 @@ function sendDrinkToKitchen(item){
 }
 function markOne(k){db[current].served[k]=Math.min(db[current].q[k]||0,(db[current].served[k]||0)+1);db[current].updated=stamp();save();drawCurrent();drawLive()}
 function markAll(k){db[current].served[k]=db[current].q[k]||0;db[current].updated=stamp();save();drawCurrent();drawLive()}
-function nextStage(){if(db[current].stage<STAGES.length-1){db[current].stage++;db[current].updated=stamp();save();drawCurrent()}}
+function nextStage(){sendKitchenUpdate()}}
 
 function linesForTable(t){return ITEMS.filter(i=>(db[t].q[i.k]||0)>0).map(i=>({key:i.k,name:i.n,qty:db[t].q[i.k],price:i.p,subtotal:db[t].q[i.k]*i.p}))}
 function shareText(txt){location.href="https://wa.me/?text="+encodeURIComponent(txt)}
 function kitchenText(t){
  const b=db[t],n=people(t),stage=STAGES[b.stage];let x=`👨‍🍳 TASTE HOME — KUZHINA\n🪑 ${b.position}${b.name?" — "+b.name:""}\n👥 ${n} persona\n\nPËRGATIT ${n} ${stage.msg}`;
- if(b.stage===3){const parts=[];["normal","veg","kids","group"].forEach(k=>{const q=b.q[k]||0,i=ITEMS.find(z=>z.k===k);if(q)parts.push(`${q} ${i.n}`)});if(parts.length)x+=`\n${parts.join("\n")}`}
+ if(b.stage===2){const parts=[];["normal","veg","kids","group"].forEach(k=>{const q=b.q[k]||0,i=ITEMS.find(z=>z.k===k);if(q)parts.push(`${q} ${i.n}`)});if(parts.length)x+=`\n${parts.join("\n")}`}
  const req=Object.keys(b.requests||{}).filter(k=>b.requests[k]);if(req.length)x+=`\n\nKërkesa: ${req.join(", ")}`;
  const pend=ITEMS.filter(i=>i.type==="drink"&&pending(t,i.k)>0).map(i=>`${i.n}: ${pending(t,i.k)}`);if(pend.length)x+=`\n\n🥂 Për t'u çuar:\n${pend.join("\n")}`;
  if(b.notes)x+=`\n\nShënim: ${b.notes}`;return x;
@@ -377,6 +408,19 @@ function sendQuickRequest(r){
  });
 }
 
+function soupBreakdownForTable(t){
+ const b=db[t];
+ const individualVeg=Number(b.q.veg)||0;
+ const individualNormal=(Number(b.q.normal)||0)+(Number(b.q.kids)||0);
+ const group=Number(b.q.group)||0;
+ const groupVeg=Math.max(0,Math.min(group,Number(b.groupVeg)||0));
+ const veg=individualVeg+groupVeg;
+ const normal=individualNormal+(group-groupVeg);
+ const parts=[];
+ if(veg)parts.push(`🥬 ${veg} ${veg===1?"SUPË VEGJETARIANE":"SUPA VEGJETARIANE"}`);
+ if(normal)parts.push(`🥣 ${normal} ${normal===1?"SUPË NORMALE":"SUPA NORMALE"}`);
+ return {veg,normal,parts};
+}
 function sendKitchenUpdate(){
  if(!people(current))return alert("Vendos personat ose menutë.");
  const b=db[current],stage=STAGES[b.stage],n=people(current);
@@ -386,9 +430,17 @@ function sendKitchenUpdate(){
    instruction:`PËRGATIT ${n} ${stage.msg}`,notes:b.notes||"",requests:req,
    status:"pending",createdAt:Date.now()
  };
- if(b.stage===3){
-   order.menuBreakdown=["normal","veg","kids","group"].map(k=>{const q=b.q[k]||0,i=ITEMS.find(z=>z.k===k);return q?`${q} ${i.n}`:""}).filter(Boolean);
+
+ // Imam + Qofte: trego ndarjen e menuve.
+ if(b.stage===2){
+   order.menuBreakdown=["normal","veg","kids","group"].map(k=>{
+     const q=b.q[k]||0,i=ITEMS.find(z=>z.k===k);return q?`${q} ${i.n}`:""
+   }).filter(Boolean);
+   if((b.q.group||0)>0 && (b.groupVeg||0)>0){
+     order.menuBreakdown.push(`🥬 Brenda grupit: ${b.groupVeg} vegjetarianë`);
+   }
  }
+
  if(firebaseReady){
    const ref=fbdb.ref("kitchenOrders").push();
    ref.set({...order,id:ref.key}).catch(e=>{console.error(e);alert("Komanda nuk u dërgua në kuzhinë. Kontrollo internetin.")});

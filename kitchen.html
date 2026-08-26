@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7b2d26">
+<title>Taste Home Kitchen</title>
+<style>
+:root{--brand:#7b2d26;--bg:#f6f0e9;--card:#fff;--text:#211d1a;--muted:#766b63;--green:#1f7a53;--orange:#d98a1d;--red:#b3261e;--line:#e6d9ce}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:10;background:var(--brand);color:#fff;padding:14px 16px;box-shadow:0 2px 12px #0003}.head{max-width:900px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:21px;margin:0}.status{font-size:12px;font-weight:800;background:#ffffff20;padding:7px 9px;border-radius:999px}
+main{max-width:900px;margin:auto;padding:12px 12px 36px}.empty{background:#fff;border-radius:18px;padding:38px 16px;text-align:center;color:var(--muted);font-size:18px;box-shadow:0 2px 10px #0000000d}.order{background:var(--card);border-radius:20px;padding:16px;margin:0 0 14px;box-shadow:0 5px 18px #00000012;border-left:8px solid var(--orange)}
+.table{font-size:24px;font-weight:950;color:var(--brand)}.guest{font-size:15px;color:var(--muted);margin-top:2px}.people{display:inline-block;margin-top:8px;background:#f0e6de;padding:6px 10px;border-radius:999px;font-weight:850}.instruction{font-size:27px;line-height:1.12;font-weight:1000;margin:16px 0 10px}.breakdown,.note,.req{border-radius:12px;padding:10px 12px;margin:8px 0;font-weight:800}.breakdown{background:#f4eee8}.note{background:#fff5df}.req{background:#eef5ff}.time{font-size:12px;color:var(--muted);margin-top:10px}.ready{width:100%;min-height:70px;margin-top:14px;border:0;border-radius:15px;background:var(--green);color:#fff;font-size:24px;font-weight:1000;cursor:pointer}.ready:active{transform:scale(.99)}
+.topbar{display:flex;gap:8px;margin-bottom:12px}.notify{border:0;border-radius:11px;padding:10px 12px;background:#e9dfd6;color:var(--brand);font-weight:900;cursor:pointer}.count{margin-left:auto;align-self:center;font-weight:900;color:var(--muted)}
+.recentTitle{margin:24px 2px 8px;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:900}.done{background:#fff;border-radius:14px;padding:11px 13px;margin:6px 0;border-left:5px solid var(--green);opacity:.82}.done b{color:var(--green)}
+@media(min-width:700px){.instruction{font-size:34px}.table{font-size:29px}.order{padding:20px}.ready{font-size:28px;min-height:78px}}
+</style>
+</head>
+<body>
+<header><div class="head"><div><h1>👨‍🍳 Taste Home Kitchen</h1><div style="font-size:12px;opacity:.85">Vetëm komandat e kuzhinës</div></div><div id="conn" class="status">Po lidhet…</div></div></header>
+<main>
+  <div class="topbar"><button id="notifyBtn" class="notify" onclick="enableNotify()">🔔 Aktivizo tingullin</button><div id="count" class="count"></div></div>
+  <div id="orders"></div>
+  <div id="recent"></div>
+</main>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyCVs-nHioieaZpHa7nl7W3tpfvm5qyUMI4",authDomain:"taste-hm-kitchen.firebaseapp.com",databaseURL:"https://taste-hm-kitchen-default-rtdb.europe-west1.firebasedatabase.app",projectId:"taste-hm-kitchen",storageBucket:"taste-hm-kitchen.firebasestorage.app",messagingSenderId:"964982186880",appId:"1:964982186880:web:cd5a7061d23409c8a61765",measurementId:"G-BJ84J7QPQS"};
+let fbdb=null,orders={},soundEnabled=false,lastSeen=0,audioCtx=null;
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function fmtTime(ms){if(!ms)return"";return new Date(Number(ms)).toLocaleTimeString("sq-AL",{hour:"2-digit",minute:"2-digit"})}
+function enableNotify(){soundEnabled=true;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();audioCtx.resume()}catch(e){}$("notifyBtn").textContent="🔔 Tingulli aktiv";beep()}
+function beep(){if(!soundEnabled)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=880;g.gain.setValueAtTime(.08,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.25);o.start();o.stop(audioCtx.currentTime+.25)}catch(e){}try{navigator.vibrate&&navigator.vibrate([180,80,180])}catch(e){}}
+function render(){
+ const arr=Object.values(orders||{}).sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
+ const pending=arr.filter(o=>o.status!=="ready"),ready=arr.filter(o=>o.status==="ready").slice(0,4);
+ $("count").textContent=pending.length?`${pending.length} në pritje`:"";
+ $("orders").innerHTML=pending.length?pending.map(o=>`<div class="order"><div class="table">${esc(o.position||("Tavolina "+o.table))}</div>${o.name?`<div class="guest">${esc(o.name)}</div>`:""}<div class="people">👥 ${Number(o.people)||0} persona</div><div class="instruction">${esc(o.instruction||o.stageLabel||"")}</div>${(o.menuBreakdown||[]).length?`<div class="breakdown">${o.menuBreakdown.map(x=>esc(x)).join("<br>")}</div>`:""}${(o.requests||[]).length?`<div class="req">⚡ ${o.requests.map(x=>esc(x)).join(" · ")}</div>`:""}${o.notes?`<div class="note">📝 ${esc(o.notes)}</div>`:""}<div class="time">Dërguar ${fmtTime(o.createdAt)}</div><button class="ready" onclick="markReady('${esc(o.id)}')">✅ GATI</button></div>`).join(""):'<div class="empty">✅ Nuk ka komanda në pritje.</div>';
+ $("recent").innerHTML=ready.length?`<div class="recentTitle">Të fundit të përfunduara</div>${ready.map(o=>`<div class="done"><b>✅ GATI</b> · ${esc(o.position||("Tavolina "+o.table))} · ${esc(o.stageLabel||"")} <span style="float:right;color:var(--muted)">${fmtTime(o.readyAt)}</span></div>`).join("")}`:"";
+}
+function markReady(id){if(!fbdb||!id)return;fbdb.ref("kitchenOrders/"+id).update({status:"ready",readyAt:Date.now()})}
+try{
+ firebase.initializeApp(firebaseConfig);fbdb=firebase.database();
+ fbdb.ref(".info/connected").on("value",s=>{$("conn").textContent=s.val()?"🟢 Online":"🔴 Offline"});
+ fbdb.ref("kitchenOrders").on("value",snap=>{const next=snap.val()||{};const newest=Math.max(0,...Object.values(next).filter(o=>o.status!=="ready").map(o=>Number(o.createdAt)||0));if(lastSeen&&newest>lastSeen)beep();lastSeen=Math.max(lastSeen,newest);orders=next;render()});
+}catch(e){$("conn").textContent="🔴 Gabim lidhjeje";$("orders").innerHTML='<div class="empty">Nuk u lidh me Firebase.</div>';console.error(e)}
+render();
+</script>
+</body>
+</html>

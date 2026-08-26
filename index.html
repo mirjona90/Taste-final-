@@ -314,7 +314,7 @@ function drawTip(){const box=$("tipBox");if(db[current].received===""){box.class
 function drawCurrent(){
  drawHeaderOnly();drawPayment();
  $("statusButtons").innerHTML="";STAGES.forEach((s,n)=>{const b=document.createElement("button");b.className="status-btn "+(db[current].stage===n?"selected":"");b.innerHTML=s.short;b.onclick=()=>{db[current].stage=n;db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawCurrent()};$("statusButtons").appendChild(b)});
- $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="reqbtn "+(db[current].requests[r]?"selected":"");b.textContent=r;b.onclick=()=>{db[current].requests[r]=!db[current].requests[r];db[current].updated=stamp();save();drawCurrent()};$("requestButtons").appendChild(b)});
+ $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="reqbtn";b.textContent=r;b.onclick=()=>sendQuickRequest(r);$("requestButtons").appendChild(b)});
  $("menus").innerHTML="";ITEMS.filter(i=>i.type==="menu").forEach(i=>{const r=document.createElement("div");r.className="row";r.innerHTML=`<div><div class="name">${i.n}</div><div class="price">${money(i.p)}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${db[current].q[i.k]}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div>`;$("menus").appendChild(r)});
  drawDrinks();
 }
@@ -322,7 +322,28 @@ function drawDrinks(){
  $("drinkTiles").innerHTML="";ITEMS.filter(i=>i.type==="drink").forEach(i=>{const q=db[current].q[i.k]||0,p=pending(current,i.k),b=document.createElement("button");b.className="drinktile";b.innerHTML=`${p?`<span class="badgealert">${p}</span>`:""}<div class="ico">${i.ico}</div><div class="dn">${i.n}</div><div class="dp">${money(i.p)} · kliko +1</div>${q?`<div class="meta">${q} porositur</div>`:""}`;b.onclick=()=>change(i.k,1);$("drinkTiles").appendChild(b)});
  $("drinkDetails").innerHTML="";ITEMS.filter(i=>i.type==="drink"&&(db[current].q[i.k]||0)>0).forEach(i=>{const q=db[current].q[i.k]||0,s=Math.min(db[current].served[i.k]||0,q),p=pending(current,i.k),d=document.createElement("div");d.className="drinkdetail";d.innerHTML=`<div class="drinkhead"><b>${i.ico} ${i.n}</b><button class="minus" onclick="change('${i.k}',-1)">−</button></div><div class="delivery"><div>Porositur<b>${q}</b></div><div>Dërguar<b>${s}</b></div><div class="pending">Pret<b>${p}</b></div></div><div class="deliverBtns single"><button ${p===0?"disabled":""} onclick="markAll('${i.k}')">✓ U DËRGUAN${p?` ${p}`:""}</button></div>`;$("drinkDetails").appendChild(d)});
 }
-function change(k,d){db[current].q[k]=Math.max(0,(db[current].q[k]||0)+d);if((db[current].served[k]||0)>db[current].q[k])db[current].served[k]=db[current].q[k];db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawCurrent();drawLive()}
+function change(k,d){
+ const item=ITEMS.find(i=>i.k===k);
+ const before=Number(db[current].q[k]||0);
+ db[current].q[k]=Math.max(0,before+d);
+ if((db[current].served[k]||0)>db[current].q[k])db[current].served[k]=db[current].q[k];
+ db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();
+ if(item&&item.type==="drink"&&d>0&&db[current].q[k]>before)sendDrinkToKitchen(item);
+ drawCurrent();drawLive();
+}
+
+function sendDrinkToKitchen(item){
+ if(!firebaseReady||!fbdb)return;
+ const b=db[current];
+ const order={
+   table:current,position:b.position,name:b.name||"",people:people(current),
+   stageLabel:"PIJE",instruction:`🥂 PIJE: 1 ${item.n.toUpperCase()}`,
+   notes:b.notes||"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:1,
+   status:"pending",createdAt:Date.now()
+ };
+ const ref=fbdb.ref("kitchenOrders").push();
+ ref.set({...order,id:ref.key}).catch(e=>console.error("Pija nuk u dërgua në kuzhinë",e));
+}
 function markOne(k){db[current].served[k]=Math.min(db[current].q[k]||0,(db[current].served[k]||0)+1);db[current].updated=stamp();save();drawCurrent();drawLive()}
 function markAll(k){db[current].served[k]=db[current].q[k]||0;db[current].updated=stamp();save();drawCurrent();drawLive()}
 function nextStage(){if(db[current].stage<STAGES.length-1){db[current].stage++;db[current].updated=stamp();save();drawCurrent()}}
@@ -336,6 +357,26 @@ function kitchenText(t){
  const pend=ITEMS.filter(i=>i.type==="drink"&&pending(t,i.k)>0).map(i=>`${i.n}: ${pending(t,i.k)}`);if(pend.length)x+=`\n\n🥂 Për t'u çuar:\n${pend.join("\n")}`;
  if(b.notes)x+=`\n\nShënim: ${b.notes}`;return x;
 }
+function sendQuickRequest(r){
+ const b=db[current],n=people(current);
+ if(!firebaseReady||!fbdb){alert("Firebase nuk është lidhur. Kontrollo internetin.");return}
+ const clean=String(r||"").replace(/^[^A-Za-zÀ-ž]+/,"").trim();
+ const order={
+   table:current,position:b.position,name:b.name||"",people:n,
+   stageLabel:"KËRKESË",
+   instruction:`KËRKESË: ${clean.toUpperCase()}`,
+   notes:b.notes||"",requests:[r],
+   menuBreakdown:[],status:"pending",createdAt:Date.now()
+ };
+ const ref=fbdb.ref("kitchenOrders").push();
+ ref.set({...order,id:ref.key}).then(()=>{
+   b.updated=stamp();save();
+ }).catch(e=>{
+   console.error(e);
+   alert("Kërkesa nuk u dërgua në kuzhinë. Kontrollo internetin.");
+ });
+}
+
 function sendKitchenUpdate(){
  if(!people(current))return alert("Vendos personat ose menutë.");
  const b=db[current],stage=STAGES[b.stage],n=people(current);

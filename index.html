@@ -166,7 +166,6 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCVs-nHioieaZpHa7nl7W3tpfvm5qyUMI4",
@@ -182,9 +181,7 @@ let firebaseReady=false, remoteApplying=false, kitchenOrders={};
 try{
   firebase.initializeApp(firebaseConfig);
   window.fbdb=firebase.database();
-  firebase.auth().signInAnonymously()
-    .then(()=>{firebaseReady=true;})
-    .catch(e=>console.warn("Firebase Auth dështoi",e));
+  firebaseReady=true;
 }catch(e){console.warn("Firebase nuk u inicializua",e)}
 
 const ITEMS=[
@@ -347,42 +344,47 @@ function sendDrinkToKitchen(item){
  if(!firebaseReady||!fbdb)return;
  const b=db[current];
 
- // Kërko në Firebase një njoftim ekzistues, ende në pritje,
- // për të njëjtën tavolinë dhe të njëjtën pije.
- fbdb.ref("kitchenOrders")
-   .orderByChild("table")
-   .equalTo(current)
-   .once("value")
-   .then(snap=>{
-     let existing=null;
-     snap.forEach(ch=>{
-       const o=ch.val();
-       if(o && o.status!=="ready" && o.stageLabel==="PIJE" && o.drinkKey===item.k){
-         if(!existing || Number(o.createdAt||0)>Number(existing.createdAt||0)){
-           existing={...o,id:ch.key};
-         }
-       }
-     });
+ // Një rekord unik për çdo tavolinë + lloj pijeje.
+ // Transaction e bën numërimin atomik edhe kur klikon shpejt 3 herë.
+ const key=`drink_${current}_${item.k}`;
+ const ref=fbdb.ref("kitchenOrders/"+key);
 
-     if(existing){
-       const qty=(Number(existing.drinkQty)||1)+1;
-       return fbdb.ref("kitchenOrders/"+existing.id).update({
-         drinkQty:qty,
-         instruction:drinkKitchenText(item,qty),
-         updatedAt:Date.now()
-       });
-     }
-
-     const ref=fbdb.ref("kitchenOrders").push();
-     const order={
-       table:current,position:b.position,name:b.name||"",people:people(current),
-       stageLabel:"PIJE",instruction:drinkKitchenText(item,1),
-       notes:b.notes||"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:1,
-       status:"pending",createdAt:Date.now()
+ ref.transaction(existing=>{
+   if(existing && existing.status!=="ready"){
+     const qty=(Number(existing.drinkQty)||1)+1;
+     return {
+       ...existing,
+       id:key,
+       table:current,
+       position:b.position,
+       name:b.name||"",
+       people:people(current),
+       stageLabel:"PIJE",
+       drinkKey:item.k,
+       drinkQty:qty,
+       instruction:drinkKitchenText(item,qty),
+       updatedAt:Date.now()
      };
-     return ref.set({...order,id:ref.key});
-   })
-   .catch(e=>console.error("Pija nuk u dërgua/përditësua në kuzhinë",e));
+   }
+
+   return {
+     id:key,
+     table:current,
+     position:b.position,
+     name:b.name||"",
+     people:people(current),
+     stageLabel:"PIJE",
+     instruction:drinkKitchenText(item,1),
+     notes:b.notes||"",
+     requests:[],
+     menuBreakdown:[],
+     drinkKey:item.k,
+     drinkQty:1,
+     status:"pending",
+     createdAt:Date.now(),
+     updatedAt:Date.now()
+   };
+ }).catch(e=>console.error("Pija nuk u dërgua/përditësua në kuzhinë",e));
 }
 function markOne(k){db[current].served[k]=Math.min(db[current].q[k]||0,(db[current].served[k]||0)+1);db[current].updated=stamp();save();drawCurrent();drawLive()}
 function markAll(k){db[current].served[k]=db[current].q[k]||0;db[current].updated=stamp();save();drawCurrent();drawLive()}

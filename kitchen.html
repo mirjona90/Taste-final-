@@ -34,6 +34,7 @@ main{max-width:900px;margin:auto;padding:9px 10px 24px}
 </main>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script>
 const firebaseConfig={apiKey:"AIzaSyCVs-nHioieaZpHa7nl7W3tpfvm5qyUMI4",authDomain:"taste-hm-kitchen.firebaseapp.com",databaseURL:"https://taste-hm-kitchen-default-rtdb.europe-west1.firebasedatabase.app",projectId:"taste-hm-kitchen",storageBucket:"taste-hm-kitchen.firebasestorage.app",messagingSenderId:"964982186880",appId:"1:964982186880:web:cd5a7061d23409c8a61765",measurementId:"G-BJ84J7QPQS"};
 let fbdb=null,orders={},soundEnabled=false,lastSeen=0,audioCtx=null;
@@ -111,6 +112,7 @@ function render(){
 function markReady(id){if(!fbdb||!id)return;fbdb.ref("kitchenOrders/"+id).update({status:"ready",readyAt:Date.now()})}
 try{
  firebase.initializeApp(firebaseConfig);fbdb=firebase.database();
+ firebase.auth().signInAnonymously().catch(e=>{$("conn").textContent="🔴 Auth gabim";console.error(e)});
  fbdb.ref(".info/connected").on("value",s=>{$("conn").textContent=s.val()?"🟢 Online":"🔴 Offline"});
  fbdb.ref("kitchenOrders").on("value",snap=>{
  const next=snap.val()||{};

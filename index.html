@@ -166,6 +166,7 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCVs-nHioieaZpHa7nl7W3tpfvm5qyUMI4",
@@ -181,7 +182,9 @@ let firebaseReady=false, remoteApplying=false, kitchenOrders={};
 try{
   firebase.initializeApp(firebaseConfig);
   window.fbdb=firebase.database();
-  firebaseReady=true;
+  firebase.auth().signInAnonymously()
+    .then(()=>{firebaseReady=true;})
+    .catch(e=>console.warn("Firebase Auth dështoi",e));
 }catch(e){console.warn("Firebase nuk u inicializua",e)}
 
 const ITEMS=[

@@ -166,7 +166,6 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCVs-nHioieaZpHa7nl7W3tpfvm5qyUMI4",
@@ -178,18 +177,11 @@ const firebaseConfig = {
   appId: "1:964982186880:web:cd5a7061d23409c8a61765",
   measurementId: "G-BJ84J7QPQS"
 };
-let firebaseReady=false, remoteApplying=false, kitchenOrders={}, firebaseSyncStarted=false;
+let firebaseReady=false, remoteApplying=false, kitchenOrders={};
 try{
   firebase.initializeApp(firebaseConfig);
   window.fbdb=firebase.database();
-  firebase.auth().onAuthStateChanged(user=>{
-    if(user){
-      firebaseReady=true;
-      startFirebaseSync();
-    }else{
-      firebase.auth().signInAnonymously().catch(e=>console.warn("Firebase Auth dështoi",e));
-    }
-  });
+  firebaseReady=true;
 }catch(e){console.warn("Firebase nuk u inicializua",e)}
 
 const ITEMS=[
@@ -351,14 +343,47 @@ function drinkKitchenText(item,qty){
 function sendDrinkToKitchen(item){
  if(!firebaseReady||!fbdb)return;
  const b=db[current];
+
+ // Një rekord unik për çdo tavolinë + lloj pijeje.
+ // Transaction e bën numërimin atomik edhe kur klikon shpejt 3 herë.
  const key=`drink_${current}_${item.k}`;
  const ref=fbdb.ref("kitchenOrders/"+key);
+
  ref.transaction(existing=>{
    if(existing && existing.status!=="ready"){
      const qty=(Number(existing.drinkQty)||1)+1;
-     return {...existing,id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",drinkKey:item.k,drinkQty:qty,instruction:drinkKitchenText(item,qty),updatedAt:Date.now()};
+     return {
+       ...existing,
+       id:key,
+       table:current,
+       position:b.position,
+       name:b.name||"",
+       people:people(current),
+       stageLabel:"PIJE",
+       drinkKey:item.k,
+       drinkQty:qty,
+       instruction:drinkKitchenText(item,qty),
+       updatedAt:Date.now()
+     };
    }
-   return {id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",instruction:drinkKitchenText(item,1),notes:b.notes||"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:1,status:"pending",createdAt:Date.now(),updatedAt:Date.now()};
+
+   return {
+     id:key,
+     table:current,
+     position:b.position,
+     name:b.name||"",
+     people:people(current),
+     stageLabel:"PIJE",
+     instruction:drinkKitchenText(item,1),
+     notes:b.notes||"",
+     requests:[],
+     menuBreakdown:[],
+     drinkKey:item.k,
+     drinkQty:1,
+     status:"pending",
+     createdAt:Date.now(),
+     updatedAt:Date.now()
+   };
  }).catch(e=>console.error("Pija nuk u dërgua/përditësua në kuzhinë",e));
 }
 function markOne(k){db[current].served[k]=Math.min(db[current].q[k]||0,(db[current].served[k]||0)+1);db[current].updated=stamp();save();drawCurrent();drawLive()}
@@ -503,9 +528,7 @@ function drawStats(){
  else{pv=Array(7).fill(0);rv=Array(7).fill(0);tv=Array(7).fill(0);labels=["H","M","M","E","P","S","D"];const r=weekRange($("statsWeek").value);if(r)arr.forEach(x=>{const d=new Date((x.date||"")+"T12:00:00"),idx=Math.floor((d-r[0])/86400000);if(idx>=0&&idx<7){pv[idx]+=Number(x.persons)||inferPeople(x);rv[idx]+=Number(x.total)||0;tv[idx]+=Number(x.tip)||0}})}
  chart("peopleChart",pv,"num",labels);chart("revenueChart",rv,"money",labels);chart("tipsChart",tv,"money",labels,true);
 }
-function startFirebaseSync(){
- if(firebaseSyncStarted||!firebaseReady||!fbdb)return;
- firebaseSyncStarted=true;
+if(firebaseReady){
  fbdb.ref("appState").on("value",snap=>{
    const v=snap.val(); if(!v)return;
    remoteApplying=true;

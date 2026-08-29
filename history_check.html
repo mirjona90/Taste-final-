@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Taste Home - Kontroll Historiku</title>
+<style>
+body{font-family:system-ui,Arial;background:#f6f0e9;color:#211d1a;margin:0;padding:18px}
+.card{max-width:760px;margin:auto;background:#fff;border-radius:18px;padding:18px;box-shadow:0 2px 12px #0001}
+h2{margin-top:0;color:#7b2d26}
+.box{padding:12px;border-radius:12px;background:#f4eee8;margin:10px 0}
+.good{background:#edf8f2}.bad{background:#fff0ef}
+b{color:#1f7a53}
+pre{white-space:pre-wrap;word-break:break-word;font-size:12px}
+button{width:100%;padding:12px;border:0;border-radius:10px;background:#7b2d26;color:#fff;font-weight:800;margin-top:8px}
+small{color:#7b7168}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>🔎 Kontroll Historiku — VETËM LEXIM</h2>
+<p>Kjo faqe <b>nuk shkruan dhe nuk fshin asgjë</b>. Lexon vetëm kopjet e historikut që ndodhen në storage të kësaj faqeje/origjine.</p>
+<div id="result"></div>
+<button onclick="check()">Kontrollo përsëri</button>
+<small>Duhet hapur nën të njëjtën adresë mirjona90.github.io/Taste-final-/ që të ketë akses te i njëjti localStorage.</small>
+</div>
+<script>
+function safeParse(v){try{return JSON.parse(v||"[]")}catch(e){return null}}
+function dates(arr){
+ if(!Array.isArray(arr)) return {};
+ const m={};
+ arr.forEach(x=>{let d=x&&x.date?String(x.date):"(pa datë)";m[d]=(m[d]||0)+1});
+ return m;
+}
+function renderKey(key){
+ const raw=localStorage.getItem(key);
+ const arr=safeParse(raw);
+ const ds=dates(arr);
+ const d28=ds["2026-08-28"]||0, d29=ds["2026-08-29"]||0;
+ const cls=(d28||d29)?"good":"bad";
+ let lines=Object.keys(ds).sort().map(d=>d+" : "+ds[d]+" fatura").join("\n")||"Asnjë datë.";
+ return `<div class="box ${cls}"><strong>${key}</strong><br>
+ Regjistrime: <b>${Array.isArray(arr)?arr.length:"Nuk lexohet"}</b><br>
+ 28 Gusht: <b>${d28}</b> fatura<br>
+ 29 Gusht: <b>${d29}</b> fatura
+ <details><summary>Shiko të gjitha datat</summary><pre>${lines}</pre></details></div>`;
+}
+function check(){
+ document.getElementById("result").innerHTML=
+ renderKey("taste_home_history_v9")+renderKey("taste_home_history_v11");
+}
+check();
+</script>
+</body>
+</html>

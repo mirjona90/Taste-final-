@@ -110,20 +110,46 @@ function render(){
  </div>`).join(""):'<div class="empty">✅ Nuk ka komanda në pritje.</div>';
 }
 function markReady(id){if(!fbdb||!id)return;fbdb.ref("kitchenOrders/"+id).update({status:"ready",readyAt:Date.now()})}
-try{
- firebase.initializeApp(firebaseConfig);fbdb=firebase.database();
- firebase.auth().signInAnonymously().catch(e=>{$("conn").textContent="🔴 Auth gabim";console.error(e)});
- fbdb.ref(".info/connected").on("value",s=>{$("conn").textContent=s.val()?"🟢 Online":"🔴 Offline"});
+function startKitchenFirebase(){
+ fbdb.ref(".info/connected").on("value",s=>{
+   $("conn").textContent=s.val()?"🟢 Online":"🔴 Offline";
+ });
+
  fbdb.ref("kitchenOrders").on("value",snap=>{
- const next=snap.val()||{};
- const pending=Object.values(next).filter(o=>o&&o.status!=="ready");
- const newestOrder=pending.sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0))[0];
- const newest=Number(newestOrder?.createdAt)||0;
- if(lastSeen&&newest>lastSeen){beep();speakOrder(newestOrder)}
- lastSeen=Math.max(lastSeen,newest);
- orders=next;render();
-});
-}catch(e){$("conn").textContent="🔴 Gabim lidhjeje";$("orders").innerHTML='<div class="empty">Nuk u lidh me Firebase.</div>';console.error(e)}
+   const next=snap.val()||{};
+   const pending=Object.values(next).filter(o=>o&&o.status!=="ready");
+   const newestOrder=pending.sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0))[0];
+   const newest=Number(newestOrder?.createdAt)||0;
+   if(lastSeen&&newest>lastSeen){beep();speakOrder(newestOrder)}
+   lastSeen=Math.max(lastSeen,newest);
+   orders=next;render();
+ },err=>{
+   console.error("Firebase read error:",err);
+   $("conn").textContent="🔴 Pa leje";
+ });
+}
+
+try{
+ firebase.initializeApp(firebaseConfig);
+ fbdb=firebase.database();
+
+ firebase.auth().onAuthStateChanged(user=>{
+   if(user){
+     console.log("Kitchen UID:",user.uid);
+     $("conn").textContent="🟡 Duke u lidhur…";
+     startKitchenFirebase();
+   }else{
+     firebase.auth().signInAnonymously().catch(e=>{
+       console.error("Anonymous auth:",e);
+       $("conn").textContent="🔴 Auth gabim";
+     });
+   }
+ });
+}catch(e){
+ $("conn").textContent="🔴 Gabim lidhjeje";
+ $("orders").innerHTML='<div class="empty">Nuk u lidh me Firebase.</div>';
+ console.error(e);
+}
 $("todayDate").textContent=shqipDate();
 render();
 </script>

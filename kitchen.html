@@ -67,29 +67,34 @@ function shqipDate(){
 function cleanSpeak(v){return String(v||"").replace(/[🍺🍷🥂🍇🥤🍲🥣🥬🍽️🍰⚡👨‍🍳👥📝✅]/gu," ").replace(/\s+/g," ").trim()}
 function speakOrder(o){
  if(!soundEnabled||!("speechSynthesis" in window))return;
- const place=cleanSpeak(o.position||("Tavolina "+o.table));
- let parts=[place];
- if(o.instruction)parts.push(cleanSpeak(o.instruction));
- if(Array.isArray(o.menuBreakdown))parts.push(...o.menuBreakdown.map(cleanSpeak));
- if(Array.isArray(o.requests))parts.push(...o.requests.map(cleanSpeak));
- const u=new SpeechSynthesisUtterance(parts.filter(Boolean).join(". "));
- u.lang="sq-AL";u.rate=.92;u.pitch=1;
- const voices=speechSynthesis.getVoices();
- const sq=voices.find(v=>String(v.lang||"").toLowerCase().startsWith("sq"));
- if(sq)u.voice=sq;
- speechSynthesis.cancel();speechSynthesis.speak(u);
+ try{
+   speechSynthesis.cancel();
+   const u=new SpeechSynthesisUtterance("Njoftim nga oborri.");
+   u.lang="sq-AL";
+   u.rate=.9;
+   u.pitch=1;
+   const voices=speechSynthesis.getVoices();
+   const sq=voices.find(v=>String(v.lang||"").toLowerCase().startsWith("sq"));
+   if(sq)u.voice=sq;
+   speechSynthesis.speak(u);
+ }catch(e){console.warn("Zëri:",e)}
 }
 function enableNotify(){
  soundEnabled=true;
  try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();audioCtx.resume()}catch(e){}
+ $("notifyBtn").textContent="🔊 Njoftimet aktive";
+ beep();
  try{
    if("speechSynthesis" in window){
-     const u=new SpeechSynthesisUtterance("Zëri u aktivizua");
-     u.lang="sq-AL";u.volume=.7;speechSynthesis.speak(u);
+     speechSynthesis.cancel();
+     const u=new SpeechSynthesisUtterance("Njoftim nga oborri.");
+     u.lang="sq-AL";u.rate=.9;u.pitch=1;
+     const voices=speechSynthesis.getVoices();
+     const sq=voices.find(v=>String(v.lang||"").toLowerCase().startsWith("sq"));
+     if(sq)u.voice=sq;
+     speechSynthesis.speak(u);
    }
  }catch(e){}
- $("notifyBtn").textContent="🔊 Zëri aktiv";
- beep();
 }
 function beep(){if(!soundEnabled)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=880;g.gain.setValueAtTime(.08,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.25);o.start();o.stop(audioCtx.currentTime+.25)}catch(e){}try{navigator.vibrate&&navigator.vibrate([180,80,180])}catch(e){}}
 function orderClass(o){

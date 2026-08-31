@@ -64,21 +64,11 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 
 .reqbtn.selected{outline:3px solid var(--green);background:#eaf7ef}
 
-.sourcegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.sourcegrid input{font-size:18px;font-weight:950;text-align:center}
-.source-results{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
-.source-result{background:#f4eee8;border-radius:11px;padding:9px;text-align:center}
-.source-result span{display:block;font-size:11px;color:var(--muted);font-weight:800}
-.source-result b{display:block;font-size:20px;margin-top:2px}
-.source-result.diff.bad{background:#fff0ef;color:var(--red)}
-.source-result.diff.good{background:#edf8f2;color:var(--green)}
-.source-money{margin-top:9px;background:#f8f5f1;border:1px solid var(--line);border-radius:11px;padding:9px;font-size:12px;line-height:1.7}
-.source-money b{color:var(--green)}
 .source-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px}
-.source-stat{background:#f4eee8;border-radius:11px;padding:9px}
-.source-stat span{font-size:11px;color:var(--muted)}
-.source-stat b{display:block;font-size:18px;margin-top:2px}
-@media(max-width:430px){.sourcegrid{grid-template-columns:1fr}.source-results{grid-template-columns:1fr 1fr}.source-results .diff{grid-column:1/-1}}
+.source-stat{background:#f4eee8;border-radius:11px;padding:10px}
+.source-stat span{font-size:11px;color:var(--muted);font-weight:800}
+.source-stat b{display:block;font-size:19px;margin-top:2px}
+.source-note{margin-top:9px;padding:9px;border-radius:10px;background:#fff7e8;font-size:12px;line-height:1.45}
 </style>
 </head>
 <body>
@@ -158,32 +148,6 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
   <div class="card"><label>Data</label><div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px"><button class="back" onclick="shiftHistoryDate(-1)">‹</button><input id="historyDate" type="date" onchange="drawHistory()"><button class="back" onclick="shiftHistoryDate(1)">›</button></div></div>
   <div id="dailyTotal" class="card"></div>
 
-  <div id="sourceBreakdownCard" class="card">
-    <div class="section-title">
-      <div>
-        <h3>📌 Ndarja e personave</h3>
-        <div class="meta">Ruhet veçmas — nuk ndryshon faturat apo historikun.</div>
-      </div>
-      <span id="sourceStatus" class="badge"></span>
-    </div>
-
-    <div class="meta" style="margin-bottom:7px">Totali i personave në historik: <b id="sourceTotalPeople" style="color:var(--text)">0</b></div>
-
-    <div class="sourcegrid">
-      <div><label>Jotform · 25€/person</label><input id="sourceJotform" type="number" min="0" step="1" inputmode="numeric" onchange="saveSourceField('jotform',this.value)"></div>
-      <div><label>GetYourGuide · 25€/person</label><input id="sourceGYG" type="number" min="0" step="1" inputmode="numeric" onchange="saveSourceField('gyg',this.value)"></div>
-      <div><label>Outdoor / Grup · 15€/person</label><input id="sourceOutdoor" type="number" min="0" step="1" inputmode="numeric" onchange="saveSourceField('outdoor',this.value)"></div>
-    </div>
-
-    <div class="source-results">
-      <div class="source-result"><span>ZBULO · max 12</span><b id="sourceZbulo">0</b></div>
-      <div class="source-result"><span>PA PRENOTIM</span><b id="sourceWalkin">0</b></div>
-      <div id="sourceDiffBox" class="source-result diff good"><span>DIFERENCA +/-</span><b id="sourceDiff">0</b></div>
-    </div>
-
-    <div id="sourceMoney" class="source-money"></div>
-  </div>
-
   <div class="card">
     <div class="history-jona">
       <div>
@@ -213,7 +177,26 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
     <div id="statsPeriodLabel" class="meta" style="margin-top:8px"></div>
   </div>
   <div id="statsCards" class="statsgrid"></div>
-  <div id="sourceStatsCard" class="card"></div>
+  <div class="card">
+    <div class="section-title">
+      <div>
+        <h3>🎁 Bakshishet</h3>
+        <div id="tipsPeriodText" class="meta">Sipas periudhës së zgjedhur</div>
+      </div>
+      <b id="tipsPeriodTotal" style="font-size:22px;color:var(--orange)">€0.00</b>
+    </div>
+    <div id="tipsPeriodAverage" class="meta"></div>
+  </div>
+
+  <div id="sourceStatsCard" class="card">
+    <div class="section-title">
+      <div>
+        <h3>📌 Rezervimet sipas burimit</h3>
+        <div class="meta">Jotform/GYG 25€ · Outdoor/Grup 15€ · diferenca vetëm nr.</div>
+      </div>
+    </div>
+    <div id="sourceStatsBody"></div>
+  </div>
   <div class="card"><h3>Persona</h3><div id="peopleChart" class="chart"></div></div>
   <div class="card"><h3>Xhiro</h3><div id="revenueChart" class="chart"></div></div>
   <div class="card"><h3>Bakshishe</h3><div id="tipsChart" class="chart"></div></div>
@@ -283,7 +266,6 @@ let db=JSON.parse(oldDB9||localStorage.getItem("taste_home_tables_v11")||"{}");
 let history=JSON.parse(oldHist9||localStorage.getItem("taste_home_history_v11")||"[]");
 let jonaDaily=JSON.parse(localStorage.getItem(JONA_KEY)||"{}");
 let sourceDaily=JSON.parse(localStorage.getItem(SOURCE_KEY)||"{}");
-/* Mbushim vetëm datat që mungojnë. Çdo ndryshim që ke bërë ti ruhet. */
 Object.entries(SOURCE_SEED_2026).forEach(([d,v])=>{
  if(!sourceDaily[d]) sourceDaily[d]={...v};
 });
@@ -591,8 +573,7 @@ function printDaily(){
  paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
  unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
  jona=jonaForDate(d),
- persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0),
- src=sourceCalc(d);
+ persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
 
  $("printArea").innerHTML=`
    <div style="font-family:Arial;max-width:520px;margin:auto;color:#111">
@@ -605,88 +586,11 @@ function printDaily(){
      <div style="margin:5px 0">Card papaguar: <b>${money(unpaid)}</b></div>
      <div style="margin:5px 0">Bakshishe: <b>${money(tips)}</b></div>
      <div style="margin:5px 0">Persona: <b>${persons}</b></div>
-     <div style="margin-top:10px;padding:8px;border:1px solid #ddd">
-       <b>Ndarja:</b> Jotform ${src.jotform} · GYG ${src.gyg} · Outdoor ${src.outdoor} · Zbulo ${src.zbulo} · Pa prenotim ${src.walkin} · Diferenca ${src.diff}
-     </div>
      <hr style="margin:14px 0">
      <div style="font-size:22px"><b>JONA: ${money(jona)}</b></div>
      <div style="margin-top:14px;font-size:12px;color:#555">Fatura të mbyllura: ${day.length}</div>
    </div>`;
  window.print();
-}
-
-
-function sourceDayPeople(d){
- return history.filter(x=>x.date===d).reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
-}
-function sourceRow(d){
- const x=sourceDaily[d]||{};
- return {
-   jotform:Math.max(0,Number(x.jotform)||0),
-   gyg:Math.max(0,Number(x.gyg)||0),
-   outdoor:Math.max(0,Number(x.outdoor)||0)
- };
-}
-function sourceCalc(d){
- const total=sourceDayPeople(d),s=sourceRow(d);
- const known=s.jotform+s.gyg+s.outdoor;
- const remainder=total-known;
- if(remainder<0){
-   return {...s,total,known,remainder,zbulo:0,walkin:0,diff:remainder};
- }
- return {...s,total,known,remainder,zbulo:Math.min(12,remainder),walkin:Math.max(0,remainder-12),diff:0};
-}
-function saveSourceField(k,v){
- const d=$("historyDate").value;
- if(!d)return;
- if(!sourceDaily[d])sourceDaily[d]={jotform:0,gyg:0,outdoor:0};
- sourceDaily[d][k]=Math.max(0,Math.round(Number(v)||0));
- save();
- drawSourceBreakdown();
-}
-function drawSourceBreakdown(){
- if(!$("sourceBreakdownCard"))return;
- const d=$("historyDate").value,c=sourceCalc(d);
- $("sourceTotalPeople").textContent=c.total;
- if(document.activeElement!==$("sourceJotform"))$("sourceJotform").value=c.jotform;
- if(document.activeElement!==$("sourceGYG"))$("sourceGYG").value=c.gyg;
- if(document.activeElement!==$("sourceOutdoor"))$("sourceOutdoor").value=c.outdoor;
- $("sourceZbulo").textContent=c.zbulo;
- $("sourceWalkin").textContent=c.walkin;
- $("sourceDiff").textContent=c.diff>0?"+"+c.diff:String(c.diff);
- const bad=c.diff!==0;
- $("sourceDiffBox").className="source-result diff "+(bad?"bad":"good");
- $("sourceStatus").className="badge "+(bad?"warnbadge":"");
- $("sourceStatus").textContent=bad?"⚠️ KONTROLL":"✅ OK";
- const jfVal=c.jotform*25,gygVal=c.gyg*25,outVal=c.outdoor*15;
- $("sourceMoney").innerHTML=
-   `Jotform: <b>${c.jotform} veta · ${money(jfVal)}</b><br>`+
-   `GYG: <b>${c.gyg} veta · ${money(gygVal)}</b><br>`+
-   `Outdoor/Grup: <b>${c.outdoor} veta · ${money(outVal)}</b><br>`+
-   `<span class="meta">Zbulo, Pa prenotim dhe Diferenca nuk marrin vlerë € këtu.</span>`;
-}
-function sourceDatesForStats(arr){
- return [...new Set(arr.map(x=>x.date).filter(Boolean))];
-}
-function drawSourceStats(arr){
- const box=$("sourceStatsCard"); if(!box)return;
- const dates=sourceDatesForStats(arr);
- let jf=0,gyg=0,out=0,zb=0,walk=0,diff=0;
- dates.forEach(d=>{
-   const c=sourceCalc(d);
-   jf+=c.jotform; gyg+=c.gyg; out+=c.outdoor; zb+=c.zbulo; walk+=c.walkin; diff+=c.diff;
- });
- const val=jf*25+gyg*25+out*15;
- box.innerHTML=`<div class="section-title"><div><h3>📌 Burimi i personave</h3><div class="meta">${dates.length} ditë me histori në periudhë</div></div></div>
- <div class="source-stat-grid">
-   <div class="source-stat"><span>JOTFORM</span><b>${jf} · ${money(jf*25)}</b></div>
-   <div class="source-stat"><span>GETYOURGUIDE</span><b>${gyg} · ${money(gyg*25)}</b></div>
-   <div class="source-stat"><span>OUTDOOR / GRUP</span><b>${out} · ${money(out*15)}</b></div>
-   <div class="source-stat"><span>VLERË E IDENTIFIKUAR</span><b>${money(val)}</b></div>
-   <div class="source-stat"><span>ZBULO · max 12/ditë</span><b>${zb}</b></div>
-   <div class="source-stat"><span>PA PRENOTIM</span><b>${walk}</b></div>
- </div>
- <div class="meta" style="margin-top:8px">Diferenca +/-: <b style="color:${diff?"var(--red)":"var(--green)"}">${diff>0?"+":""}${diff}</b> persona · pa vlerë €.</div>`;
 }
 
 function filtered(){return history.filter(x=>x.date===$("historyDate").value)}
@@ -695,7 +599,6 @@ function qtyHistory(arr,i){return arr.reduce((s,inv)=>s+(inv.lines||[]).filter(x
 function drawHistory(){
  const day=filtered();
  drawHistorySummaryOnly();
- drawSourceBreakdown();
  $("historyBox").innerHTML=day.length?"":'<div class="card empty">Nuk ka fatura për këtë datë.</div>';
  day.forEach(inv=>{const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="section-title"><div><h3>${inv.name||"Pa emër"}</h3><div class="meta">${inv.position||""}</div></div><b>${money(inv.total)}</b></div><div class="meta">${inv.closedAt}</div><div><span class="badge">👥 ${inv.persons||0}</span><span class="badge">${inv.payment||""}</span>${inv.payment==="Card"?`<span class="badge ${!inv.cardPaid?"warnbadge":""}">${inv.cardPaid?"✅ Paguar":"⏳ Papaguar"}</span>`:""}<span class="badge">🎁 ${money(inv.tip||0)}</span></div>${(inv.lines||[]).map(x=>`<div class="invoice-line"><span>${x.name} × ${x.qty}</span><b>${money(x.subtotal)}</b></div>`).join("")}<div class="meta">Marrë: ${money(inv.received||inv.total)} · Bakshish: ${money(inv.tip||0)}</div><div class="actions"><button class="invoice" onclick="shareInvoice(${inv.id})">WhatsApp</button><button class="delete" onclick="deleteInvoice(${inv.id})">Fshij</button></div>`;$("historyBox").appendChild(c)});
 }
@@ -710,6 +613,56 @@ function payRow(x,canPay){return `<div class="payrow"><div><div class="who">${x.
 function markPaid(type,id){if(type==="active"){db[id].cardPaid=true;db[id].updated=stamp()}else{const x=history.find(a=>a.id===id);if(x)x.cardPaid=true}save();drawLive();openCardList();if(!$("historyView").classList.contains("hidden"))drawHistory()}
 function closeModal(id){$(id).classList.add("hidden")}function modalBg(e,id){if(e.target.id===id)closeModal(id)}
 
+
+function sourceRow(d){
+ const x=sourceDaily[d]||{};
+ return {
+   jotform:Math.max(0,Number(x.jotform)||0),
+   gyg:Math.max(0,Number(x.gyg)||0),
+   outdoor:Math.max(0,Number(x.outdoor)||0)
+ };
+}
+function sourceDayPeopleFromHistory(d){
+ return history.filter(x=>x.date===d).reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
+}
+function sourceCalcForDate(d){
+ const s=sourceRow(d), total=sourceDayPeopleFromHistory(d);
+ const known=s.jotform+s.gyg+s.outdoor;
+ const rem=total-known;
+ if(rem<0) return {...s,total,known,zbulo:0,walkin:0,diff:rem};
+ return {...s,total,known,zbulo:Math.min(12,rem),walkin:Math.max(0,rem-12),diff:0};
+}
+function drawSourceStats(arr){
+ const body=$("sourceStatsBody");
+ if(!body)return;
+
+ const dates=[...new Set(arr.map(x=>x.date).filter(Boolean))].sort();
+ let jf=0,gyg=0,out=0,zb=0,walk=0,diff=0,totalPeople=0;
+ dates.forEach(d=>{
+   const c=sourceCalcForDate(d);
+   jf+=c.jotform; gyg+=c.gyg; out+=c.outdoor;
+   zb+=c.zbulo; walk+=c.walkin; diff+=c.diff; totalPeople+=c.total;
+ });
+
+ const identifiedValue=jf*25+gyg*25+out*15;
+
+ body.innerHTML=`
+   <div class="source-stat-grid">
+     <div class="source-stat"><span>JOTFORM</span><b>${jf} veta · ${money(jf*25)}</b></div>
+     <div class="source-stat"><span>GETYOURGUIDE</span><b>${gyg} veta · ${money(gyg*25)}</b></div>
+     <div class="source-stat"><span>OUTDOOR / GRUP</span><b>${out} veta · ${money(out*15)}</b></div>
+     <div class="source-stat"><span>VLERA NGA BURIMET</span><b>${money(identifiedValue)}</b></div>
+     <div class="source-stat"><span>ZBULO</span><b>${zb} veta</b></div>
+     <div class="source-stat"><span>PA PRENOTIM</span><b>${walk} veta</b></div>
+     <div class="source-stat"><span>PERSONA NË HISTORIK</span><b>${totalPeople}</b></div>
+     <div class="source-stat"><span>DIFERENCA +/-</span><b>${diff>0?"+":""}${diff}</b></div>
+   </div>
+   <div class="source-note">
+     Diferenca +/- shfaqet vetëm si numër personash dhe <b>nuk llogaritet në €</b>.
+     Zbulo llogaritet maksimumi 12 persona/ditë; pjesa tjetër kalon te Pa prenotim.
+   </div>`;
+}
+
 function setStatsMode(m){statsMode=m;$("statsYearBtn").classList.toggle("selected",m==="year");$("statsMonthBtn").classList.toggle("selected",m==="month");$("statsWeekBtn").classList.toggle("selected",m==="week");$("statsYearBox").classList.toggle("hidden",m!=="year");$("statsMonthBox").classList.toggle("hidden",m!=="month");$("statsWeekBox").classList.toggle("hidden",m!=="week");drawStats()}
 function fillStatsControls(){
  const ys=[...new Set(history.map(x=>(x.date||"").slice(0,4)).filter(Boolean))].sort().reverse(),now=String(new Date().getFullYear());if(!ys.includes(now))ys.unshift(now);$("statsYear").innerHTML=ys.map(y=>`<option>${y}</option>`).join("");$("statsYear").value=now;
@@ -721,6 +674,12 @@ function chart(el,vals,kind,labels,tip=false){const max=Math.max(...vals,1);$(el
 function drawStats(){
  const arr=statsFiltered(),persons=arr.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0),revenue=arr.reduce((s,x)=>s+(Number(x.total)||0),0),tips=arr.reduce((s,x)=>s+(Number(x.tip)||0),0),cash=arr.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),card=arr.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),paid=arr.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),unpaid=arr.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
  $("statsPeriodLabel").textContent=`${arr.length} fatura`;
+ if($("tipsPeriodTotal")){
+   $("tipsPeriodTotal").textContent=money(tips);
+   const label=statsMode==="week"?"Bakshishe javore":statsMode==="month"?"Bakshishe mujore":"Bakshishe vjetore";
+   $("tipsPeriodText").textContent=label;
+   $("tipsPeriodAverage").textContent=`Mesatarja për faturë: ${arr.length?money(tips/arr.length):money(0)}`;
+ }
  const cards=[["👥 Persona",persons],["🍽️ Normale",qtyHistory(arr,ITEMS[0])],["🥬 Vegjet",qtyHistory(arr,ITEMS[1])],["🧒 Kids",qtyHistory(arr,ITEMS[2])],["👥 Grup",qtyHistory(arr,ITEMS[3])],["🍺 Birrë",qtyHistory(arr,ITEMS[4])],["🍷 Verë kuqe",qtyHistory(arr,ITEMS[5])],["🥂 Verë bardhë",qtyHistory(arr,ITEMS[6])],["🍇 Grape Juice",qtyHistory(arr,ITEMS[7])],["💰 Xhiro",money(revenue)],["🎁 Bakshishe",money(tips)],["💶 Totali marrë",money(revenue+tips)],["💵 Cash",money(cash)],["💳 Card",money(card)],["✅ Card paguar",money(paid)],["⏳ Card papaguar",money(unpaid)],["Bakshish %",revenue?((tips/revenue)*100).toFixed(1)+"%":"0%"],["Mes./person",persons?money(revenue/persons):money(0)]];
  $("statsCards").innerHTML=cards.map(a=>`<div class="stat"><span>${a[0]}</span><b>${a[1]}</b></div>`).join("");
  let pv=[],rv=[],tv=[],labels=[];

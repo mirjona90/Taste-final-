@@ -38,7 +38,10 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 .compact2{display:grid;grid-template-columns:1fr 92px;gap:7px}.notes{height:46px;min-height:46px;resize:vertical}.people{font-size:18px;font-weight:900;color:var(--brand);text-align:center;margin-top:5px}
 .row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eee}.row:last-child{border-bottom:0}.name{font-weight:900}.price{font-size:12px;color:var(--muted)}.counter{display:flex;align-items:center;gap:7px}.counter b{min-width:26px;text-align:center;font-size:19px}.minus,.plus{width:40px;height:40px;border-radius:10px;padding:0;font-size:22px;font-weight:900}.minus{background:#eee}.plus{background:var(--brand);color:#fff}
 .status-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.status-btn{min-height:42px;border-radius:9px;background:#eee;padding:4px 2px;font-size:9px;line-height:1.08;font-weight:850}.status-btn.selected{background:var(--brand);color:#fff}.next{width:100%;margin-top:7px;background:var(--orange);color:#fff;border-radius:10px;padding:10px;font-weight:900}
-.reqgrid,.paybuttons,.actions,.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}.reqbtn,.paybtn{background:#eee;border-radius:10px;padding:10px;font-weight:900}.reqbtn.selected{background:var(--orange);color:#fff}.paybtn.selected{background:var(--green);color:#fff}
+.reqgrid,.paybuttons,.actions,.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.history-jona{display:grid;grid-template-columns:1fr 140px;gap:8px;align-items:end}
+.history-jona input{font-size:20px;font-weight:950;border:2px solid #cfc1b6}
+.history-print{background:#34495e;color:#fff;border-radius:10px;padding:10px;font-weight:900}.reqbtn,.paybtn{background:#eee;border-radius:10px;padding:10px;font-weight:900}.reqbtn.selected{background:var(--orange);color:#fff}.paybtn.selected{background:var(--green);color:#fff}
 .drinktiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.drinktile{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;min-height:100px;padding:10px 7px;text-align:center}.drinktile .ico{font-size:30px}.drinktile .dn{font-size:15px;font-weight:950}.drinktile .dp{font-size:11px;color:var(--muted)}.badgealert{position:absolute;top:6px;right:6px;min-width:24px;height:24px;padding:0 6px;background:var(--red);color:#fff;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:950}
 .drinkdetail{border:1px solid var(--line);border-radius:13px;padding:10px;margin-top:8px}.drinkhead{display:flex;justify-content:space-between;align-items:center}.delivery{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;margin:7px 0;font-size:11px;color:var(--muted)}.delivery b{display:block;font-size:18px;color:var(--text)}.delivery .pending b{color:var(--red)}.deliverBtns{display:grid;grid-template-columns:1fr 1fr;gap:6px}.deliverBtns.single{grid-template-columns:1fr}.deliverBtns.single button{min-height:46px;font-size:14px}.deliverBtns button{border-radius:9px;padding:9px;font-weight:900}.deliverBtns button:not(:disabled){background:var(--orange);color:#fff}.deliverBtns button:disabled{background:#ddd;color:#999}
 .paidcheck{display:flex;align-items:center;gap:9px;font-weight:850;color:var(--text);margin-top:9px}.paidcheck input{width:20px;height:20px}.tipgrid{display:grid;grid-template-columns:1.35fr 1fr;gap:9px}.tipgrid input#received{min-height:54px;font-size:22px;font-weight:950;padding:11px 12px;border:2px solid #cfc1b6}.tipgrid label{font-size:13px;font-weight:850}.tipgrid .tipbox{min-height:54px;display:flex;align-items:center;font-size:20px;font-weight:950}.tipbox{margin-top:7px;padding:9px;border-radius:10px;background:#f4eee8;font-weight:850}.tipbox.good{background:#edf8f2;color:#145b3c}.tipbox.bad{background:#fff0ef;color:#8d201a}
@@ -58,6 +61,8 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 #printArea{display:none}
 @media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.drinktiles{grid-template-columns:repeat(4,1fr)}}
 @media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:20px;background:#fff}}
+
+.reqbtn.selected{outline:3px solid var(--green);background:#eaf7ef}
 </style>
 </head>
 <body>
@@ -95,9 +100,9 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
   </div>
 
   <div class="card"><div class="section-title"><h3>👥 Menu</h3><span class="meta">Personat llogariten vetë</span></div><div id="menus"></div></div>
-  <div class="card"><div class="section-title"><h3>🍽️ Shërbimi</h3><span class="meta">Komandë për kuzhinën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="sendKitchenUpdate()">👨‍🍳 INFO GUZHINËS</button></div>
-  <div class="card"><h3>⚡ Kërkesa të shpejta</h3><div id="requestButtons" class="reqgrid"></div></div>
-  <div class="card"><div class="section-title"><h3>🥂 Pijet</h3><span class="meta">Kliko katrorin për +1</span></div><div id="drinkTiles" class="drinktiles"></div><div id="drinkDetails"></div></div>
+  <div class="card"><div class="section-title"><h3>🍽️ Shërbimi</h3><span class="meta">Zgjidh fazën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="sendKitchenUpdate()">👨‍🍳 DËRGO KUZHINËS</button></div>
+  <div class="card"><h3>⚡ Kërkesa të shpejta</h3><div id="requestButtons" class="reqgrid"></div><button class="next" onclick="sendSelectedRequests()">👨‍🍳 DËRGO KUZHINËS</button></div>
+  <div class="card"><div class="section-title"><h3>🥂 Pijet</h3><span class="meta">Zgjidh pijet, pastaj dërgo</span></div><div id="drinkTiles" class="drinktiles"></div><div id="drinkDetails"></div><button class="next" onclick="sendPendingDrinks()">👨‍🍳 DËRGO KUZHINËS</button></div>
 
   <div class="card">
     <div class="section-title"><h3>💳 Pagesa</h3><b id="tableTotal"></b></div>
@@ -110,11 +115,6 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
       <div><label>Shuma e marrë</label><input id="received" type="number" min="0" step=".01" inputmode="decimal" placeholder="0.00" oninput="setReceived(this.value)"></div>
       <div><label>Bakshishi</label><div id="tipBox" class="tipbox">€0.00</div></div>
     </div>
-  </div>
-
-  <div class="action-zone">
-    <div class="action-zone-title">Shërbimi</div>
-    <button class="kitchen action-primary" onclick="sendKitchenUpdate()">👨‍🍳 Update Kuzhina</button>
   </div>
 
   <div class="action-zone">
@@ -141,7 +141,24 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 <section id="historyView" class="hidden">
   <div class="card"><label>Data</label><div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px"><button class="back" onclick="shiftHistoryDate(-1)">‹</button><input id="historyDate" type="date" onchange="drawHistory()"><button class="back" onclick="shiftHistoryDate(1)">›</button></div></div>
   <div id="dailyTotal" class="card"></div>
-  <div class="toolbar"><button class="kitchen" onclick="shareDaily()">Share xhiron</button><button class="delete" onclick="clearHistoryForDate()">Fshij datën</button></div>
+
+  <div class="card">
+    <div class="history-jona">
+      <div>
+        <label>JONA — Shuma që kam marrë unë</label>
+        <div class="meta">Ruhet veçmas për datën e zgjedhur.</div>
+      </div>
+      <input id="jonaAmount" type="number" min="0" step=".01" inputmode="decimal" placeholder="0.00" oninput="saveJonaAmount(this.value)">
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="kitchen" onclick="shareDaily()">Share xhiron</button>
+    <button class="history-print" onclick="printDaily()">🖨️ Printo xhiron</button>
+  </div>
+  <div class="toolbar" style="margin-top:7px">
+    <button class="delete" style="grid-column:1/-1" onclick="clearHistoryForDate()">Fshij datën</button>
+  </div>
   <div id="historyBox"></div>
 </section>
 
@@ -166,6 +183,7 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyCVs-nHioieaZpHa7nl7W3tpfvm5qyUMI4",
@@ -177,11 +195,18 @@ const firebaseConfig = {
   appId: "1:964982186880:web:cd5a7061d23409c8a61765",
   measurementId: "G-BJ84J7QPQS"
 };
-let firebaseReady=false, remoteApplying=false, kitchenOrders={};
+let firebaseReady=false, remoteApplying=false, kitchenOrders={}, firebaseSyncStarted=false;
 try{
   firebase.initializeApp(firebaseConfig);
   window.fbdb=firebase.database();
-  firebaseReady=true;
+  firebase.auth().onAuthStateChanged(user=>{
+    if(user){
+      firebaseReady=true;
+      startFirebaseSync();
+    }else{
+      firebase.auth().signInAnonymously().catch(e=>console.warn("Firebase Auth dështoi",e));
+    }
+  });
 }catch(e){console.warn("Firebase nuk u inicializua",e)}
 
 const ITEMS=[
@@ -207,9 +232,11 @@ const MAX_TABLES=13;
 
 /* Ruajmë historikun e versionit v9. Nëse v9 s'ka të dhëna, lexojmë edhe v11 si fallback. */
 const DB_KEY="taste_home_tables_v9",HIST_KEY="taste_home_history_v9",DATE_KEY="taste_home_workdate_v9",COUNT_KEY="taste_home_tablecount_v9";
+const JONA_KEY="taste_home_jona_daily_v1";
 const oldDB9=localStorage.getItem(DB_KEY), oldHist9=localStorage.getItem(HIST_KEY);
 let db=JSON.parse(oldDB9||localStorage.getItem("taste_home_tables_v11")||"{}");
 let history=JSON.parse(oldHist9||localStorage.getItem("taste_home_history_v11")||"[]");
+let jonaDaily=JSON.parse(localStorage.getItem(JONA_KEY)||"{}");
 let tableCount=Math.max(10,Math.min(13,Number(localStorage.getItem(COUNT_KEY)||10))),current=1,statsMode="year";
 const $=id=>document.getElementById(id);
 
@@ -237,10 +264,8 @@ history.forEach(x=>{
 function save(){
  localStorage.setItem(DB_KEY,JSON.stringify(db));
  localStorage.setItem(HIST_KEY,JSON.stringify(history));
+ localStorage.setItem(JONA_KEY,JSON.stringify(jonaDaily));
  localStorage.setItem(COUNT_KEY,String(tableCount));
- if(firebaseReady&&!remoteApplying){
-   fbdb.ref("appState").set({db,history,tableCount,workDate:$("workDate")?$("workDate").value:""}).catch(e=>console.warn("Firebase save",e));
- }
 }
 function money(v){return "€"+Number(v||0).toFixed(2)} function stamp(){return new Date().toLocaleString("sq-AL")}
 function total(t){return ITEMS.reduce((s,i)=>s+(Number(db[t].q[i.k])||0)*i.p,0)}
@@ -314,7 +339,7 @@ function drawTip(){const box=$("tipBox");if(db[current].received===""){box.class
 function drawCurrent(){
  drawHeaderOnly();drawPayment();
  $("statusButtons").innerHTML="";STAGES.forEach((s,n)=>{const b=document.createElement("button");b.className="status-btn "+(db[current].stage===n?"selected":"");b.innerHTML=s.short;b.onclick=()=>{db[current].stage=n;db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawCurrent()};$("statusButtons").appendChild(b)});
- $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="reqbtn";b.textContent=r;b.onclick=()=>sendQuickRequest(r);$("requestButtons").appendChild(b)});
+ $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="reqbtn "+(db[current].requests[r]?"selected":"");b.textContent=(db[current].requests[r]?"✓ ":"")+r;b.onclick=()=>toggleQuickRequest(r);$("requestButtons").appendChild(b)});
  $("menus").innerHTML="";ITEMS.filter(i=>i.type==="menu").forEach(i=>{const r=document.createElement("div");r.className="row";r.innerHTML=`<div><div class="name">${i.n}</div><div class="price">${money(i.p)}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${db[current].q[i.k]}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div>`;$("menus").appendChild(r)});
  drawDrinks();
 }
@@ -327,8 +352,8 @@ function change(k,d){
  const before=Number(db[current].q[k]||0);
  db[current].q[k]=Math.max(0,before+d);
  if((db[current].served[k]||0)>db[current].q[k])db[current].served[k]=db[current].q[k];
+ if(item&&item.type==="drink"&&(db[current].sent[k]||0)>db[current].q[k])db[current].sent[k]=db[current].q[k];
  db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();
- if(item&&item.type==="drink"&&d>0&&db[current].q[k]>before)sendDrinkToKitchen(item);
  drawCurrent();drawLive();
 }
 
@@ -340,51 +365,34 @@ function drinkKitchenText(item,qty){
  if(item.k==="juice")return `🍇 ${q} ${q===1?"GOTË":"GOTA"} GRAPE JUICE`;
  return `🥤 ${q} ${item.n.toUpperCase()}`;
 }
-function sendDrinkToKitchen(item){
- if(!firebaseReady||!fbdb)return;
+function sendPendingDrinks(){
+ if(!firebaseReady||!fbdb){alert("Firebase nuk është autentikuar ende. Provo përsëri pas pak.");return}
  const b=db[current];
+ const pendingItems=ITEMS.filter(i=>i.type==="drink").map(i=>({
+   item:i,
+   qty:Math.max(0,Number(b.q[i.k]||0)-Number(b.sent[i.k]||0))
+ })).filter(x=>x.qty>0);
 
- // Një rekord unik për çdo tavolinë + lloj pijeje.
- // Transaction e bën numërimin atomik edhe kur klikon shpejt 3 herë.
- const key=`drink_${current}_${item.k}`;
- const ref=fbdb.ref("kitchenOrders/"+key);
+ if(!pendingItems.length){alert("Nuk ka pije të reja për t'u dërguar.");return}
 
- ref.transaction(existing=>{
-   if(existing && existing.status!=="ready"){
-     const qty=(Number(existing.drinkQty)||1)+1;
-     return {
-       ...existing,
-       id:key,
-       table:current,
-       position:b.position,
-       name:b.name||"",
-       people:people(current),
-       stageLabel:"PIJE",
-       drinkKey:item.k,
-       drinkQty:qty,
-       instruction:drinkKitchenText(item,qty),
-       updatedAt:Date.now()
-     };
-   }
+ const jobs=pendingItems.map(({item,qty})=>{
+   const key=`drink_${current}_${item.k}`;
+   const ref=fbdb.ref("kitchenOrders/"+key);
+   return ref.transaction(existing=>{
+     if(existing && existing.status!=="ready"){
+       const newQty=(Number(existing.drinkQty)||1)+qty;
+       return {...existing,id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",drinkKey:item.k,drinkQty:newQty,instruction:drinkKitchenText(item,newQty),updatedAt:Date.now()};
+     }
+     return {id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",instruction:drinkKitchenText(item,qty),notes:b.notes||"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:qty,status:"pending",createdAt:Date.now(),updatedAt:Date.now()};
+   }).then(()=>{ b.sent[item.k]=Number(b.sent[item.k]||0)+qty; });
+ });
 
-   return {
-     id:key,
-     table:current,
-     position:b.position,
-     name:b.name||"",
-     people:people(current),
-     stageLabel:"PIJE",
-     instruction:drinkKitchenText(item,1),
-     notes:b.notes||"",
-     requests:[],
-     menuBreakdown:[],
-     drinkKey:item.k,
-     drinkQty:1,
-     status:"pending",
-     createdAt:Date.now(),
-     updatedAt:Date.now()
-   };
- }).catch(e=>console.error("Pija nuk u dërgua/përditësua në kuzhinë",e));
+ Promise.all(jobs).then(()=>{
+   b.updated=stamp();save();drawCurrent();drawLive();
+ }).catch(e=>{
+   console.error("Pijet nuk u dërguan në kuzhinë",e);
+   alert("Pijet nuk u dërguan në kuzhinë. Kontrollo lidhjen/lejen Firebase.");
+ });
 }
 function markOne(k){db[current].served[k]=Math.min(db[current].q[k]||0,(db[current].served[k]||0)+1);db[current].updated=stamp();save();drawCurrent();drawLive()}
 function markAll(k){db[current].served[k]=db[current].q[k]||0;db[current].updated=stamp();save();drawCurrent();drawLive()}
@@ -399,23 +407,31 @@ function kitchenText(t){
  const pend=ITEMS.filter(i=>i.type==="drink"&&pending(t,i.k)>0).map(i=>`${i.n}: ${pending(t,i.k)}`);if(pend.length)x+=`\n\n🥂 Për t'u çuar:\n${pend.join("\n")}`;
  if(b.notes)x+=`\n\nShënim: ${b.notes}`;return x;
 }
-function sendQuickRequest(r){
+function toggleQuickRequest(r){
+ const b=db[current];
+ b.requests[r]=!b.requests[r];
+ b.updated=stamp();save();drawCurrent();drawLive();
+}
+function sendSelectedRequests(){
  const b=db[current],n=people(current);
- if(!firebaseReady||!fbdb){alert("Firebase nuk është lidhur. Kontrollo internetin.");return}
- const clean=String(r||"").replace(/^[^A-Za-zÀ-ž]+/,"").trim();
+ const selected=Object.keys(b.requests||{}).filter(k=>b.requests[k]);
+ if(!selected.length){alert("Zgjidh Ujë ose Bukë.");return}
+ if(!firebaseReady||!fbdb){alert("Firebase nuk është autentikuar ende. Provo përsëri pas pak.");return}
+
+ const clean=selected.map(r=>String(r).replace(/^[^A-Za-zÀ-ž]+/,"").trim().toUpperCase());
  const order={
    table:current,position:b.position,name:b.name||"",people:n,
    stageLabel:"KËRKESË",
-   instruction:`KËRKESË: ${clean.toUpperCase()}`,
-   notes:b.notes||"",requests:[r],
+   instruction:`KËRKESË: ${clean.join(" + ")}`,
+   notes:b.notes||"",requests:selected,
    menuBreakdown:[],status:"pending",createdAt:Date.now()
  };
  const ref=fbdb.ref("kitchenOrders").push();
  ref.set({...order,id:ref.key}).then(()=>{
-   b.updated=stamp();save();
+   b.requests={};b.updated=stamp();save();drawCurrent();drawLive();
  }).catch(e=>{
    console.error(e);
-   alert("Kërkesa nuk u dërgua në kuzhinë. Kontrollo internetin.");
+   alert("Kërkesa nuk u dërgua në kuzhinë. Kontrollo lidhjen/lejen Firebase.");
  });
 }
 
@@ -463,9 +479,9 @@ function sendKitchenUpdate(){
 
  if(firebaseReady){
    const ref=fbdb.ref("kitchenOrders").push();
-   ref.set({...order,id:ref.key}).catch(e=>{console.error(e);alert("Komanda nuk u dërgua në kuzhinë. Kontrollo internetin.")});
+   ref.set({...order,id:ref.key}).catch(e=>{console.error(e);alert("Komanda nuk u dërgua në kuzhinë. Kontrollo lidhjen/lejen Firebase.")});
  }else{
-   alert("Firebase nuk është lidhur. Kontrollo internetin.");
+   alert("Firebase nuk është autentikuar ende. Provo përsëri pas pak.");
    return;
  }
  db[current].requests={};db[current].updated=stamp();save();drawCurrent();drawTables();
@@ -489,12 +505,67 @@ function drawService(){
  if(!n)$("serviceList").innerHTML='<div class="card empty">Nuk ka tavolina aktive.</div>';
 }
 
+function jonaForDate(d){
+ return Math.max(0,Number(jonaDaily[d]||0));
+}
+function saveJonaAmount(v){
+ const d=$("historyDate").value;
+ if(!d)return;
+ if(v===""){
+   delete jonaDaily[d];
+ }else{
+   jonaDaily[d]=Math.max(0,Number(v)||0);
+ }
+ save();
+ if(!$("historyView").classList.contains("hidden"))drawHistorySummaryOnly();
+}
+function drawHistorySummaryOnly(){
+ const d=$("historyDate").value,day=filtered(),
+ grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),
+ tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),
+ cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
+ card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
+ paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ jona=jonaForDate(d);
+ $("dailyTotal").innerHTML=`<b style="font-size:20px;color:var(--green)">Xhiro: ${money(grand)}</b> · 🎁 ${money(tips)}<br><span class="meta">Cash ${money(cash)} · Card ${money(card)} · ✅ ${money(paid)} · ⏳ ${money(unpaid)}</span><br><b style="display:inline-block;margin-top:7px;color:var(--brand)">JONA: ${money(jona)}</b>`;
+ if($("jonaAmount") && document.activeElement!==$("jonaAmount")) $("jonaAmount").value=jonaDaily[d]??"";
+}
+function printDaily(){
+ const d=$("historyDate").value,day=filtered(),
+ grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),
+ tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),
+ cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
+ card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
+ paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ jona=jonaForDate(d),
+ persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
+
+ $("printArea").innerHTML=`
+   <div style="font-family:Arial;max-width:520px;margin:auto;color:#111">
+     <h2 style="margin-bottom:4px">Taste Home — Xhiro Ditore</h2>
+     <div style="margin-bottom:14px">Data: <b>${d}</b></div>
+     <div style="font-size:18px;margin:7px 0">Xhiro: <b>${money(grand)}</b></div>
+     <div style="margin:5px 0">Cash: <b>${money(cash)}</b></div>
+     <div style="margin:5px 0">Card: <b>${money(card)}</b></div>
+     <div style="margin:5px 0">Card paguar: <b>${money(paid)}</b></div>
+     <div style="margin:5px 0">Card papaguar: <b>${money(unpaid)}</b></div>
+     <div style="margin:5px 0">Bakshishe: <b>${money(tips)}</b></div>
+     <div style="margin:5px 0">Persona: <b>${persons}</b></div>
+     <hr style="margin:14px 0">
+     <div style="font-size:22px"><b>JONA: ${money(jona)}</b></div>
+     <div style="margin-top:14px;font-size:12px;color:#555">Fatura të mbyllura: ${day.length}</div>
+   </div>`;
+ window.print();
+}
+
 function filtered(){return history.filter(x=>x.date===$("historyDate").value)}
 function inferPeople(inv){return (inv.lines||[]).filter(x=>["Menu","Menu Normale","Menu Vegjet","Menu Kids","Grup"].includes(x.name)).reduce((s,x)=>s+(Number(x.qty)||0),0)}
 function qtyHistory(arr,i){return arr.reduce((s,inv)=>s+(inv.lines||[]).filter(x=>x.name===i.n||(i.k==="normal"&&x.name==="Menu")).reduce((a,x)=>a+(Number(x.qty)||0),0),0)}
 function drawHistory(){
- const day=filtered(),grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
- $("dailyTotal").innerHTML=`<b style="font-size:20px;color:var(--green)">Xhiro: ${money(grand)}</b> · 🎁 ${money(tips)}<br><span class="meta">Cash ${money(cash)} · Card ${money(card)} · ✅ ${money(paid)} · ⏳ ${money(unpaid)}</span>`;
+ const day=filtered();
+ drawHistorySummaryOnly();
  $("historyBox").innerHTML=day.length?"":'<div class="card empty">Nuk ka fatura për këtë datë.</div>';
  day.forEach(inv=>{const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="section-title"><div><h3>${inv.name||"Pa emër"}</h3><div class="meta">${inv.position||""}</div></div><b>${money(inv.total)}</b></div><div class="meta">${inv.closedAt}</div><div><span class="badge">👥 ${inv.persons||0}</span><span class="badge">${inv.payment||""}</span>${inv.payment==="Card"?`<span class="badge ${!inv.cardPaid?"warnbadge":""}">${inv.cardPaid?"✅ Paguar":"⏳ Papaguar"}</span>`:""}<span class="badge">🎁 ${money(inv.tip||0)}</span></div>${(inv.lines||[]).map(x=>`<div class="invoice-line"><span>${x.name} × ${x.qty}</span><b>${money(x.subtotal)}</b></div>`).join("")}<div class="meta">Marrë: ${money(inv.received||inv.total)} · Bakshish: ${money(inv.tip||0)}</div><div class="actions"><button class="invoice" onclick="shareInvoice(${inv.id})">WhatsApp</button><button class="delete" onclick="deleteInvoice(${inv.id})">Fshij</button></div>`;$("historyBox").appendChild(c)});
 }
@@ -528,23 +599,18 @@ function drawStats(){
  else{pv=Array(7).fill(0);rv=Array(7).fill(0);tv=Array(7).fill(0);labels=["H","M","M","E","P","S","D"];const r=weekRange($("statsWeek").value);if(r)arr.forEach(x=>{const d=new Date((x.date||"")+"T12:00:00"),idx=Math.floor((d-r[0])/86400000);if(idx>=0&&idx<7){pv[idx]+=Number(x.persons)||inferPeople(x);rv[idx]+=Number(x.total)||0;tv[idx]+=Number(x.tip)||0}})}
  chart("peopleChart",pv,"num",labels);chart("revenueChart",rv,"money",labels);chart("tipsChart",tv,"money",labels,true);
 }
-if(firebaseReady){
- fbdb.ref("appState").on("value",snap=>{
-   const v=snap.val(); if(!v)return;
-   remoteApplying=true;
-   if(v.db)db=v.db; if(Array.isArray(v.history))history=v.history; if(v.tableCount)tableCount=Math.max(10,Math.min(13,Number(v.tableCount)));
-   for(let t=1;t<=MAX_TABLES;t++)normalize(t);
-   if(v.workDate&&$("workDate")){$("workDate").value=v.workDate;$("historyDate").value=v.workDate;localStorage.setItem(DATE_KEY,v.workDate)}
-   localStorage.setItem(DB_KEY,JSON.stringify(db));localStorage.setItem(HIST_KEY,JSON.stringify(history));localStorage.setItem(COUNT_KEY,String(tableCount));
-   remoteApplying=false;
+function startFirebaseSync(){
+ if(firebaseSyncStarted||!firebaseReady||!fbdb)return;
+ firebaseSyncStarted=true;
+ fbdb.ref("kitchenOrders").on("value",snap=>{
+   kitchenOrders=snap.val()||{};
    if(!$("tablesView").classList.contains("hidden"))drawTables();
-   if(!$("serviceView").classList.contains("hidden"))drawService();
-   if(!$("historyView").classList.contains("hidden"))drawHistory();
-   if(!$("statsView").classList.contains("hidden"))drawStats();
-   if(!$("tableView").classList.contains("hidden"))drawCurrent();
+ },err=>{
+   console.error("Firebase kitchenOrders:",err);
+   firebaseReady=false;
  });
- fbdb.ref("kitchenOrders").on("value",snap=>{kitchenOrders=snap.val()||{};if(!$("tablesView").classList.contains("hidden"))drawTables()});
 }
+
 save();drawTables();
 </script>
 </body>

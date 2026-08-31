@@ -6,42 +6,39 @@
 <meta name="theme-color" content="#7b2d26">
 <title>Taste Home Kitchen</title>
 <style>
-:root{--brand:#7b2d26;--bg:#f6f0e9;--card:#fff;--text:#211d1a;--muted:#766b63;--green:#1f7a53;--orange:#d98a1d;--line:#e6d9ce;--blue:#2f6f9f}
+:root{--brand:#7b2d26;--bg:#f7f2ec;--card:#fff;--text:#211d1a;--muted:#776b63;--green:#237a52;--orange:#d88a1d;--line:#e7dcd3;--blue:#2f6f9f}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
-header{position:sticky;top:0;z-index:10;background:var(--brand);color:#fff;padding:12px 14px;box-shadow:0 2px 10px #0002}
-.head{max-width:1180px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
-h1{font-size:22px;margin:0}.subtitle{font-size:12px;opacity:.86}.status{font-size:12px;font-weight:900;background:#ffffff20;padding:7px 10px;border-radius:999px}
-main{max-width:1180px;margin:auto;padding:12px 12px 28px}
-.topline{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
-.date{background:#fff;border-radius:12px;padding:9px 12px;display:flex;gap:12px;align-items:center;font-size:13px;box-shadow:0 2px 7px #0000000b}
-.date b{color:var(--brand);font-size:14px}
-.notify{border:0;border-radius:11px;padding:10px 12px;background:#e9dfd6;color:var(--brand);font-size:13px;font-weight:900;cursor:pointer}
+header{position:sticky;top:0;z-index:10;background:var(--brand);color:#fff;padding:12px 16px;box-shadow:0 2px 10px #0002}
+.head{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font-size:22px;margin:0}.subtitle{font-size:12px;opacity:.85}.status{font-size:12px;font-weight:900;background:#ffffff20;padding:7px 10px;border-radius:999px}
+main{max-width:1200px;margin:auto;padding:14px}
+.topline{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.date,.notify{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 12px;font-size:13px}
+.date{display:flex;gap:10px}.date b{color:var(--brand)}.notify{font-weight:900;color:var(--brand);cursor:pointer}
 .count{margin-left:auto;font-size:13px;font-weight:950;color:var(--muted)}
-.empty{background:#fff;border-radius:18px;padding:34px 14px;text-align:center;color:var(--muted);font-size:17px;box-shadow:0 3px 10px #0000000d}
-.tablegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.tablecard{background:var(--card);border-radius:18px;padding:16px;box-shadow:0 5px 18px #00000012;border:2px solid var(--line);min-width:0}
-.tablecard.newest{border-color:var(--orange);box-shadow:0 5px 20px #d98a1d25}
-.cardhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding-bottom:11px;border-bottom:1px solid var(--line)}
-.tableplace{font-size:25px;line-height:1.05;font-weight:1000;color:var(--brand)}
-.guest{font-size:13px;color:var(--muted);margin-top:4px;font-weight:700}
-.people{display:inline-block;margin-top:7px;background:#f0e6de;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:900}
-.newtag{font-size:11px;font-weight:1000;border-radius:999px;padding:6px 9px;background:#fff1dc;color:#9a5a00;white-space:nowrap}
-.orderlines{display:grid;gap:8px;margin-top:12px}
-.orderline{border-radius:12px;padding:10px 11px;background:#f8f4ef;border-left:5px solid var(--orange)}
-.orderline.drink{border-left-color:var(--brand);background:#fbf3f2}
-.orderline.request{border-left-color:var(--blue);background:#f0f6fb}
-.orderline.soup{border-left-color:var(--green);background:#eff8f3}
-.linehead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
-.linetag{font-size:11px;font-weight:1000;color:var(--muted)}
-.linetext{font-size:20px;line-height:1.18;font-weight:1000;margin-top:2px}
-.breakdown{margin-top:7px;font-size:15px;line-height:1.4;font-weight:850;color:#4b413b}
+.tablegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tablecard{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:17px;box-shadow:0 5px 16px #0000000d;min-height:300px;display:flex;flex-direction:column}
+.tablecard.newest{border-color:var(--orange);box-shadow:0 5px 18px #d88a1d20}
+.cardhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.tableplace{font-size:28px;line-height:1.05;font-weight:1000;color:var(--brand)}
+.guest{font-size:13px;color:var(--muted);margin-top:4px;font-weight:750}.people{margin-top:7px;font-size:12px;font-weight:900;color:#554a43}
+.newtag{font-size:11px;font-weight:1000;background:#fff0d9;color:#9a5900;border-radius:999px;padding:6px 9px;white-space:nowrap}
+.sections{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px;flex:1}
+.zone{border-radius:14px;padding:11px 12px;background:#faf7f3;min-height:86px}
+.zone.food{grid-column:1/-1;border-left:5px solid var(--orange)}
+.zone.drinks{border-left:5px solid var(--brand);background:#fcf5f4}
+.zone.requests{border-left:5px solid var(--blue);background:#f2f7fb}
+.zoneTitle{font-size:11px;font-weight:1000;letter-spacing:.3px;color:var(--muted);margin-bottom:5px}
+.zoneText{font-size:20px;line-height:1.25;font-weight:1000}
+.zoneSub{font-size:14px;line-height:1.35;font-weight:800;margin-top:5px;color:#4c423c}
 .note{margin-top:9px;background:#fff5df;border-radius:10px;padding:8px 9px;font-size:13px;font-weight:800}
-.time{font-size:11px;color:var(--muted);white-space:nowrap;margin-top:1px}
-.ready{width:100%;min-height:55px;margin-top:14px;border:0;border-radius:13px;background:var(--green);color:#fff;font-size:20px;font-weight:1000;cursor:pointer}
+.time{font-size:11px;color:var(--muted);margin-top:5px}
+.ready{width:100%;min-height:58px;margin-top:13px;border:0;border-radius:14px;background:var(--green);color:#fff;font-size:20px;font-weight:1000;cursor:pointer}
 .ready:active{transform:scale(.99)}
-@media(max-width:720px){.tablegrid{grid-template-columns:1fr}.tableplace{font-size:22px}.linetext{font-size:18px}.count{width:100%;margin-left:0}}
-@media(min-width:900px){.tablecard{padding:18px}.tableplace{font-size:28px}.linetext{font-size:22px}.ready{min-height:62px;font-size:22px}}
+.empty{grid-column:1/-1;background:#fff;border-radius:18px;padding:38px;text-align:center;color:var(--muted);font-size:17px}
+@media(max-width:720px){.tablegrid{grid-template-columns:1fr}.sections{grid-template-columns:1fr}.zone.food{grid-column:auto}.tableplace{font-size:24px}.zoneText{font-size:18px}.count{width:100%;margin-left:0}}
+@media(min-width:1000px){.tablecard{min-height:330px;padding:19px}.tableplace{font-size:30px}.zoneText{font-size:22px}}
 </style>
 </head>
 <body>
@@ -139,44 +136,67 @@ function lineText(o){
  if(o.stageLabel==="KËRKESË")return requestText(o);
  return esc(o.instruction||o.stageLabel||"");
 }
+function summarizeGroup(g){
+ const food=[], drinks=[], requests=[], notes=[];
+ g.items.forEach(o=>{
+   if(o.notes)notes.push(o.notes);
+   if(o.stageLabel==="PIJE"){
+     if(o.instruction)drinks.push(o.instruction);
+   }else if(o.stageLabel==="KËRKESË"){
+     const r=(o.requests||[]).filter(Boolean);
+     if(r.length)requests.push(...r);
+     else if(o.instruction)requests.push(String(o.instruction).replace(/^KËRKESË:\s*/i,""));
+   }else{
+     if(o.instruction)food.push(o.instruction);
+     if((o.menuBreakdown||[]).length)food.push(...o.menuBreakdown);
+   }
+ });
+ const uniq=a=>[...new Set(a.filter(Boolean).map(x=>String(x).trim()))];
+ return {food:uniq(food),drinks:uniq(drinks),requests:uniq(requests),notes:uniq(notes)};
+}
 function render(){
  const groups=tableGroups();
  const totalOrders=groups.reduce((s,g)=>s+g.items.length,0);
- $("count").textContent=groups.length?`${groups.length} tavolina · ${totalOrders} komanda në pritje`:"";
-
+ $("count").textContent=groups.length?`${groups.length} tavolina aktive · ${totalOrders} komanda`:"";
  if(!groups.length){
-   $("orders").className="";
+   $("orders").className="tablegrid";
    $("orders").innerHTML='<div class="empty">✅ Nuk ka komanda në pritje.</div>';
    return;
  }
  $("orders").className="tablegrid";
-
- $("orders").innerHTML=groups.map((g,idx)=>`
- <div class="tablecard ${idx===0?"newest":""}">
-   <div class="cardhead">
-     <div>
-       <div class="tableplace">${esc(g.position||("Tavolina "+g.table))}</div>
-       ${g.name?`<div class="guest">${esc(g.name)}</div>`:""}
-       ${g.people?`<div class="people">👥 ${g.people} persona</div>`:""}
+ $("orders").innerHTML=groups.map((g,idx)=>{
+   const s=summarizeGroup(g);
+   return `
+   <div class="tablecard ${idx===0?"newest":""}">
+     <div class="cardhead">
+       <div>
+         <div class="tableplace">${esc(g.position||("Tavolina "+g.table))}</div>
+         ${g.name?`<div class="guest">${esc(g.name)}</div>`:""}
+         ${g.people?`<div class="people">👥 ${g.people} persona</div>`:""}
+       </div>
+       ${idx===0?'<div class="newtag">🔔 E RE</div>':""}
      </div>
-     ${idx===0?'<div class="newtag">🔔 MË E REJA</div>':""}
-   </div>
 
-   <div class="orderlines">
-     ${g.items.map(o=>`
-       <div class="orderline ${orderClass(o)}">
-         <div class="linehead">
-           <div class="linetag">${orderTag(o)}</div>
-           <div class="time">${fmtTime(orderMoment(o))}</div>
-         </div>
-         <div class="linetext">${lineText(o)}</div>
-         ${(o.menuBreakdown||[]).length?`<div class="breakdown">${o.menuBreakdown.map(x=>esc(x)).join("<br>")}</div>`:""}
-         ${o.notes?`<div class="note">📝 ${esc(o.notes)}</div>`:""}
-       </div>`).join("")}
-   </div>
+     <div class="sections">
+       <div class="zone food">
+         <div class="zoneTitle">🍽️ USHQIM</div>
+         <div class="zoneText">${s.food.length?s.food.map(esc).join(" · "):"—"}</div>
+       </div>
+       <div class="zone drinks">
+         <div class="zoneTitle">🥤 PIJE</div>
+         <div class="zoneText">${s.drinks.length?s.drinks.map(esc).join("<br>"):"—"}</div>
+       </div>
+       <div class="zone requests">
+         <div class="zoneTitle">⚡ KËRKESA</div>
+         <div class="zoneText">${s.requests.length?s.requests.map(esc).join("<br>"):"—"}</div>
+       </div>
+     </div>
 
-   <button class="ready" onclick='markTableReady(${JSON.stringify(g.items.map(o=>o.id))})'>✅ GATI — ${esc(g.position||("Tavolina "+g.table))}</button>
- </div>`).join("");
+     ${s.notes.length?`<div class="note">📝 ${s.notes.map(esc).join(" · ")}</div>`:""}
+     <div class="time">Porosia e fundit: ${fmtTime(g.latest)}</div>
+     <button class="ready" onclick='markTableReady(${JSON.stringify(g.items.map(o=>o.id))})'>✅ GATI</button>
+   </div>`;
+ }).join("");
 }
 function markTableReady(ids){
  if(!fbdb||!Array.isArray(ids)||!ids.length)return;

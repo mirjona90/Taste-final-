@@ -69,6 +69,39 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 .source-stat span{font-size:11px;color:var(--muted);font-weight:800}
 .source-stat b{display:block;font-size:19px;margin-top:2px}
 .source-note{margin-top:9px;padding:9px;border-radius:10px;background:#fff7e8;font-size:12px;line-height:1.45}
+
+.month-source{border:1px solid var(--line);border-radius:14px;margin:10px 0;overflow:hidden;background:#fff}
+.month-source-head{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;background:#f4eee8}
+.month-source-head h4{margin:0;font-size:17px}
+.month-source-total{font-size:20px;font-weight:950;color:var(--green)}
+.month-source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+.month-source-cell{background:#fff;padding:9px 7px;min-height:68px}
+.month-source-cell span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase}
+.month-source-cell b{display:block;font-size:16px;margin-top:3px}
+.month-source-cell small{font-size:10px;color:var(--green);font-weight:800}
+.month-source-foot{padding:8px 11px;font-size:11px;color:var(--muted);background:#fffaf5}
+.month-source-money{padding:9px 11px;background:#edf8f2;font-weight:900;color:#145b3c}
+@media(max-width:430px){.month-source-grid{grid-template-columns:repeat(2,1fr)}}
+
+
+.month-report{margin-top:10px}
+.month-title-card{
+  background:#fff;border-radius:16px;padding:12px 14px;margin:10px 0 8px;
+  box-shadow:0 2px 9px #00000010;display:flex;justify-content:space-between;align-items:center
+}
+.month-title-card h3{margin:0;font-size:18px}
+.month-title-card b{font-size:22px;color:var(--green)}
+.month-card-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.month-stat-card{
+  background:#fff;border-radius:16px;padding:13px 12px;box-shadow:0 2px 9px #00000010;min-height:92px
+}
+.month-stat-card span{display:block;font-size:14px;color:var(--text)}
+.month-stat-card b{display:block;font-size:24px;line-height:1.05;color:var(--green);margin-top:5px}
+.month-stat-card small{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.month-stat-card.money b{color:var(--orange)}
+.month-stat-card.diff.bad b{color:var(--red)}
+.month-note{background:#fff7e8;border-radius:12px;padding:9px 11px;margin-top:8px;font-size:11px;color:#6d5b48}
+
 </style>
 </head>
 <body>
@@ -191,8 +224,8 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
   <div id="sourceStatsCard" class="card">
     <div class="section-title">
       <div>
-        <h3>📌 Rezervimet sipas burimit</h3>
-        <div class="meta">Jotform/GYG 25€ · Outdoor/Grup 15€ · diferenca vetëm nr.</div>
+        <h3>📊 Ndarja e rezervimeve</h3>
+        <div class="meta">Persona · burimi · vlera</div>
       </div>
     </div>
     <div id="sourceStatsBody"></div>
@@ -614,6 +647,14 @@ function markPaid(type,id){if(type==="active"){db[id].cardPaid=true;db[id].updat
 function closeModal(id){$(id).classList.add("hidden")}function modalBg(e,id){if(e.target.id===id)closeModal(id)}
 
 
+
+const SOURCE_MONTHLY_2026=[
+ {month:"Maj",total:130,jotform:32,gyg:0,outdoor:0,zbulo:null,walkin:null,diff:0,other:98,note:"Për Majin kemi totalin mujor, jo totalet ditore; prandaj 98 mbeten Të tjera pa i ndarë Zbulo/Pa prenotim."},
+ {month:"Qershor",total:297,jotform:103,gyg:12,outdoor:63,zbulo:112,walkin:11,diff:-4},
+ {month:"Korrik",total:349,jotform:150,gyg:25,outdoor:36,zbulo:135,walkin:20,diff:-17},
+ {month:"Gusht",total:479,jotform:299,gyg:17,outdoor:36,zbulo:105,walkin:28,diff:-6,note:"Gusht: deri më 30/08; 31/08 nuk është futur sepse totali real i ditës nuk ishte mbyllur."}
+];
+
 function sourceRow(d){
  const x=sourceDaily[d]||{};
  return {
@@ -636,33 +677,89 @@ function drawSourceStats(arr){
  const body=$("sourceStatsBody");
  if(!body)return;
 
- const dates=[...new Set(arr.map(x=>x.date).filter(Boolean))].sort();
- let jf=0,gyg=0,out=0,zb=0,walk=0,diff=0,totalPeople=0;
- dates.forEach(d=>{
-   const c=sourceCalcForDate(d);
-   jf+=c.jotform; gyg+=c.gyg; out+=c.outdoor;
-   zb+=c.zbulo; walk+=c.walkin; diff+=c.diff; totalPeople+=c.total;
+ let months=SOURCE_MONTHLY_2026;
+
+ // Në modin mujor tregojmë vetëm muajin e zgjedhur.
+ if(statsMode==="month"){
+   const m=Number(($("statsMonth").value||"").slice(5,7));
+   months=SOURCE_MONTHLY_2026.filter((_,i)=>i+5===m);
+ }
+
+ // Në javore nuk kemi ndarje të sigurt burimesh ditë-për-ditë për gjithë periudhën.
+ if(statsMode==="week"){
+   body.innerHTML=`<div class="month-note">Ndarja Jotform / GYG / Outdoor / Zbulo / Pa prenotim shfaqet te Vjetore ose Mujore.</div>`;
+   return;
+ }
+
+ let html="";
+ months.forEach(m=>{
+   const jfMoney=m.jotform*25;
+   const gygMoney=m.gyg*25;
+   const outMoney=m.outdoor*15;
+   const identified=jfMoney+gygMoney+outMoney;
+
+   html+=`<div class="month-report">
+     <div class="month-title-card">
+       <h3>📅 ${m.month} 2026</h3>
+       <b>👥 ${m.total}</b>
+     </div>
+
+     <div class="month-card-grid">
+       <div class="month-stat-card">
+         <span>📝 Jotform</span>
+         <b>${m.jotform}</b>
+         <small>${money(jfMoney)}</small>
+       </div>
+
+       <div class="month-stat-card">
+         <span>🎟️ GetYourGuide</span>
+         <b>${m.gyg}</b>
+         <small>${money(gygMoney)}</small>
+       </div>
+
+       <div class="month-stat-card">
+         <span>👥 Outdoor / Grup</span>
+         <b>${m.outdoor}</b>
+         <small>${money(outMoney)}</small>
+       </div>
+
+       ${m.zbulo==null ? `
+       <div class="month-stat-card">
+         <span>📌 Të tjera</span>
+         <b>${m.other}</b>
+         <small>pa ndarje ditore</small>
+       </div>` : `
+       <div class="month-stat-card">
+         <span>🧭 Zbulo</span>
+         <b>${m.zbulo}</b>
+         <small>max 12/ditë</small>
+       </div>
+
+       <div class="month-stat-card">
+         <span>🚶 Pa prenotim</span>
+         <b>${m.walkin}</b>
+         <small>persona</small>
+       </div>
+
+       <div class="month-stat-card diff ${m.diff!==0?"bad":""}">
+         <span>➕➖ Diferenca</span>
+         <b>${m.diff>0?"+":""}${m.diff}</b>
+         <small>vetëm numër</small>
+       </div>`}
+
+       <div class="month-stat-card money">
+         <span>💰 Vlera burimeve</span>
+         <b>${money(identified)}</b>
+         <small>Jotform + GYG + Outdoor</small>
+       </div>
+     </div>
+
+     ${m.note?`<div class="month-note">${m.note}</div>`:""}
+   </div>`;
  });
 
- const identifiedValue=jf*25+gyg*25+out*15;
-
- body.innerHTML=`
-   <div class="source-stat-grid">
-     <div class="source-stat"><span>JOTFORM</span><b>${jf} veta · ${money(jf*25)}</b></div>
-     <div class="source-stat"><span>GETYOURGUIDE</span><b>${gyg} veta · ${money(gyg*25)}</b></div>
-     <div class="source-stat"><span>OUTDOOR / GRUP</span><b>${out} veta · ${money(out*15)}</b></div>
-     <div class="source-stat"><span>VLERA NGA BURIMET</span><b>${money(identifiedValue)}</b></div>
-     <div class="source-stat"><span>ZBULO</span><b>${zb} veta</b></div>
-     <div class="source-stat"><span>PA PRENOTIM</span><b>${walk} veta</b></div>
-     <div class="source-stat"><span>PERSONA NË HISTORIK</span><b>${totalPeople}</b></div>
-     <div class="source-stat"><span>DIFERENCA +/-</span><b>${diff>0?"+":""}${diff}</b></div>
-   </div>
-   <div class="source-note">
-     Diferenca +/- shfaqet vetëm si numër personash dhe <b>nuk llogaritet në €</b>.
-     Zbulo llogaritet maksimumi 12 persona/ditë; pjesa tjetër kalon te Pa prenotim.
-   </div>`;
+ body.innerHTML=html || `<div class="month-note">Nuk ka të dhëna për këtë muaj.</div>`;
 }
-
 function setStatsMode(m){statsMode=m;$("statsYearBtn").classList.toggle("selected",m==="year");$("statsMonthBtn").classList.toggle("selected",m==="month");$("statsWeekBtn").classList.toggle("selected",m==="week");$("statsYearBox").classList.toggle("hidden",m!=="year");$("statsMonthBox").classList.toggle("hidden",m!=="month");$("statsWeekBox").classList.toggle("hidden",m!=="week");drawStats()}
 function fillStatsControls(){
  const ys=[...new Set(history.map(x=>(x.date||"").slice(0,4)).filter(Boolean))].sort().reverse(),now=String(new Date().getFullYear());if(!ys.includes(now))ys.unshift(now);$("statsYear").innerHTML=ys.map(y=>`<option>${y}</option>`).join("");$("statsYear").value=now;

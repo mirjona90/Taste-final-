@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7b2d26">
+<title>Taste Home Pro</title>
+<style>
+:root{
+  --brand:#7b2d26;--green:#1f7a53;--orange:#d98a1d;--red:#b3261e;
+  --bg:#f6f0e9;--card:#fff;--text:#211d1a;--muted:#7b7168;--line:#e8ded4;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,textarea,select{font:inherit}
+button{border:0;cursor:pointer}
+header{position:sticky;top:0;z-index:50;background:var(--brand);color:#fff;padding:11px 12px;box-shadow:0 2px 10px #0003}
+.headrow{max-width:860px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+header h1{margin:0;font-size:20px} header small{opacity:.85}
+.datebar{display:flex;align-items:center;gap:4px;background:#ffffff18;border:1px solid #ffffff2c;border-radius:12px;padding:3px}
+.datebar input{width:122px;background:transparent;color:#fff;border:0;padding:6px 2px;font-size:12px}
+.datebar input::-webkit-calendar-picker-indicator{filter:invert(1)}
+.datebar button{background:#ffffff18;color:#fff;border-radius:8px;padding:7px 8px;font-weight:900}
+nav{position:sticky;top:59px;z-index:45;background:var(--bg);display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:7px 9px;border-bottom:1px solid var(--line)}
+.navbtn{padding:9px 4px;border-radius:11px;background:#e9dfd6;font-size:12px;font-weight:850}
+.navbtn.active{background:var(--brand);color:#fff}
+main{max-width:860px;margin:auto;padding:8px 10px 28px}
+.hidden{display:none!important}.card{background:#fff;border-radius:16px;padding:12px;margin:9px 0;box-shadow:0 2px 9px #00000010}
+.meta{font-size:12px;color:var(--muted)}.section-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.section-title h3{margin:0;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.table{position:relative;background:#fff;border:2px solid transparent;border-radius:15px;padding:12px 10px;text-align:left;min-height:112px;box-shadow:0 2px 8px #0000000f}
+.table.active{border-color:#78b99c}.table.alert{border-color:var(--red);background:#fff7f6}.table.unpaid{box-shadow:inset 0 0 0 2px #e9b0ac}
+.position{font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase}.guest{font-size:16px;font-weight:950;margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.amount{font-size:19px;font-weight:950;color:var(--green);margin-top:3px}.redtxt{color:var(--red);font-weight:900;font-size:11px;margin-top:3px}
+.live{padding:12px}.livetop{display:flex;justify-content:space-between;align-items:end}.livetotal{font-size:26px;font-weight:950;color:var(--green)}.livechips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.livechip{background:#f1e8df;border-radius:10px;padding:8px 4px;text-align:center;font-size:11px;font-weight:800}.livechip b{display:block;font-size:15px;margin-top:2px}.clickchip{background:#edf3f8;color:#274d72}
+.backbar{position:sticky;top:101px;z-index:40;background:var(--bg);display:grid;grid-template-columns:auto 1fr auto;gap:7px;align-items:center;padding:3px 0 6px}.back{background:#e9dfd6;border-radius:9px;padding:9px 11px;font-weight:900}.tabletitle{font-size:15px;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.topTotal{font-size:17px;font-weight:950;color:var(--green)}
+label{display:block;font-size:12px;color:var(--muted);margin:6px 0 3px}
+input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padding:9px;background:#fff}
+.compact2{display:grid;grid-template-columns:1fr 92px;gap:7px}.notes{height:46px;min-height:46px;resize:vertical}.people{font-size:18px;font-weight:900;color:var(--brand);text-align:center;margin-top:5px}
+.row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eee}.row:last-child{border-bottom:0}.name{font-weight:900}.price{font-size:12px;color:var(--muted)}.counter{display:flex;align-items:center;gap:7px}.counter b{min-width:26px;text-align:center;font-size:19px}.minus,.plus{width:40px;height:40px;border-radius:10px;padding:0;font-size:22px;font-weight:900}.minus{background:#eee}.plus{background:var(--brand);color:#fff}
+.status-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.status-btn{min-height:42px;border-radius:9px;background:#eee;padding:4px 2px;font-size:9px;line-height:1.08;font-weight:850}.status-btn.selected{background:var(--brand);color:#fff}.next{width:100%;margin-top:7px;background:var(--orange);color:#fff;border-radius:10px;padding:10px;font-weight:900}
+.reqgrid,.paybuttons,.actions,.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.history-jona{display:grid;grid-template-columns:1fr 140px;gap:8px;align-items:end}
+.history-jona input{font-size:20px;font-weight:950;border:2px solid #cfc1b6}
+.history-print{background:#34495e;color:#fff;border-radius:10px;padding:10px;font-weight:900}.reqbtn,.paybtn{background:#eee;border-radius:10px;padding:10px;font-weight:900}.reqbtn.selected{background:var(--orange);color:#fff}.paybtn.selected{background:var(--green);color:#fff}
+.drinktiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.drinktile{position:relative;background:#fff;border:1px solid var(--line);border-radius:14px;min-height:100px;padding:10px 7px;text-align:center}.drinktile .ico{font-size:30px}.drinktile .dn{font-size:15px;font-weight:950}.drinktile .dp{font-size:11px;color:var(--muted)}.badgealert{position:absolute;top:6px;right:6px;min-width:24px;height:24px;padding:0 6px;background:var(--red);color:#fff;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:950}
+.drinkdetail{border:1px solid var(--line);border-radius:13px;padding:10px;margin-top:8px}.drinkhead{display:flex;justify-content:space-between;align-items:center}.delivery{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;margin:7px 0;font-size:11px;color:var(--muted)}.delivery b{display:block;font-size:18px;color:var(--text)}.delivery .pending b{color:var(--red)}.deliverBtns{display:grid;grid-template-columns:1fr 1fr;gap:6px}.deliverBtns.single{grid-template-columns:1fr}.deliverBtns.single button{min-height:46px;font-size:14px}.deliverBtns button{border-radius:9px;padding:9px;font-weight:900}.deliverBtns button:not(:disabled){background:var(--orange);color:#fff}.deliverBtns button:disabled{background:#ddd;color:#999}
+.paidcheck{display:flex;align-items:center;gap:9px;font-weight:850;color:var(--text);margin-top:9px}.paidcheck input{width:20px;height:20px}.tipgrid{display:grid;grid-template-columns:1.35fr 1fr;gap:9px}.tipgrid input#received{min-height:54px;font-size:22px;font-weight:950;padding:11px 12px;border:2px solid #cfc1b6}.tipgrid label{font-size:13px;font-weight:850}.tipgrid .tipbox{min-height:54px;display:flex;align-items:center;font-size:20px;font-weight:950}.tipbox{margin-top:7px;padding:9px;border-radius:10px;background:#f4eee8;font-weight:850}.tipbox.good{background:#edf8f2;color:#145b3c}.tipbox.bad{background:#fff0ef;color:#8d201a}
+.kitchen{background:var(--orange);color:#fff}.print{background:#34495e;color:#fff}.invoice{background:#e8ded4}.delete{background:#f4d7d4;color:var(--red)}.close{background:var(--green);color:#fff}
+.action-zone{background:#fff;border-radius:16px;padding:12px;margin:9px 0;box-shadow:0 2px 9px #00000010}
+.action-zone-title{font-size:12px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.action-primary{width:100%;min-height:54px;border-radius:12px;font-size:15px;font-weight:900}
+.action-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.action-pair button{min-height:52px;border-radius:12px;font-size:14px;font-weight:900}
+.action-close{width:100%;min-height:56px;border-radius:12px;font-size:16px;font-weight:950}
+.action-delete{width:100%;min-height:48px;border-radius:12px;font-size:14px;font-weight:900}
+.service-card{border-left:6px solid var(--green)}.service-card.waiting{border-left-color:var(--red)}.badge{display:inline-block;background:#eee;border-radius:999px;padding:4px 7px;font-size:11px;margin:3px 3px 2px 0}.warnbadge{background:#fff0df;color:#9a4d00}.invoice-line{display:flex;justify-content:space-between;gap:8px;margin:5px 0}.empty{text-align:center;color:var(--muted);padding:24px}
+.statsgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.stat{background:#fff;border-radius:13px;padding:10px;box-shadow:0 2px 8px #0000000f}.stat b{display:block;font-size:19px;color:var(--green)}.stats-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.stats-modes button{background:#eee;border-radius:9px;padding:9px;font-weight:850}.stats-modes button.selected{background:var(--brand);color:#fff}
+.chart{display:flex;align-items:flex-end;gap:4px;height:200px;overflow-x:auto;padding-top:12px}.barwrap{min-width:24px;flex:1;text-align:center;font-size:9px}.bar{background:var(--brand);min-height:2px;border-radius:4px 4px 0 0}.tipbar{background:var(--orange)}.barval{font-size:8px;margin-bottom:3px}
+.addtable{width:100%;background:#e9dfd6;color:var(--brand);border-radius:11px;padding:10px;font-weight:900;margin-top:8px}
+.modal{position:fixed;inset:0;z-index:100;background:#0008;display:flex;align-items:flex-end;justify-content:center;padding:10px}.modalbox{width:min(680px,100%);max-height:84vh;overflow:auto;background:var(--bg);border-radius:18px 18px 10px 10px;padding:11px}.modalhead{display:flex;align-items:center;justify-content:space-between}.modalhead h3{margin:0}.modalclose{background:#e9dfd6;border-radius:9px;padding:8px 10px;font-weight:900}.payrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:#fff;border-radius:11px;padding:9px;margin:6px 0}.payrow .who{font-weight:900}.payrow button{background:var(--green);color:#fff;border-radius:8px;padding:8px 9px;font-weight:850}
+#printArea{display:none}
+@media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.drinktiles{grid-template-columns:repeat(4,1fr)}}
+@media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:20px;background:#fff}}
+
+.reqbtn.selected{outline:3px solid var(--green);background:#eaf7ef}
+
+.source-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px}
+.source-stat{background:#f4eee8;border-radius:11px;padding:10px}
+.source-stat span{font-size:11px;color:var(--muted);font-weight:800}
+.source-stat b{display:block;font-size:19px;margin-top:2px}
+.source-note{margin-top:9px;padding:9px;border-radius:10px;background:#fff7e8;font-size:12px;line-height:1.45}
+
+.month-source{border:1px solid var(--line);border-radius:14px;margin:10px 0;overflow:hidden;background:#fff}
+.month-source-head{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;background:#f4eee8}
+.month-source-head h4{margin:0;font-size:17px}
+.month-source-total{font-size:20px;font-weight:950;color:var(--green)}
+.month-source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line)}
+.month-source-cell{background:#fff;padding:9px 7px;min-height:68px}
+.month-source-cell span{display:block;font-size:10px;color:var(--muted);font-weight:850;text-transform:uppercase}
+.month-source-cell b{display:block;font-size:16px;margin-top:3px}
+.month-source-cell small{font-size:10px;color:var(--green);font-weight:800}
+.month-source-foot{padding:8px 11px;font-size:11px;color:var(--muted);background:#fffaf5}
+.month-source-money{padding:9px 11px;background:#edf8f2;font-weight:900;color:#145b3c}
+@media(max-width:430px){.month-source-grid{grid-template-columns:repeat(2,1fr)}}
+
+</style>
+</head>
+<body>
+<header><div class="headrow"><div><h1>Taste Home Pro</h1><small>Shërbimi i mbrëmjes</small></div><div class="datebar"><button onclick="shiftWorkDate(-1)">‹</button><input id="workDate" type="date" onchange="saveWorkDate()"><button onclick="shiftWorkDate(1)">›</button></div></div></header>
+<nav>
+<button id="tabTables" class="navbtn active" onclick="showTables()">🪑 Tavolinat</button>
+<button id="tabService" class="navbtn" onclick="showService()">🍽️ Shërbimi</button>
+<button id="tabHistory" class="navbtn" onclick="showHistory()">🧾 Historia</button>
+<button id="tabStats" class="navbtn" onclick="showStats()">📊 Statistika</button>
+</nav>
+<main>
+<section id="tablesView">
+  <div class="card live">
+    <div class="livetop"><div><div class="meta">💰 XHIRO SOT</div><div id="liveSales" class="livetotal">€0.00</div></div><div style="text-align:right"><div class="meta">🎁 Bakshishe</div><b id="liveTips">€0.00</b></div></div>
+    <div class="livechips">
+      <button class="livechip" onclick="openCashList()">💵 Cash<b id="liveCash">€0.00</b></button>
+      <button class="livechip clickchip" onclick="openCardList()">💳 Card<b id="liveCard">€0.00</b></button>
+      <div class="livechip">⏳ Pa paguar<b id="liveUnpaid">€0.00</b></div>
+    </div>
+  </div>
+  <div id="tables" class="grid"></div>
+  <button id="addTableBtn" class="addtable" onclick="addExtraTable()">＋ Shto tavolinë</button>
+  <div id="extraInfo" class="meta" style="text-align:center;margin-top:5px"></div>
+</section>
+
+<section id="tableView" class="hidden">
+  <div class="backbar"><button class="back" onclick="showTables()">←</button><div id="tableHeader" class="tabletitle"></div><div id="topTotal" class="topTotal"></div></div>
+  <div class="card">
+    <div>
+      <label>Emri i rezervimit / klientit</label>
+      <input id="tableName" placeholder="p.sh. Ella Wise" oninput="updateDetails()">
+    </div>
+    <div id="autoPeople" class="people">👥 0 persona</div>
+    <label>Shënime</label><textarea id="notes" class="notes" placeholder="p.sh. pa alkool..." oninput="updateDetails()"></textarea>
+  </div>
+
+  <div class="card"><div class="section-title"><h3>👥 Menu</h3><span class="meta">Personat llogariten vetë</span></div><div id="menus"></div></div>
+  <div class="card"><div class="section-title"><h3>🍽️ Shërbimi</h3><span class="meta">Zgjidh fazën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="sendKitchenUpdate()">👨‍🍳 DËRGO KUZHINËS</button></div>
+  <div class="card"><h3>⚡ Kërkesa të shpejta</h3><div id="requestButtons" class="reqgrid"></div><button class="next" onclick="sendSelectedRequests()">👨‍🍳 DËRGO KUZHINËS</button></div>
+  <div class="card"><div class="section-title"><h3>🥂 Pijet</h3><span class="meta">Zgjidh pijet, pastaj dërgo</span></div><div id="drinkTiles" class="drinktiles"></div><div id="drinkDetails"></div><button class="next" onclick="sendPendingDrinks()">👨‍🍳 DËRGO KUZHINËS</button></div>
+
+  <div class="card">
+    <div class="section-title"><h3>💳 Pagesa</h3><b id="tableTotal"></b></div>
+    <div class="paybuttons"><button id="cashBtn" class="paybtn" onclick="setPayment('Cash')">💵 CASH</button><button id="cardBtn" class="paybtn" onclick="setPayment('Card')">💳 CARD</button></div>
+    <div id="cardBox" class="hidden">
+      <label class="paidcheck"><input id="cardPaid" type="checkbox" onchange="setCardPaid(this.checked)"> ✅ Card e paguar</label>
+      <label>Shënim Card</label><input id="cardNote" placeholder="p.sh. Visa / 2 pagesa" oninput="updateDetails()">
+    </div>
+    <div class="tipgrid">
+      <div><label>Shuma e marrë</label><input id="received" type="number" min="0" step=".01" inputmode="decimal" placeholder="0.00" oninput="setReceived(this.value)"></div>
+      <div><label>Bakshishi</label><div id="tipBox" class="tipbox">€0.00</div></div>
+    </div>
+  </div>
+
+  <div class="action-zone">
+    <div class="action-zone-title">Fatura</div>
+    <div class="action-pair">
+      <button class="print" onclick="printCurrent()">🖨️ Printo</button>
+      <button class="invoice" onclick="shareCurrent()">🧾 Dërgo faturën</button>
+    </div>
+  </div>
+
+  <div class="action-zone">
+    <div class="action-zone-title">Mbyllja e tavolinës</div>
+    <button class="close action-close" onclick="closeCurrent()">✅ Mbyll tavolinën</button>
+  </div>
+
+  <div class="action-zone">
+    <div class="action-zone-title">Kujdes</div>
+    <button class="delete action-delete" onclick="clearCurrent()">🗑️ Fshije pa ruajtur</button>
+  </div>
+</section>
+
+<section id="serviceView" class="hidden"><div id="serviceList"></div></section>
+
+<section id="historyView" class="hidden">
+  <div class="card"><label>Data</label><div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px"><button class="back" onclick="shiftHistoryDate(-1)">‹</button><input id="historyDate" type="date" onchange="drawHistory()"><button class="back" onclick="shiftHistoryDate(1)">›</button></div></div>
+  <div id="dailyTotal" class="card"></div>
+
+  <div class="card">
+    <div class="history-jona">
+      <div>
+        <label>JONA — Shuma që kam marrë unë</label>
+        <div class="meta">Ruhet veçmas për datën e zgjedhur.</div>
+      </div>
+      <input id="jonaAmount" type="number" min="0" step=".01" inputmode="decimal" placeholder="0.00" oninput="saveJonaAmount(this.value)">
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="kitchen" onclick="shareDaily()">Share xhiron</button>
+    <button class="history-print" onclick="printDaily()">🖨️ Printo xhiron</button>
+  </div>
+  <div class="toolbar" style="margin-top:7px">
+    <button class="delete" style="grid-column:1/-1" onclick="clearHistoryForDate()">Fshij datën</button>
+  </div>
+  <div id="historyBox"></div>
+</section>
+
+<section id="statsView" class="hidden">
+  <div class="card">
+    <div class="stats-modes"><button id="statsYearBtn" class="selected" onclick="setStatsMode('year')">Vjetore</button><button id="statsMonthBtn" onclick="setStatsMode('month')">Mujore</button><button id="statsWeekBtn" onclick="setStatsMode('week')">Javore</button></div>
+    <div id="statsYearBox"><label>Viti</label><select id="statsYear" onchange="drawStats()"></select></div>
+    <div id="statsMonthBox" class="hidden"><label>Muaji</label><input id="statsMonth" type="month" onchange="drawStats()"></div>
+    <div id="statsWeekBox" class="hidden"><label>Java</label><input id="statsWeek" type="week" onchange="drawStats()"></div>
+    <div id="statsPeriodLabel" class="meta" style="margin-top:8px"></div>
+  </div>
+  <div id="statsCards" class="statsgrid"></div>
+  <div class="card">
+    <div class="section-title">
+      <div>
+        <h3>🎁 Bakshishet</h3>
+        <div id="tipsPeriodText" class="meta">Sipas periudhës së zgjedhur</div>
+      </div>
+      <b id="tipsPeriodTotal" style="font-size:22px;color:var(--orange)">€0.00</b>
+    </div>
+    <div id="tipsPeriodAverage" class="meta"></div>
+  </div>
+
+  <div id="sourceStatsCard" class="card">
+    <div class="section-title">
+      <div>
+        <h3>📌 Rezervimet sipas muajve</h3>
+        <div class="meta">Maj · Qershor · Korrik · Gusht 2026</div>
+      </div>
+    </div>
+    <div id="sourceStatsBody"></div>
+  </div>
+  <div class="card"><h3>Persona</h3><div id="peopleChart" class="chart"></div></div>
+  <div class="card"><h3>Xhiro</h3><div id="revenueChart" class="chart"></div></div>
+  <div class="card"><h3>Bakshishe</h3><div id="tipsChart" class="chart"></div></div>
+</section>
+<div id="printArea"></div>
+</main>
+
+<div id="cardModal" class="modal hidden" onclick="modalBg(event,'cardModal')"><div class="modalbox"><div class="modalhead"><h3>💳 Card sot</h3><button class="modalclose" onclick="closeModal('cardModal')">Mbyll</button></div><div id="cardModalBody"></div></div></div>
+<div id="cashModal" class="modal hidden" onclick="modalBg(event,'cashModal')"><div class="modalbox"><div class="modalhead"><h3>💵 Cash sot</h3><button class="modalclose" onclick="closeModal('cashModal')">Mbyll</button></div><div id="cashModalBody"></div></div></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCVs-nHioieaZpHa7nl7W3tpfvm5qyUMI4",
+  authDomain: "taste-hm-kitchen.firebaseapp.com",
+  databaseURL: "https://taste-hm-kitchen-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "taste-hm-kitchen",
+  storageBucket: "taste-hm-kitchen.firebasestorage.app",
+  messagingSenderId: "964982186880",
+  appId: "1:964982186880:web:cd5a7061d23409c8a61765",
+  measurementId: "G-BJ84J7QPQS"
+};
+let firebaseReady=false, remoteApplying=false, kitchenOrders={}, firebaseSyncStarted=false;
+try{
+  firebase.initializeApp(firebaseConfig);
+  window.fbdb=firebase.database();
+  firebase.auth().onAuthStateChanged(user=>{
+    if(user){
+      firebaseReady=true;
+      startFirebaseSync();
+    }else{
+      firebase.auth().signInAnonymously().catch(e=>console.warn("Firebase Auth dështoi",e));
+    }
+  });
+}catch(e){console.warn("Firebase nuk u inicializua",e)}
+
+const ITEMS=[
+ {k:"normal",n:"Menu Normale",p:25,type:"menu"},
+ {k:"veg",n:"Menu Vegjet",p:25,type:"menu"},
+ {k:"kids",n:"Menu Kids",p:15,type:"menu"},
+ {k:"group",n:"Grup",p:15,type:"menu"},
+ {k:"beer",n:"Birrë",p:3.5,type:"drink",ico:"🍺"},
+ {k:"red",n:"Verë e kuqe",p:2.5,type:"drink",ico:"🍷"},
+ {k:"white",n:"Verë e bardhë",p:2.5,type:"drink",ico:"🥂"},
+ {k:"juice",n:"Grape Juice",p:2.5,type:"drink",ico:"🍇"}
+];
+const STAGES=[
+ {short:"Mezet<br>e para",msg:"MEZET E PARA"},
+ {short:"Mezet<br>e dyta",msg:"MEZET E DYTA"},
+ {short:"Supë",msg:"SUPA"},
+ {short:"Imam<br>+ Qofte",msg:"IMAM + QOFTE"},
+ {short:"Ëmbël-<br>sirë",msg:"ËMBËLSIRA"}
+];
+const REQUESTS=["💧 Ujë","🍞 Bukë"];
+const BASE_POSITIONS=["🥘 Tek Tepsiat","🍇 Tek Hardhia","💧 Tek Çezma","💡 Tek Drita","🍊 Tek Mandarina","🍊 Tek Portokalli","🌳 Nën Fik","🌿 Në Bahçe","🚪 Tek Dera","➕ Tavolinë Extra"];
+const MAX_TABLES=13;
+
+/* Ruajmë historikun e versionit v9. Nëse v9 s'ka të dhëna, lexojmë edhe v11 si fallback. */
+const DB_KEY="taste_home_tables_v9",HIST_KEY="taste_home_history_v9",DATE_KEY="taste_home_workdate_v9",COUNT_KEY="taste_home_tablecount_v9";
+const JONA_KEY="taste_home_jona_daily_v1";
+const SOURCE_KEY="taste_home_source_breakdown_v1";
+const SOURCE_SEED_2026={"2026-05-01":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-09":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-11":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-16":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-17":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-20":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-23":{"jotform":3,"gyg":0,"outdoor":0},"2026-05-24":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-27":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-28":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-31":{"jotform":5,"gyg":0,"outdoor":0},"2026-06-01":{"jotform":21,"gyg":0,"outdoor":0},"2026-06-03":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-04":{"jotform":11,"gyg":0,"outdoor":0},"2026-06-05":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-06":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-07":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-08":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-09":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-12":{"jotform":5,"gyg":0,"outdoor":0},"2026-06-13":{"jotform":6,"gyg":0,"outdoor":18},"2026-06-15":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-16":{"jotform":8,"gyg":0,"outdoor":0},"2026-06-17":{"jotform":0,"gyg":0,"outdoor":9},"2026-06-19":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-20":{"jotform":4,"gyg":2,"outdoor":18},"2026-06-21":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-22":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-23":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-24":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-25":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-26":{"jotform":1,"gyg":0,"outdoor":0},"2026-06-27":{"jotform":2,"gyg":0,"outdoor":18},"2026-06-28":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-29":{"jotform":12,"gyg":2,"outdoor":0},"2026-06-30":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-01":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-02":{"jotform":4,"gyg":2,"outdoor":0},"2026-07-03":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-04":{"jotform":2,"gyg":2,"outdoor":0},"2026-07-06":{"jotform":5,"gyg":0,"outdoor":0},"2026-07-07":{"jotform":15,"gyg":0,"outdoor":0},"2026-07-08":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-10":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-11":{"jotform":5,"gyg":3,"outdoor":18},"2026-07-12":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-13":{"jotform":0,"gyg":2,"outdoor":0},"2026-07-14":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-15":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-17":{"jotform":3,"gyg":0,"outdoor":0},"2026-07-18":{"jotform":5,"gyg":2,"outdoor":0},"2026-07-19":{"jotform":12,"gyg":0,"outdoor":0},"2026-07-20":{"jotform":4,"gyg":3,"outdoor":0},"2026-07-21":{"jotform":4,"gyg":2,"outdoor":0},"2026-07-22":{"jotform":3,"gyg":2,"outdoor":0},"2026-07-23":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-24":{"jotform":2,"gyg":3,"outdoor":0},"2026-07-25":{"jotform":0,"gyg":0,"outdoor":18},"2026-07-26":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-27":{"jotform":2,"gyg":1,"outdoor":0},"2026-07-28":{"jotform":8,"gyg":0,"outdoor":0},"2026-07-29":{"jotform":13,"gyg":3,"outdoor":0},"2026-07-30":{"jotform":8,"gyg":0,"outdoor":0},"2026-07-31":{"jotform":11,"gyg":0,"outdoor":0},"2026-08-01":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-02":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-03":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-04":{"jotform":17,"gyg":0,"outdoor":0},"2026-08-05":{"jotform":3,"gyg":6,"outdoor":0},"2026-08-06":{"jotform":1,"gyg":0,"outdoor":0},"2026-08-07":{"jotform":2,"gyg":3,"outdoor":0},"2026-08-08":{"jotform":4,"gyg":0,"outdoor":18},"2026-08-09":{"jotform":10,"gyg":3,"outdoor":0},"2026-08-10":{"jotform":3,"gyg":0,"outdoor":0},"2026-08-11":{"jotform":8,"gyg":0,"outdoor":0},"2026-08-12":{"jotform":7,"gyg":0,"outdoor":0},"2026-08-13":{"jotform":23,"gyg":0,"outdoor":0},"2026-08-14":{"jotform":4,"gyg":0,"outdoor":0},"2026-08-15":{"jotform":14,"gyg":0,"outdoor":0},"2026-08-16":{"jotform":9,"gyg":2,"outdoor":0},"2026-08-17":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-18":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-19":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-20":{"jotform":27,"gyg":0,"outdoor":0},"2026-08-21":{"jotform":13,"gyg":0,"outdoor":0},"2026-08-22":{"jotform":9,"gyg":2,"outdoor":18},"2026-08-23":{"jotform":2,"gyg":0,"outdoor":0},"2026-08-24":{"jotform":5,"gyg":0,"outdoor":0},"2026-08-25":{"jotform":8,"gyg":0,"outdoor":0},"2026-08-27":{"jotform":41,"gyg":0,"outdoor":0},"2026-08-28":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-29":{"jotform":19,"gyg":1,"outdoor":0},"2026-08-30":{"jotform":4,"gyg":0,"outdoor":0},"2026-08-31":{"jotform":10,"gyg":2,"outdoor":0}};
+const oldDB9=localStorage.getItem(DB_KEY), oldHist9=localStorage.getItem(HIST_KEY);
+let db=JSON.parse(oldDB9||localStorage.getItem("taste_home_tables_v11")||"{}");
+let history=JSON.parse(oldHist9||localStorage.getItem("taste_home_history_v11")||"[]");
+let jonaDaily=JSON.parse(localStorage.getItem(JONA_KEY)||"{}");
+let sourceDaily=JSON.parse(localStorage.getItem(SOURCE_KEY)||"{}");
+Object.entries(SOURCE_SEED_2026).forEach(([d,v])=>{
+ if(!sourceDaily[d]) sourceDaily[d]={...v};
+});
+let tableCount=Math.max(10,Math.min(13,Number(localStorage.getItem(COUNT_KEY)||10))),current=1,statsMode="year";
+const $=id=>document.getElementById(id);
+
+function positionFor(t){return t<=10?BASE_POSITIONS[t-1]:`➕ Tavolinë Shtesë ${t-10}`}
+function blank(t){const q={},sent={},served={};ITEMS.forEach(i=>q[i.k]=sent[i.k]=served[i.k]=0);return{q,sent,served,name:"",reservedPeople:0,notes:"",updated:null,stage:0,requests:{},payment:"Cash",cardPaid:true,cardNote:"",received:"",workDate:"",position:positionFor(t)}}
+function normalize(t){
+ if(!db[t])db[t]=blank(t);
+ const b=db[t];b.q=b.q||{};b.sent=b.sent||{};b.served=b.served||{};
+ if(b.q.menu!=null&&b.q.normal==null)b.q.normal=b.q.menu||0;
+ ITEMS.forEach(i=>{if(b.q[i.k]==null)b.q[i.k]=0;if(b.sent[i.k]==null)b.sent[i.k]=0;if(b.served[i.k]==null)b.served[i.k]=0});
+ b.position=positionFor(t);
+ if(b.name&&/^Tavolina\s+\d+$/i.test(b.name))b.name="";
+ if(b.reservedPeople==null)b.reservedPeople=Number(b.persons)||0;
+ if(!b.payment)b.payment="Cash";if(typeof b.cardPaid!=="boolean")b.cardPaid=b.payment==="Cash";
+ if(b.cardNote==null)b.cardNote="";if(b.received==null)b.received=b.receivedAmount??"";
+ if(typeof b.stage!=="number")b.stage=0;if(!b.requests)b.requests={};if(b.workDate==null)b.workDate="";
+}
+for(let t=1;t<=MAX_TABLES;t++)normalize(t);
+history.forEach(x=>{
+ if(x.position==null)x.position=x.table?positionFor(Number(x.table)):"";
+ if(x.tip==null)x.tip=Math.max(0,(Number(x.received||x.receivedAmount)||Number(x.total)||0)-(Number(x.total)||0));
+ if(x.received==null)x.received=Number(x.receivedAmount)||Number(x.total)||0;
+ if(typeof x.cardPaid!=="boolean")x.cardPaid=x.payment==="Cash";
+});
+function save(){
+ localStorage.setItem(DB_KEY,JSON.stringify(db));
+ localStorage.setItem(HIST_KEY,JSON.stringify(history));
+ localStorage.setItem(JONA_KEY,JSON.stringify(jonaDaily));
+ localStorage.setItem(SOURCE_KEY,JSON.stringify(sourceDaily));
+ localStorage.setItem(COUNT_KEY,String(tableCount));
+}
+function money(v){return "€"+Number(v||0).toFixed(2)} function stamp(){return new Date().toLocaleString("sq-AL")}
+function total(t){return ITEMS.reduce((s,i)=>s+(Number(db[t].q[i.k])||0)*i.p,0)}
+function menuPeople(t){return ["normal","veg","kids","group"].reduce((s,k)=>s+(Number(db[t].q[k])||0),0)}
+function people(t){return menuPeople(t)}
+function pending(t,k){return Math.max(0,(db[t].q[k]||0)-(db[t].served[k]||0))}
+function pendingCount(t){return ITEMS.filter(i=>i.type==="drink").reduce((s,i)=>s+pending(t,i.k),0)}
+function hasRequests(t){return Object.values(db[t].requests||{}).some(Boolean)}
+function tipForTable(t){if(db[t].received==="")return 0;return Math.max(0,(Number(db[t].received)||0)-total(t))}
+function isoDate(){return $("workDate").value||new Date().toISOString().slice(0,10)}
+function shiftDate(v,n){const d=new Date(v+"T12:00:00");d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+
+$("workDate").value=localStorage.getItem(DATE_KEY)||new Date().toISOString().slice(0,10);$("historyDate").value=$("workDate").value;
+function saveWorkDate(){localStorage.setItem(DATE_KEY,$("workDate").value);$("historyDate").value=$("workDate").value;save();drawTables()}
+function shiftWorkDate(n){$("workDate").value=shiftDate(isoDate(),n);saveWorkDate()}
+function setToday(){$("workDate").value=new Date().toISOString().slice(0,10);saveWorkDate()}
+function shiftHistoryDate(n){$("historyDate").value=shiftDate($("historyDate").value,n);drawHistory()}
+
+function hideAll(){document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));["tabTables","tabService","tabHistory","tabStats"].forEach(x=>$(x).classList.remove("active"))}
+function showTables(){hideAll();$("tablesView").classList.remove("hidden");$("tabTables").classList.add("active");drawTables()}
+function showService(){hideAll();$("serviceView").classList.remove("hidden");$("tabService").classList.add("active");drawService()}
+function showHistory(){hideAll();$("historyView").classList.remove("hidden");$("tabHistory").classList.add("active");$("historyDate").value=$("workDate").value;drawHistory()}
+function showStats(){hideAll();$("statsView").classList.remove("hidden");$("tabStats").classList.add("active");fillStatsControls();drawStats()}
+
+function activeForDate(t,d){return total(t)>0}
+function liveRows(payment){
+ const d=isoDate(),rows=[];
+ history.filter(x=>x.date===d&&x.payment===payment).forEach(x=>rows.push({type:"history",id:x.id,name:x.name||"Pa emër",position:x.position||"",total:Number(x.total)||0,paid:payment==="Cash"?true:!!x.cardPaid,tip:Number(x.tip)||0}));
+ for(let t=1;t<=tableCount;t++)if(activeForDate(t,d)&&db[t].payment===payment)rows.push({type:"active",id:t,name:db[t].name||"Pa emër",position:db[t].position,total:total(t),paid:payment==="Cash"?true:!!db[t].cardPaid,tip:tipForTable(t)});
+ return rows;
+}
+function drawLive(){
+ const d=isoDate(),closed=history.filter(x=>x.date===d);
+ let sales=closed.reduce((s,x)=>s+(Number(x.total)||0),0),tips=closed.reduce((s,x)=>s+(Number(x.tip)||0),0),
+ cash=closed.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
+ card=closed.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
+ unpaid=closed.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
+ for(let t=1;t<=tableCount;t++){if(!activeForDate(t,d))continue;const v=total(t);sales+=v;tips+=tipForTable(t);if(db[t].payment==="Card"){card+=v;if(!db[t].cardPaid)unpaid+=v}else cash+=v}
+ $("liveSales").textContent=money(sales);$("liveTips").textContent=money(tips);$("liveCash").textContent=money(cash);$("liveCard").textContent=money(card);$("liveUnpaid").textContent=money(unpaid);
+}
+function latestKitchenForTable(t){
+ const arr=Object.values(kitchenOrders||{}).filter(o=>Number(o.table)===Number(t));
+ if(!arr.length)return null;
+ arr.sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
+ return arr[0];
+}
+
+function drawTables(){
+ drawLive();$("tables").innerHTML="";
+ for(let t=1;t<=tableCount;t++){
+  const p=pendingCount(t),el=document.createElement("button");
+  el.className="table "+(p?"alert":total(t)>0||people(t)>0?"active":"")+(db[t].payment==="Card"&&!db[t].cardPaid&&total(t)>0?" unpaid":"");
+  const ko=latestKitchenForTable(t),ks=ko?(ko.status==="ready"?`<div style="color:var(--green);font-weight:900;font-size:11px;margin-top:3px">✅ Kuzhina gati</div>`:`<div style="color:var(--orange);font-weight:900;font-size:11px;margin-top:3px">👨‍🍳 Në përgatitje</div>`):"";
+   el.innerHTML=`<div class="position">${db[t].position}</div><div class="guest">${db[t].name||"Pa emër"}</div><div class="meta">👥 ${people(t)} persona</div><div class="amount">${money(total(t))}</div>${p?`<div class="redtxt">🔴 ${p} pije për t'u çuar</div>`:""}${db[t].payment==="Card"&&!db[t].cardPaid&&total(t)>0?`<div class="redtxt">💳 Card pa paguar</div>`:""}${ks}`;
+  el.onclick=()=>openTable(t);$("tables").appendChild(el);
+ }
+ $("addTableBtn").classList.toggle("hidden",tableCount>=MAX_TABLES);
+ $("extraInfo").textContent=tableCount>10?`${tableCount-10} tavolina shtesë aktive`:"Mund të shtosh deri në 3 tavolina të tjera.";
+}
+function addExtraTable(){if(tableCount>=MAX_TABLES)return;tableCount++;normalize(tableCount);db[tableCount].position=positionFor(tableCount);save();drawTables()}
+
+function openTable(t){current=t;hideAll();$("tableView").classList.remove("hidden");$("tableName").value=db[t].name||"";$("notes").value=db[t].notes||"";$("cardNote").value=db[t].cardNote||"";$("received").value=db[t].received!==""?db[t].received:"";drawCurrent()}
+function updateDetails(){const b=db[current];b.name=$("tableName").value.trim();b.notes=$("notes").value.trim();b.cardNote=$("cardNote").value.trim();b.workDate=b.workDate||isoDate();b.updated=stamp();save();drawHeaderOnly()}
+function drawHeaderOnly(){$("tableHeader").textContent=`${db[current].position} · ${db[current].name||"Pa emër"}`;$("topTotal").textContent=money(total(current));$("autoPeople").textContent=`👥 ${people(current)} persona`;$("tableTotal").textContent=money(total(current));drawTip()}
+function setPayment(p){db[current].payment=p;if(p==="Cash")db[current].cardPaid=true;else if(p==="Card"&&db[current].cardPaid===true)db[current].cardPaid=false;db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawPayment();drawLive()}
+function setCardPaid(v){db[current].cardPaid=!!v;db[current].updated=stamp();save();drawPayment();drawLive()}
+function drawPayment(){$("cashBtn").classList.toggle("selected",db[current].payment==="Cash");$("cardBtn").classList.toggle("selected",db[current].payment==="Card");$("cardBox").classList.toggle("hidden",db[current].payment!=="Card");$("cardPaid").checked=!!db[current].cardPaid}
+function setReceived(v){db[current].received=v===""?"":Math.max(0,Number(v)||0);db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawTip();drawLive()}
+function drawTip(){const box=$("tipBox");if(db[current].received===""){box.className="tipbox";box.textContent="€0.00";return}const d=(Number(db[current].received)||0)-total(current);if(d>=0){box.className="tipbox good";box.textContent=money(d)}else{box.className="tipbox bad";box.textContent="Mungojnë "+money(Math.abs(d))}}
+
+function drawCurrent(){
+ drawHeaderOnly();drawPayment();
+ $("statusButtons").innerHTML="";STAGES.forEach((s,n)=>{const b=document.createElement("button");b.className="status-btn "+(db[current].stage===n?"selected":"");b.innerHTML=s.short;b.onclick=()=>{db[current].stage=n;db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawCurrent()};$("statusButtons").appendChild(b)});
+ $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="reqbtn "+(db[current].requests[r]?"selected":"");b.textContent=(db[current].requests[r]?"✓ ":"")+r;b.onclick=()=>toggleQuickRequest(r);$("requestButtons").appendChild(b)});
+ $("menus").innerHTML="";ITEMS.filter(i=>i.type==="menu").forEach(i=>{const r=document.createElement("div");r.className="row";r.innerHTML=`<div><div class="name">${i.n}</div><div class="price">${money(i.p)}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${db[current].q[i.k]}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div>`;$("menus").appendChild(r)});
+ drawDrinks();
+}
+function drawDrinks(){
+ $("drinkTiles").innerHTML="";ITEMS.filter(i=>i.type==="drink").forEach(i=>{const q=db[current].q[i.k]||0,p=pending(current,i.k),b=document.createElement("button");b.className="drinktile";b.innerHTML=`${p?`<span class="badgealert">${p}</span>`:""}<div class="ico">${i.ico}</div><div class="dn">${i.n}</div><div class="dp">${money(i.p)} · kliko +1</div>${q?`<div class="meta">${q} porositur</div>`:""}`;b.onclick=()=>change(i.k,1);$("drinkTiles").appendChild(b)});
+ $("drinkDetails").innerHTML="";ITEMS.filter(i=>i.type==="drink"&&(db[current].q[i.k]||0)>0).forEach(i=>{const q=db[current].q[i.k]||0,s=Math.min(db[current].served[i.k]||0,q),p=pending(current,i.k),d=document.createElement("div");d.className="drinkdetail";d.innerHTML=`<div class="drinkhead"><b>${i.ico} ${i.n}</b><button class="minus" onclick="change('${i.k}',-1)">−</button></div><div class="delivery"><div>Porositur<b>${q}</b></div><div>Dërguar<b>${s}</b></div><div class="pending">Pret<b>${p}</b></div></div><div class="deliverBtns single"><button ${p===0?"disabled":""} onclick="markAll('${i.k}')">✓ U DËRGUAN${p?` ${p}`:""}</button></div>`;$("drinkDetails").appendChild(d)});
+}
+function change(k,d){
+ const item=ITEMS.find(i=>i.k===k);
+ const before=Number(db[current].q[k]||0);
+ db[current].q[k]=Math.max(0,before+d);
+ if((db[current].served[k]||0)>db[current].q[k])db[current].served[k]=db[current].q[k];
+ if(item&&item.type==="drink"&&(db[current].sent[k]||0)>db[current].q[k])db[current].sent[k]=db[current].q[k];
+ db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();
+ drawCurrent();drawLive();
+}
+
+function drinkKitchenText(item,qty){
+ const q=Number(qty)||1;
+ if(item.k==="beer")return `🍺 ${q} ${q===1?"BIRRË":"BIRRA"}`;
+ if(item.k==="red")return `🍷 ${q} ${q===1?"GOTË":"GOTA"} VERË E KUQE`;
+ if(item.k==="white")return `🥂 ${q} ${q===1?"GOTË":"GOTA"} VERË E BARDHË`;
+ if(item.k==="juice")return `🍇 ${q} ${q===1?"GOTË":"GOTA"} GRAPE JUICE`;
+ return `🥤 ${q} ${item.n.toUpperCase()}`;
+}
+function sendPendingDrinks(){
+ if(!firebaseReady||!fbdb){alert("Firebase nuk është autentikuar ende. Provo përsëri pas pak.");return}
+ const b=db[current];
+ const pendingItems=ITEMS.filter(i=>i.type==="drink").map(i=>({
+   item:i,
+   qty:Math.max(0,Number(b.q[i.k]||0)-Number(b.sent[i.k]||0))
+ })).filter(x=>x.qty>0);
+
+ if(!pendingItems.length){alert("Nuk ka pije të reja për t'u dërguar.");return}
+
+ const jobs=pendingItems.map(({item,qty})=>{
+   const key=`drink_${current}_${item.k}`;
+   const ref=fbdb.ref("kitchenOrders/"+key);
+   return ref.transaction(existing=>{
+     if(existing && existing.status!=="ready"){
+       const newQty=(Number(existing.drinkQty)||1)+qty;
+       return {...existing,id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",drinkKey:item.k,drinkQty:newQty,instruction:drinkKitchenText(item,newQty),updatedAt:Date.now()};
+     }
+     return {id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",instruction:drinkKitchenText(item,qty),notes:b.notes||"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:qty,status:"pending",createdAt:Date.now(),updatedAt:Date.now()};
+   }).then(()=>{ b.sent[item.k]=Number(b.sent[item.k]||0)+qty; });
+ });
+
+ Promise.all(jobs).then(()=>{
+   b.updated=stamp();save();drawCurrent();drawLive();
+ }).catch(e=>{
+   console.error("Pijet nuk u dërguan në kuzhinë",e);
+   alert("Pijet nuk u dërguan në kuzhinë. Kontrollo lidhjen/lejen Firebase.");
+ });
+}
+function markOne(k){db[current].served[k]=Math.min(db[current].q[k]||0,(db[current].served[k]||0)+1);db[current].updated=stamp();save();drawCurrent();drawLive()}
+function markAll(k){db[current].served[k]=db[current].q[k]||0;db[current].updated=stamp();save();drawCurrent();drawLive()}
+function nextStage(){sendKitchenUpdate()}
+
+function linesForTable(t){return ITEMS.filter(i=>(db[t].q[i.k]||0)>0).map(i=>({key:i.k,name:i.n,qty:db[t].q[i.k],price:i.p,subtotal:db[t].q[i.k]*i.p}))}
+function shareText(txt){location.href="https://wa.me/?text="+encodeURIComponent(txt)}
+function kitchenText(t){
+ const b=db[t],n=people(t),stage=STAGES[b.stage];let x=`👨‍🍳 TASTE HOME — KUZHINA\n🪑 ${b.position}${b.name?" — "+b.name:""}\n👥 ${n} persona\n\nPËRGATIT ${n} ${stage.msg}`;
+ if(b.stage===2){const parts=[];["normal","veg","kids","group"].forEach(k=>{const q=b.q[k]||0,i=ITEMS.find(z=>z.k===k);if(q)parts.push(`${q} ${i.n}`)});if(parts.length)x+=`\n${parts.join("\n")}`}
+ const req=Object.keys(b.requests||{}).filter(k=>b.requests[k]);if(req.length)x+=`\n\nKërkesa: ${req.join(", ")}`;
+ const pend=ITEMS.filter(i=>i.type==="drink"&&pending(t,i.k)>0).map(i=>`${i.n}: ${pending(t,i.k)}`);if(pend.length)x+=`\n\n🥂 Për t'u çuar:\n${pend.join("\n")}`;
+ if(b.notes)x+=`\n\nShënim: ${b.notes}`;return x;
+}
+function toggleQuickRequest(r){
+ const b=db[current];
+ b.requests[r]=!b.requests[r];
+ b.updated=stamp();save();drawCurrent();drawLive();
+}
+function sendSelectedRequests(){
+ const b=db[current],n=people(current);
+ const selected=Object.keys(b.requests||{}).filter(k=>b.requests[k]);
+ if(!selected.length){alert("Zgjidh Ujë ose Bukë.");return}
+ if(!firebaseReady||!fbdb){alert("Firebase nuk është autentikuar ende. Provo përsëri pas pak.");return}
+
+ const clean=selected.map(r=>String(r).replace(/^[^A-Za-zÀ-ž]+/,"").trim().toUpperCase());
+ const order={
+   table:current,position:b.position,name:b.name||"",people:n,
+   stageLabel:"KËRKESË",
+   instruction:`KËRKESË: ${clean.join(" + ")}`,
+   notes:b.notes||"",requests:selected,
+   menuBreakdown:[],status:"pending",createdAt:Date.now()
+ };
+ const ref=fbdb.ref("kitchenOrders").push();
+ ref.set({...order,id:ref.key}).then(()=>{
+   b.requests={};b.updated=stamp();save();drawCurrent();drawLive();
+ }).catch(e=>{
+   console.error(e);
+   alert("Kërkesa nuk u dërgua në kuzhinë. Kontrollo lidhjen/lejen Firebase.");
+ });
+}
+
+function kitchenMenuCounts(t){
+ const b=db[t];
+ return {
+   normal:Number(b.q.normal||0)+Number(b.q.kids||0)+Number(b.q.group||0),
+   veg:Number(b.q.veg||0)
+ };
+}
+function soupKitchenBreakdown(t){
+ const c=kitchenMenuCounts(t),a=[];
+ if(c.normal)a.push(`🥣 ${c.normal} ${c.normal===1?"SUPË NORMALE":"SUPA NORMALE"}`);
+ if(c.veg)a.push(`🥬 ${c.veg} ${c.veg===1?"SUPË VEGJETARIANE":"SUPA VEGJETARIANE"}`);
+ return a;
+}
+function mainKitchenBreakdown(t){
+ const c=kitchenMenuCounts(t),a=[];
+ if(c.normal)a.push(`🍽️ ${c.normal} IMAM + QOFTE`);
+ if(c.veg)a.push(`🥬 ${c.veg} IMAM + VEGJETARIAN`);
+ return a;
+}
+
+function sendKitchenUpdate(){
+ if(!people(current))return alert("Vendos personat ose menutë.");
+ const b=db[current],stage=STAGES[b.stage],n=people(current);
+ const req=Object.keys(b.requests||{}).filter(k=>b.requests[k]);
+ const order={
+   table:current,position:b.position,name:b.name||"",people:n,stage:b.stage,stageLabel:stage.msg,
+   instruction:`PËRGATIT ${n} ${stage.msg}`,notes:b.notes||"",requests:req,
+   status:"pending",createdAt:Date.now()
+ };
+
+ // SUPË: ndaj normale dhe vegjetariane.
+ if(b.stage===2){
+   order.instruction="🍲 PËRGATIT SUPAT";
+   order.menuBreakdown=soupKitchenBreakdown(current);
+ }
+
+ // IMAM + QOFTE: menu vegjetariane shkon si IMAM + VEGJETARIAN.
+ if(b.stage===3){
+   order.instruction="🍽️ PËRGATIT MAIN";
+   order.menuBreakdown=mainKitchenBreakdown(current);
+ }
+
+ if(firebaseReady){
+   const ref=fbdb.ref("kitchenOrders").push();
+   ref.set({...order,id:ref.key}).catch(e=>{console.error(e);alert("Komanda nuk u dërgua në kuzhinë. Kontrollo lidhjen/lejen Firebase.")});
+ }else{
+   alert("Firebase nuk është autentikuar ende. Provo përsëri pas pak.");
+   return;
+ }
+ db[current].requests={};db[current].updated=stamp();save();drawCurrent();drawTables();
+}
+function invoiceText(t){const b=db[t];let x=`Taste Home\nData: ${b.workDate||isoDate()}\n${b.position}${b.name?" — "+b.name:""}\nPersona: ${people(t)}\nPagesa: ${b.payment}`;if(b.payment==="Card")x+=` — ${b.cardPaid?"PAGUAR":"PA PAGUAR"}`;x+="\n";linesForTable(t).forEach(a=>x+=`${a.name}: ${a.qty} × ${money(a.price)} = ${money(a.subtotal)}\n`);x+=`----------------\nTOTALI: ${money(total(t))}`;if(db[t].received!=="")x+=`\nShuma e marrë: ${money(db[t].received)}\nBakshishi: ${money(tipForTable(t))}`;return x}
+function shareCurrent(){if(total(current)<=0)return alert("Tavolina është bosh.");shareText(invoiceText(current))}
+function printCurrent(){if(total(current)<=0)return alert("Tavolina është bosh.");$("printArea").innerHTML=`<div style="font-family:Arial;max-width:420px;margin:auto"><h2>Taste Home</h2>${invoiceText(current).replace(/\n/g,"<br>")}</div>`;window.print()}
+function closeCurrent(){
+ if(total(current)<=0)return alert("Tavolina është bosh.");
+ if(db[current].payment==="Card"&&!db[current].cardPaid&&!confirm("Card është PAPAGUAR. Ta mbyll tavolinën gjithsesi?"))return;
+ if(!confirm(`Ta mbyll ${db[current].name||"Pa emër"} te ${db[current].position}?`))return;
+ const b=db[current],received=b.received===""?total(current):Number(b.received)||0;
+ history.unshift({id:Date.now(),table:current,position:b.position,name:b.name||"",persons:people(current),notes:b.notes,payment:b.payment,cardPaid:b.payment==="Cash"?true:!!b.cardPaid,cardNote:b.cardNote,date:b.workDate||isoDate(),closedAt:stamp(),lines:linesForTable(current),total:total(current),received,tip:Math.max(0,received-total(current))});
+ const pos=b.position;db[current]=blank(current);db[current].position=pos;save();showTables();
+}
+function clearCurrent(){if(confirm("Ta fshij pa e ruajtur në histori?")){const pos=db[current].position;db[current]=blank(current);db[current].position=pos;save();showTables()}}
+
+function drawService(){
+ $("serviceList").innerHTML="";let n=0;
+ for(let t=1;t<=tableCount;t++){if(!(total(t)>0||people(t)>0||hasRequests(t)||pendingCount(t)))continue;n++;const c=document.createElement("div"),pend=pendingCount(t);c.className="card service-card "+(pend?"waiting":"");c.innerHTML=`<div class="section-title"><div><h3>${db[t].name||"Pa emër"}</h3><div class="meta">${db[t].position}</div></div><span class="badge">👥 ${people(t)}</span></div><div><b>PËRGATIT ${people(t)} ${STAGES[db[t].stage].msg}</b></div>${pend?`<div style="margin-top:6px"><span class="badge warnbadge">🔴 ${pend} pije për t'u çuar</span></div>`:""}${db[t].notes?`<div class="meta" style="margin-top:5px">📝 ${db[t].notes}</div>`:""}<button class="back" style="margin-top:8px;width:100%" onclick="openTable(${t})">Hap tavolinën</button>`;$("serviceList").appendChild(c)}
+ if(!n)$("serviceList").innerHTML='<div class="card empty">Nuk ka tavolina aktive.</div>';
+}
+
+function jonaForDate(d){
+ return Math.max(0,Number(jonaDaily[d]||0));
+}
+function saveJonaAmount(v){
+ const d=$("historyDate").value;
+ if(!d)return;
+ if(v===""){
+   delete jonaDaily[d];
+ }else{
+   jonaDaily[d]=Math.max(0,Number(v)||0);
+ }
+ save();
+ if(!$("historyView").classList.contains("hidden"))drawHistorySummaryOnly();
+}
+function drawHistorySummaryOnly(){
+ const d=$("historyDate").value,day=filtered(),
+ grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),
+ tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),
+ cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
+ card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
+ paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ jona=jonaForDate(d);
+ $("dailyTotal").innerHTML=`<b style="font-size:20px;color:var(--green)">Xhiro: ${money(grand)}</b> · 🎁 ${money(tips)}<br><span class="meta">Cash ${money(cash)} · Card ${money(card)} · ✅ ${money(paid)} · ⏳ ${money(unpaid)}</span><br><b style="display:inline-block;margin-top:7px;color:var(--brand)">JONA: ${money(jona)}</b>`;
+ if($("jonaAmount") && document.activeElement!==$("jonaAmount")) $("jonaAmount").value=jonaDaily[d]??"";
+}
+function printDaily(){
+ const d=$("historyDate").value,day=filtered(),
+ grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),
+ tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),
+ cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
+ card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
+ paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ jona=jonaForDate(d),
+ persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
+
+ $("printArea").innerHTML=`
+   <div style="font-family:Arial;max-width:520px;margin:auto;color:#111">
+     <h2 style="margin-bottom:4px">Taste Home — Xhiro Ditore</h2>
+     <div style="margin-bottom:14px">Data: <b>${d}</b></div>
+     <div style="font-size:18px;margin:7px 0">Xhiro: <b>${money(grand)}</b></div>
+     <div style="margin:5px 0">Cash: <b>${money(cash)}</b></div>
+     <div style="margin:5px 0">Card: <b>${money(card)}</b></div>
+     <div style="margin:5px 0">Card paguar: <b>${money(paid)}</b></div>
+     <div style="margin:5px 0">Card papaguar: <b>${money(unpaid)}</b></div>
+     <div style="margin:5px 0">Bakshishe: <b>${money(tips)}</b></div>
+     <div style="margin:5px 0">Persona: <b>${persons}</b></div>
+     <hr style="margin:14px 0">
+     <div style="font-size:22px"><b>JONA: ${money(jona)}</b></div>
+     <div style="margin-top:14px;font-size:12px;color:#555">Fatura të mbyllura: ${day.length}</div>
+   </div>`;
+ window.print();
+}
+
+function filtered(){return history.filter(x=>x.date===$("historyDate").value)}
+function inferPeople(inv){return (inv.lines||[]).filter(x=>["Menu","Menu Normale","Menu Vegjet","Menu Kids","Grup"].includes(x.name)).reduce((s,x)=>s+(Number(x.qty)||0),0)}
+function qtyHistory(arr,i){return arr.reduce((s,inv)=>s+(inv.lines||[]).filter(x=>x.name===i.n||(i.k==="normal"&&x.name==="Menu")).reduce((a,x)=>a+(Number(x.qty)||0),0),0)}
+function drawHistory(){
+ const day=filtered();
+ drawHistorySummaryOnly();
+ $("historyBox").innerHTML=day.length?"":'<div class="card empty">Nuk ka fatura për këtë datë.</div>';
+ day.forEach(inv=>{const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="section-title"><div><h3>${inv.name||"Pa emër"}</h3><div class="meta">${inv.position||""}</div></div><b>${money(inv.total)}</b></div><div class="meta">${inv.closedAt}</div><div><span class="badge">👥 ${inv.persons||0}</span><span class="badge">${inv.payment||""}</span>${inv.payment==="Card"?`<span class="badge ${!inv.cardPaid?"warnbadge":""}">${inv.cardPaid?"✅ Paguar":"⏳ Papaguar"}</span>`:""}<span class="badge">🎁 ${money(inv.tip||0)}</span></div>${(inv.lines||[]).map(x=>`<div class="invoice-line"><span>${x.name} × ${x.qty}</span><b>${money(x.subtotal)}</b></div>`).join("")}<div class="meta">Marrë: ${money(inv.received||inv.total)} · Bakshish: ${money(inv.tip||0)}</div><div class="actions"><button class="invoice" onclick="shareInvoice(${inv.id})">WhatsApp</button><button class="delete" onclick="deleteInvoice(${inv.id})">Fshij</button></div>`;$("historyBox").appendChild(c)});
+}
+function shareInvoice(id){const inv=history.find(x=>x.id===id);if(!inv)return;let x=`Taste Home\n${inv.date}\n${inv.position||""}${inv.name?" — "+inv.name:""}\nPersona: ${inv.persons||0}\n`;(inv.lines||[]).forEach(a=>x+=`${a.name}: ${a.qty} × ${money(a.price)} = ${money(a.subtotal)}\n`);x+=`TOTALI: ${money(inv.total)}\nBakshish: ${money(inv.tip||0)}`;shareText(x)}
+function deleteInvoice(id){if(confirm("Ta fshij faturën?")){history=history.filter(x=>x.id!==id);save();drawHistory()}}
+function clearHistoryForDate(){const d=$("historyDate").value;if(confirm("T'i fshij të gjitha faturat e "+d+"?")){history=history.filter(x=>x.date!==d);save();drawHistory()}}
+function shareDaily(){const day=filtered(),grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0);shareText(`Taste Home — ${$("historyDate").value}\nFatura: ${day.length}\nXhiro: ${money(grand)}\nBakshish: ${money(tips)}\nTotali marrë: ${money(grand+tips)}`)}
+
+function openCardList(){const rows=liveRows("Card"),paid=rows.filter(x=>x.paid),unpaid=rows.filter(x=>!x.paid);$("cardModalBody").innerHTML=`<div class="card"><div class="section-title"><h3>✅ PAGUARA</h3><b>${money(paid.reduce((s,x)=>s+x.total,0))}</b></div>${paid.length?paid.map(x=>payRow(x,false)).join(""):'<div class="meta">Asnjë.</div>'}</div><div class="card"><div class="section-title"><h3>⏳ PAPAGUARA</h3><b>${money(unpaid.reduce((s,x)=>s+x.total,0))}</b></div>${unpaid.length?unpaid.map(x=>payRow(x,true)).join(""):'<div class="meta">Asnjë.</div>'}</div>`;$("cardModal").classList.remove("hidden")}
+function openCashList(){const rows=liveRows("Cash");$("cashModalBody").innerHTML=`<div class="card"><div class="section-title"><h3>Cash sot</h3><b>${money(rows.reduce((s,x)=>s+x.total,0))}</b></div>${rows.length?rows.map(x=>payRow(x,false)).join(""):'<div class="meta">Asnjë.</div>'}</div>`;$("cashModal").classList.remove("hidden")}
+function payRow(x,canPay){return `<div class="payrow"><div><div class="who">${x.name}</div><div class="meta">${x.position} · ${money(x.total)}${x.tip?` · 🎁 ${money(x.tip)}`:""}</div></div>${canPay?`<button onclick="markPaid('${x.type}',${x.id})">✓ Paguar</button>`:""}</div>`}
+function markPaid(type,id){if(type==="active"){db[id].cardPaid=true;db[id].updated=stamp()}else{const x=history.find(a=>a.id===id);if(x)x.cardPaid=true}save();drawLive();openCardList();if(!$("historyView").classList.contains("hidden"))drawHistory()}
+function closeModal(id){$(id).classList.add("hidden")}function modalBg(e,id){if(e.target.id===id)closeModal(id)}
+
+
+
+const SOURCE_MONTHLY_2026=[
+ {month:"Maj",total:130,jotform:32,gyg:0,outdoor:0,zbulo:null,walkin:null,diff:0,other:98,note:"Për Majin kemi totalin mujor, jo totalet ditore; prandaj 98 mbeten Të tjera pa i ndarë Zbulo/Pa prenotim."},
+ {month:"Qershor",total:297,jotform:103,gyg:12,outdoor:63,zbulo:112,walkin:11,diff:-4},
+ {month:"Korrik",total:349,jotform:150,gyg:25,outdoor:36,zbulo:135,walkin:20,diff:-17},
+ {month:"Gusht",total:479,jotform:299,gyg:17,outdoor:36,zbulo:105,walkin:28,diff:-6,note:"Gusht: deri më 30/08; 31/08 nuk është futur sepse totali real i ditës nuk ishte mbyllur."}
+];
+
+function sourceRow(d){
+ const x=sourceDaily[d]||{};
+ return {
+   jotform:Math.max(0,Number(x.jotform)||0),
+   gyg:Math.max(0,Number(x.gyg)||0),
+   outdoor:Math.max(0,Number(x.outdoor)||0)
+ };
+}
+function sourceDayPeopleFromHistory(d){
+ return history.filter(x=>x.date===d).reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
+}
+function sourceCalcForDate(d){
+ const s=sourceRow(d), total=sourceDayPeopleFromHistory(d);
+ const known=s.jotform+s.gyg+s.outdoor;
+ const rem=total-known;
+ if(rem<0) return {...s,total,known,zbulo:0,walkin:0,diff:rem};
+ return {...s,total,known,zbulo:Math.min(12,rem),walkin:Math.max(0,rem-12),diff:0};
+}
+function drawSourceStats(arr){
+ const body=$("sourceStatsBody");
+ if(!body)return;
+
+ // Ky raport është historiku i analizuar Maj–Gusht 2026 dhe nuk varet
+ // nga faturat që janë mbyllur në browser.
+ let html="";
+ let grandPeople=0,grandJF=0,grandGYG=0,grandOut=0,grandZ=0,grandWalk=0,grandDiff=0;
+
+ SOURCE_MONTHLY_2026.forEach(m=>{
+   const jfMoney=m.jotform*25, gygMoney=m.gyg*25, outMoney=m.outdoor*15;
+   const knownMoney=jfMoney+gygMoney+outMoney;
+   grandPeople+=m.total; grandJF+=m.jotform; grandGYG+=m.gyg; grandOut+=m.outdoor;
+   grandZ+=Number(m.zbulo||0); grandWalk+=Number(m.walkin||0); grandDiff+=Number(m.diff||0);
+
+   html+=`<div class="month-source">
+     <div class="month-source-head"><h4>${m.month} 2026</h4><div class="month-source-total">👥 ${m.total}</div></div>
+     <div class="month-source-grid">
+       <div class="month-source-cell"><span>Jotform</span><b>${m.jotform} veta</b><small>${money(jfMoney)}</small></div>
+       <div class="month-source-cell"><span>GYG</span><b>${m.gyg} veta</b><small>${money(gygMoney)}</small></div>
+       <div class="month-source-cell"><span>Outdoor / Grup</span><b>${m.outdoor} veta</b><small>${money(outMoney)}</small></div>
+       ${m.zbulo==null
+         ? `<div class="month-source-cell"><span>Të tjera</span><b>${m.other} veta</b><small>pa ndarje ditore</small></div>`
+         : `<div class="month-source-cell"><span>Zbulo</span><b>${m.zbulo} veta</b><small>max 12/ditë</small></div>
+            <div class="month-source-cell"><span>Pa prenotim</span><b>${m.walkin} veta</b><small>mbi 12/ditë</small></div>
+            <div class="month-source-cell"><span>Diferenca +/-</span><b>${m.diff>0?"+":""}${m.diff}</b><small>vetëm nr.</small></div>`}
+     </div>
+     <div class="month-source-money">Vlera Jotform + GYG + Outdoor: ${money(knownMoney)}</div>
+     ${m.note?`<div class="month-source-foot">${m.note}</div>`:""}
+   </div>`;
+ });
+
+ const grandKnown=grandJF*25+grandGYG*25+grandOut*15;
+ body.innerHTML=`
+   <div class="source-stat-grid" style="margin-bottom:10px">
+     <div class="source-stat"><span>TOTAL MAJ–GUSHT</span><b>${grandPeople} veta</b></div>
+     <div class="source-stat"><span>VLERA E IDENTIFIKUAR</span><b>${money(grandKnown)}</b></div>
+   </div>
+   ${html}`;
+}
+
+function setStatsMode(m){statsMode=m;$("statsYearBtn").classList.toggle("selected",m==="year");$("statsMonthBtn").classList.toggle("selected",m==="month");$("statsWeekBtn").classList.toggle("selected",m==="week");$("statsYearBox").classList.toggle("hidden",m!=="year");$("statsMonthBox").classList.toggle("hidden",m!=="month");$("statsWeekBox").classList.toggle("hidden",m!=="week");drawStats()}
+function fillStatsControls(){
+ const ys=[...new Set(history.map(x=>(x.date||"").slice(0,4)).filter(Boolean))].sort().reverse(),now=String(new Date().getFullYear());if(!ys.includes(now))ys.unshift(now);$("statsYear").innerHTML=ys.map(y=>`<option>${y}</option>`).join("");$("statsYear").value=now;
+ const td=new Date();$("statsMonth").value=td.toISOString().slice(0,7);const d=new Date(Date.UTC(td.getFullYear(),td.getMonth(),td.getDate())),dn=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()+4-dn);const y0=new Date(Date.UTC(d.getUTCFullYear(),0,1)),wn=Math.ceil((((d-y0)/86400000)+1)/7);$("statsWeek").value=`${d.getUTCFullYear()}-W${String(wn).padStart(2,"0")}`;
+}
+function weekRange(v){if(!v)return null;const [y,w]=v.split("-W").map(Number),j=new Date(y,0,4),jd=j.getDay()||7,mon=new Date(y,0,4-(jd-1)+(w-1)*7);mon.setHours(0,0,0,0);const sun=new Date(mon);sun.setDate(mon.getDate()+6);sun.setHours(23,59,59,999);return[mon,sun]}
+function statsFiltered(){if(statsMode==="month"){const m=$("statsMonth").value;return history.filter(x=>(x.date||"").startsWith(m))}if(statsMode==="week"){const r=weekRange($("statsWeek").value);if(!r)return[];return history.filter(x=>{const d=new Date((x.date||"")+"T12:00:00");return d>=r[0]&&d<=r[1]})}return history.filter(x=>(x.date||"").startsWith($("statsYear").value))}
+function chart(el,vals,kind,labels,tip=false){const max=Math.max(...vals,1);$(el).innerHTML=vals.map((v,i)=>`<div class="barwrap"><div class="barval">${kind==="money"?"€"+Math.round(v):v}</div><div class="bar ${tip?"tipbar":""}" style="height:${Math.max(2,(v/max)*140)}px"></div><div>${labels[i]||""}</div></div>`).join("")}
+function drawStats(){
+ const arr=statsFiltered(),persons=arr.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0),revenue=arr.reduce((s,x)=>s+(Number(x.total)||0),0),tips=arr.reduce((s,x)=>s+(Number(x.tip)||0),0),cash=arr.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),card=arr.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),paid=arr.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),unpaid=arr.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
+ $("statsPeriodLabel").textContent=`${arr.length} fatura`;
+ if($("tipsPeriodTotal")){
+   $("tipsPeriodTotal").textContent=money(tips);
+   const label=statsMode==="week"?"Bakshishe javore":statsMode==="month"?"Bakshishe mujore":"Bakshishe vjetore";
+   $("tipsPeriodText").textContent=label;
+   $("tipsPeriodAverage").textContent=`Mesatarja për faturë: ${arr.length?money(tips/arr.length):money(0)}`;
+ }
+ const cards=[["👥 Persona",persons],["🍽️ Normale",qtyHistory(arr,ITEMS[0])],["🥬 Vegjet",qtyHistory(arr,ITEMS[1])],["🧒 Kids",qtyHistory(arr,ITEMS[2])],["👥 Grup",qtyHistory(arr,ITEMS[3])],["🍺 Birrë",qtyHistory(arr,ITEMS[4])],["🍷 Verë kuqe",qtyHistory(arr,ITEMS[5])],["🥂 Verë bardhë",qtyHistory(arr,ITEMS[6])],["🍇 Grape Juice",qtyHistory(arr,ITEMS[7])],["💰 Xhiro",money(revenue)],["🎁 Bakshishe",money(tips)],["💶 Totali marrë",money(revenue+tips)],["💵 Cash",money(cash)],["💳 Card",money(card)],["✅ Card paguar",money(paid)],["⏳ Card papaguar",money(unpaid)],["Bakshish %",revenue?((tips/revenue)*100).toFixed(1)+"%":"0%"],["Mes./person",persons?money(revenue/persons):money(0)]];
+ $("statsCards").innerHTML=cards.map(a=>`<div class="stat"><span>${a[0]}</span><b>${a[1]}</b></div>`).join("");
+ let pv=[],rv=[],tv=[],labels=[];
+ if(statsMode==="year"){pv=Array(12).fill(0);rv=Array(12).fill(0);tv=Array(12).fill(0);labels=["J","S","M","P","M","Q","K","G","S","T","N","D"];arr.forEach(x=>{const m=Number((x.date||"").slice(5,7))-1;if(m>=0){pv[m]+=Number(x.persons)||inferPeople(x);rv[m]+=Number(x.total)||0;tv[m]+=Number(x.tip)||0}})}
+ else if(statsMode==="month"){const [y,m]=($("statsMonth").value||"0-0").split("-").map(Number),days=new Date(y,m,0).getDate();pv=Array(days).fill(0);rv=Array(days).fill(0);tv=Array(days).fill(0);labels=Array.from({length:days},(_,i)=>String(i+1));arr.forEach(x=>{const d=Number((x.date||"").slice(8,10))-1;if(d>=0){pv[d]+=Number(x.persons)||inferPeople(x);rv[d]+=Number(x.total)||0;tv[d]+=Number(x.tip)||0}})}
+ else{pv=Array(7).fill(0);rv=Array(7).fill(0);tv=Array(7).fill(0);labels=["H","M","M","E","P","S","D"];const r=weekRange($("statsWeek").value);if(r)arr.forEach(x=>{const d=new Date((x.date||"")+"T12:00:00"),idx=Math.floor((d-r[0])/86400000);if(idx>=0&&idx<7){pv[idx]+=Number(x.persons)||inferPeople(x);rv[idx]+=Number(x.total)||0;tv[idx]+=Number(x.tip)||0}})}
+ drawSourceStats(arr);
+ chart("peopleChart",pv,"num",labels);chart("revenueChart",rv,"money",labels);chart("tipsChart",tv,"money",labels,true);
+}
+function startFirebaseSync(){
+ if(firebaseSyncStarted||!firebaseReady||!fbdb)return;
+ firebaseSyncStarted=true;
+ fbdb.ref("kitchenOrders").on("value",snap=>{
+   kitchenOrders=snap.val()||{};
+   if(!$("tablesView").classList.contains("hidden"))drawTables();
+ },err=>{
+   console.error("Firebase kitchenOrders:",err);
+   firebaseReady=false;
+ });
+}
+
+save();drawTables();
+</script>
+</body>
+</html>

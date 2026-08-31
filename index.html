@@ -63,6 +63,22 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 @media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:20px;background:#fff}}
 
 .reqbtn.selected{outline:3px solid var(--green);background:#eaf7ef}
+
+.sourcegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.sourcegrid input{font-size:18px;font-weight:950;text-align:center}
+.source-results{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+.source-result{background:#f4eee8;border-radius:11px;padding:9px;text-align:center}
+.source-result span{display:block;font-size:11px;color:var(--muted);font-weight:800}
+.source-result b{display:block;font-size:20px;margin-top:2px}
+.source-result.diff.bad{background:#fff0ef;color:var(--red)}
+.source-result.diff.good{background:#edf8f2;color:var(--green)}
+.source-money{margin-top:9px;background:#f8f5f1;border:1px solid var(--line);border-radius:11px;padding:9px;font-size:12px;line-height:1.7}
+.source-money b{color:var(--green)}
+.source-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px}
+.source-stat{background:#f4eee8;border-radius:11px;padding:9px}
+.source-stat span{font-size:11px;color:var(--muted)}
+.source-stat b{display:block;font-size:18px;margin-top:2px}
+@media(max-width:430px){.sourcegrid{grid-template-columns:1fr}.source-results{grid-template-columns:1fr 1fr}.source-results .diff{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -142,6 +158,32 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
   <div class="card"><label>Data</label><div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px"><button class="back" onclick="shiftHistoryDate(-1)">‹</button><input id="historyDate" type="date" onchange="drawHistory()"><button class="back" onclick="shiftHistoryDate(1)">›</button></div></div>
   <div id="dailyTotal" class="card"></div>
 
+  <div id="sourceBreakdownCard" class="card">
+    <div class="section-title">
+      <div>
+        <h3>📌 Ndarja e personave</h3>
+        <div class="meta">Ruhet veçmas — nuk ndryshon faturat apo historikun.</div>
+      </div>
+      <span id="sourceStatus" class="badge"></span>
+    </div>
+
+    <div class="meta" style="margin-bottom:7px">Totali i personave në historik: <b id="sourceTotalPeople" style="color:var(--text)">0</b></div>
+
+    <div class="sourcegrid">
+      <div><label>Jotform · 25€/person</label><input id="sourceJotform" type="number" min="0" step="1" inputmode="numeric" onchange="saveSourceField('jotform',this.value)"></div>
+      <div><label>GetYourGuide · 25€/person</label><input id="sourceGYG" type="number" min="0" step="1" inputmode="numeric" onchange="saveSourceField('gyg',this.value)"></div>
+      <div><label>Outdoor / Grup · 15€/person</label><input id="sourceOutdoor" type="number" min="0" step="1" inputmode="numeric" onchange="saveSourceField('outdoor',this.value)"></div>
+    </div>
+
+    <div class="source-results">
+      <div class="source-result"><span>ZBULO · max 12</span><b id="sourceZbulo">0</b></div>
+      <div class="source-result"><span>PA PRENOTIM</span><b id="sourceWalkin">0</b></div>
+      <div id="sourceDiffBox" class="source-result diff good"><span>DIFERENCA +/-</span><b id="sourceDiff">0</b></div>
+    </div>
+
+    <div id="sourceMoney" class="source-money"></div>
+  </div>
+
   <div class="card">
     <div class="history-jona">
       <div>
@@ -171,6 +213,7 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
     <div id="statsPeriodLabel" class="meta" style="margin-top:8px"></div>
   </div>
   <div id="statsCards" class="statsgrid"></div>
+  <div id="sourceStatsCard" class="card"></div>
   <div class="card"><h3>Persona</h3><div id="peopleChart" class="chart"></div></div>
   <div class="card"><h3>Xhiro</h3><div id="revenueChart" class="chart"></div></div>
   <div class="card"><h3>Bakshishe</h3><div id="tipsChart" class="chart"></div></div>
@@ -233,10 +276,17 @@ const MAX_TABLES=13;
 /* Ruajmë historikun e versionit v9. Nëse v9 s'ka të dhëna, lexojmë edhe v11 si fallback. */
 const DB_KEY="taste_home_tables_v9",HIST_KEY="taste_home_history_v9",DATE_KEY="taste_home_workdate_v9",COUNT_KEY="taste_home_tablecount_v9";
 const JONA_KEY="taste_home_jona_daily_v1";
+const SOURCE_KEY="taste_home_source_breakdown_v1";
+const SOURCE_SEED_2026={"2026-05-01":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-09":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-11":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-16":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-17":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-20":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-23":{"jotform":3,"gyg":0,"outdoor":0},"2026-05-24":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-27":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-28":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-31":{"jotform":5,"gyg":0,"outdoor":0},"2026-06-01":{"jotform":21,"gyg":0,"outdoor":0},"2026-06-03":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-04":{"jotform":11,"gyg":0,"outdoor":0},"2026-06-05":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-06":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-07":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-08":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-09":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-12":{"jotform":5,"gyg":0,"outdoor":0},"2026-06-13":{"jotform":6,"gyg":0,"outdoor":18},"2026-06-15":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-16":{"jotform":8,"gyg":0,"outdoor":0},"2026-06-17":{"jotform":0,"gyg":0,"outdoor":9},"2026-06-19":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-20":{"jotform":4,"gyg":2,"outdoor":18},"2026-06-21":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-22":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-23":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-24":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-25":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-26":{"jotform":1,"gyg":0,"outdoor":0},"2026-06-27":{"jotform":2,"gyg":0,"outdoor":18},"2026-06-28":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-29":{"jotform":12,"gyg":2,"outdoor":0},"2026-06-30":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-01":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-02":{"jotform":4,"gyg":2,"outdoor":0},"2026-07-03":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-04":{"jotform":2,"gyg":2,"outdoor":0},"2026-07-06":{"jotform":5,"gyg":0,"outdoor":0},"2026-07-07":{"jotform":15,"gyg":0,"outdoor":0},"2026-07-08":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-10":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-11":{"jotform":5,"gyg":3,"outdoor":18},"2026-07-12":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-13":{"jotform":0,"gyg":2,"outdoor":0},"2026-07-14":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-15":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-17":{"jotform":3,"gyg":0,"outdoor":0},"2026-07-18":{"jotform":5,"gyg":2,"outdoor":0},"2026-07-19":{"jotform":12,"gyg":0,"outdoor":0},"2026-07-20":{"jotform":4,"gyg":3,"outdoor":0},"2026-07-21":{"jotform":4,"gyg":2,"outdoor":0},"2026-07-22":{"jotform":3,"gyg":2,"outdoor":0},"2026-07-23":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-24":{"jotform":2,"gyg":3,"outdoor":0},"2026-07-25":{"jotform":0,"gyg":0,"outdoor":18},"2026-07-26":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-27":{"jotform":2,"gyg":1,"outdoor":0},"2026-07-28":{"jotform":8,"gyg":0,"outdoor":0},"2026-07-29":{"jotform":13,"gyg":3,"outdoor":0},"2026-07-30":{"jotform":8,"gyg":0,"outdoor":0},"2026-07-31":{"jotform":11,"gyg":0,"outdoor":0},"2026-08-01":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-02":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-03":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-04":{"jotform":17,"gyg":0,"outdoor":0},"2026-08-05":{"jotform":3,"gyg":6,"outdoor":0},"2026-08-06":{"jotform":1,"gyg":0,"outdoor":0},"2026-08-07":{"jotform":2,"gyg":3,"outdoor":0},"2026-08-08":{"jotform":4,"gyg":0,"outdoor":18},"2026-08-09":{"jotform":10,"gyg":3,"outdoor":0},"2026-08-10":{"jotform":3,"gyg":0,"outdoor":0},"2026-08-11":{"jotform":8,"gyg":0,"outdoor":0},"2026-08-12":{"jotform":7,"gyg":0,"outdoor":0},"2026-08-13":{"jotform":23,"gyg":0,"outdoor":0},"2026-08-14":{"jotform":4,"gyg":0,"outdoor":0},"2026-08-15":{"jotform":14,"gyg":0,"outdoor":0},"2026-08-16":{"jotform":9,"gyg":2,"outdoor":0},"2026-08-17":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-18":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-19":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-20":{"jotform":27,"gyg":0,"outdoor":0},"2026-08-21":{"jotform":13,"gyg":0,"outdoor":0},"2026-08-22":{"jotform":9,"gyg":2,"outdoor":18},"2026-08-23":{"jotform":2,"gyg":0,"outdoor":0},"2026-08-24":{"jotform":5,"gyg":0,"outdoor":0},"2026-08-25":{"jotform":8,"gyg":0,"outdoor":0},"2026-08-27":{"jotform":41,"gyg":0,"outdoor":0},"2026-08-28":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-29":{"jotform":19,"gyg":1,"outdoor":0},"2026-08-30":{"jotform":4,"gyg":0,"outdoor":0},"2026-08-31":{"jotform":10,"gyg":2,"outdoor":0}};
 const oldDB9=localStorage.getItem(DB_KEY), oldHist9=localStorage.getItem(HIST_KEY);
 let db=JSON.parse(oldDB9||localStorage.getItem("taste_home_tables_v11")||"{}");
 let history=JSON.parse(oldHist9||localStorage.getItem("taste_home_history_v11")||"[]");
 let jonaDaily=JSON.parse(localStorage.getItem(JONA_KEY)||"{}");
+let sourceDaily=JSON.parse(localStorage.getItem(SOURCE_KEY)||"{}");
+/* Mbushim vetëm datat që mungojnë. Çdo ndryshim që ke bërë ti ruhet. */
+Object.entries(SOURCE_SEED_2026).forEach(([d,v])=>{
+ if(!sourceDaily[d]) sourceDaily[d]={...v};
+});
 let tableCount=Math.max(10,Math.min(13,Number(localStorage.getItem(COUNT_KEY)||10))),current=1,statsMode="year";
 const $=id=>document.getElementById(id);
 
@@ -265,6 +315,7 @@ function save(){
  localStorage.setItem(DB_KEY,JSON.stringify(db));
  localStorage.setItem(HIST_KEY,JSON.stringify(history));
  localStorage.setItem(JONA_KEY,JSON.stringify(jonaDaily));
+ localStorage.setItem(SOURCE_KEY,JSON.stringify(sourceDaily));
  localStorage.setItem(COUNT_KEY,String(tableCount));
 }
 function money(v){return "€"+Number(v||0).toFixed(2)} function stamp(){return new Date().toLocaleString("sq-AL")}
@@ -540,7 +591,8 @@ function printDaily(){
  paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
  unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
  jona=jonaForDate(d),
- persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
+ persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0),
+ src=sourceCalc(d);
 
  $("printArea").innerHTML=`
    <div style="font-family:Arial;max-width:520px;margin:auto;color:#111">
@@ -553,11 +605,88 @@ function printDaily(){
      <div style="margin:5px 0">Card papaguar: <b>${money(unpaid)}</b></div>
      <div style="margin:5px 0">Bakshishe: <b>${money(tips)}</b></div>
      <div style="margin:5px 0">Persona: <b>${persons}</b></div>
+     <div style="margin-top:10px;padding:8px;border:1px solid #ddd">
+       <b>Ndarja:</b> Jotform ${src.jotform} · GYG ${src.gyg} · Outdoor ${src.outdoor} · Zbulo ${src.zbulo} · Pa prenotim ${src.walkin} · Diferenca ${src.diff}
+     </div>
      <hr style="margin:14px 0">
      <div style="font-size:22px"><b>JONA: ${money(jona)}</b></div>
      <div style="margin-top:14px;font-size:12px;color:#555">Fatura të mbyllura: ${day.length}</div>
    </div>`;
  window.print();
+}
+
+
+function sourceDayPeople(d){
+ return history.filter(x=>x.date===d).reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
+}
+function sourceRow(d){
+ const x=sourceDaily[d]||{};
+ return {
+   jotform:Math.max(0,Number(x.jotform)||0),
+   gyg:Math.max(0,Number(x.gyg)||0),
+   outdoor:Math.max(0,Number(x.outdoor)||0)
+ };
+}
+function sourceCalc(d){
+ const total=sourceDayPeople(d),s=sourceRow(d);
+ const known=s.jotform+s.gyg+s.outdoor;
+ const remainder=total-known;
+ if(remainder<0){
+   return {...s,total,known,remainder,zbulo:0,walkin:0,diff:remainder};
+ }
+ return {...s,total,known,remainder,zbulo:Math.min(12,remainder),walkin:Math.max(0,remainder-12),diff:0};
+}
+function saveSourceField(k,v){
+ const d=$("historyDate").value;
+ if(!d)return;
+ if(!sourceDaily[d])sourceDaily[d]={jotform:0,gyg:0,outdoor:0};
+ sourceDaily[d][k]=Math.max(0,Math.round(Number(v)||0));
+ save();
+ drawSourceBreakdown();
+}
+function drawSourceBreakdown(){
+ if(!$("sourceBreakdownCard"))return;
+ const d=$("historyDate").value,c=sourceCalc(d);
+ $("sourceTotalPeople").textContent=c.total;
+ if(document.activeElement!==$("sourceJotform"))$("sourceJotform").value=c.jotform;
+ if(document.activeElement!==$("sourceGYG"))$("sourceGYG").value=c.gyg;
+ if(document.activeElement!==$("sourceOutdoor"))$("sourceOutdoor").value=c.outdoor;
+ $("sourceZbulo").textContent=c.zbulo;
+ $("sourceWalkin").textContent=c.walkin;
+ $("sourceDiff").textContent=c.diff>0?"+"+c.diff:String(c.diff);
+ const bad=c.diff!==0;
+ $("sourceDiffBox").className="source-result diff "+(bad?"bad":"good");
+ $("sourceStatus").className="badge "+(bad?"warnbadge":"");
+ $("sourceStatus").textContent=bad?"⚠️ KONTROLL":"✅ OK";
+ const jfVal=c.jotform*25,gygVal=c.gyg*25,outVal=c.outdoor*15;
+ $("sourceMoney").innerHTML=
+   `Jotform: <b>${c.jotform} veta · ${money(jfVal)}</b><br>`+
+   `GYG: <b>${c.gyg} veta · ${money(gygVal)}</b><br>`+
+   `Outdoor/Grup: <b>${c.outdoor} veta · ${money(outVal)}</b><br>`+
+   `<span class="meta">Zbulo, Pa prenotim dhe Diferenca nuk marrin vlerë € këtu.</span>`;
+}
+function sourceDatesForStats(arr){
+ return [...new Set(arr.map(x=>x.date).filter(Boolean))];
+}
+function drawSourceStats(arr){
+ const box=$("sourceStatsCard"); if(!box)return;
+ const dates=sourceDatesForStats(arr);
+ let jf=0,gyg=0,out=0,zb=0,walk=0,diff=0;
+ dates.forEach(d=>{
+   const c=sourceCalc(d);
+   jf+=c.jotform; gyg+=c.gyg; out+=c.outdoor; zb+=c.zbulo; walk+=c.walkin; diff+=c.diff;
+ });
+ const val=jf*25+gyg*25+out*15;
+ box.innerHTML=`<div class="section-title"><div><h3>📌 Burimi i personave</h3><div class="meta">${dates.length} ditë me histori në periudhë</div></div></div>
+ <div class="source-stat-grid">
+   <div class="source-stat"><span>JOTFORM</span><b>${jf} · ${money(jf*25)}</b></div>
+   <div class="source-stat"><span>GETYOURGUIDE</span><b>${gyg} · ${money(gyg*25)}</b></div>
+   <div class="source-stat"><span>OUTDOOR / GRUP</span><b>${out} · ${money(out*15)}</b></div>
+   <div class="source-stat"><span>VLERË E IDENTIFIKUAR</span><b>${money(val)}</b></div>
+   <div class="source-stat"><span>ZBULO · max 12/ditë</span><b>${zb}</b></div>
+   <div class="source-stat"><span>PA PRENOTIM</span><b>${walk}</b></div>
+ </div>
+ <div class="meta" style="margin-top:8px">Diferenca +/-: <b style="color:${diff?"var(--red)":"var(--green)"}">${diff>0?"+":""}${diff}</b> persona · pa vlerë €.</div>`;
 }
 
 function filtered(){return history.filter(x=>x.date===$("historyDate").value)}
@@ -566,6 +695,7 @@ function qtyHistory(arr,i){return arr.reduce((s,inv)=>s+(inv.lines||[]).filter(x
 function drawHistory(){
  const day=filtered();
  drawHistorySummaryOnly();
+ drawSourceBreakdown();
  $("historyBox").innerHTML=day.length?"":'<div class="card empty">Nuk ka fatura për këtë datë.</div>';
  day.forEach(inv=>{const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="section-title"><div><h3>${inv.name||"Pa emër"}</h3><div class="meta">${inv.position||""}</div></div><b>${money(inv.total)}</b></div><div class="meta">${inv.closedAt}</div><div><span class="badge">👥 ${inv.persons||0}</span><span class="badge">${inv.payment||""}</span>${inv.payment==="Card"?`<span class="badge ${!inv.cardPaid?"warnbadge":""}">${inv.cardPaid?"✅ Paguar":"⏳ Papaguar"}</span>`:""}<span class="badge">🎁 ${money(inv.tip||0)}</span></div>${(inv.lines||[]).map(x=>`<div class="invoice-line"><span>${x.name} × ${x.qty}</span><b>${money(x.subtotal)}</b></div>`).join("")}<div class="meta">Marrë: ${money(inv.received||inv.total)} · Bakshish: ${money(inv.tip||0)}</div><div class="actions"><button class="invoice" onclick="shareInvoice(${inv.id})">WhatsApp</button><button class="delete" onclick="deleteInvoice(${inv.id})">Fshij</button></div>`;$("historyBox").appendChild(c)});
 }
@@ -597,6 +727,7 @@ function drawStats(){
  if(statsMode==="year"){pv=Array(12).fill(0);rv=Array(12).fill(0);tv=Array(12).fill(0);labels=["J","S","M","P","M","Q","K","G","S","T","N","D"];arr.forEach(x=>{const m=Number((x.date||"").slice(5,7))-1;if(m>=0){pv[m]+=Number(x.persons)||inferPeople(x);rv[m]+=Number(x.total)||0;tv[m]+=Number(x.tip)||0}})}
  else if(statsMode==="month"){const [y,m]=($("statsMonth").value||"0-0").split("-").map(Number),days=new Date(y,m,0).getDate();pv=Array(days).fill(0);rv=Array(days).fill(0);tv=Array(days).fill(0);labels=Array.from({length:days},(_,i)=>String(i+1));arr.forEach(x=>{const d=Number((x.date||"").slice(8,10))-1;if(d>=0){pv[d]+=Number(x.persons)||inferPeople(x);rv[d]+=Number(x.total)||0;tv[d]+=Number(x.tip)||0}})}
  else{pv=Array(7).fill(0);rv=Array(7).fill(0);tv=Array(7).fill(0);labels=["H","M","M","E","P","S","D"];const r=weekRange($("statsWeek").value);if(r)arr.forEach(x=>{const d=new Date((x.date||"")+"T12:00:00"),idx=Math.floor((d-r[0])/86400000);if(idx>=0&&idx<7){pv[idx]+=Number(x.persons)||inferPeople(x);rv[idx]+=Number(x.total)||0;tv[idx]+=Number(x.tip)||0}})}
+ drawSourceStats(arr);
  chart("peopleChart",pv,"num",labels);chart("revenueChart",rv,"money",labels);chart("tipsChart",tv,"money",labels,true);
 }
 function startFirebaseSync(){

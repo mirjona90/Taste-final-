@@ -643,7 +643,15 @@ function sendKitchenUpdate(){
 }
 function invoiceText(t){const b=db[t];let x=`Taste Home\nData: ${b.workDate||isoDate()}\n${b.position}${b.name?" — "+b.name:""}\nPersona: ${people(t)}\nPagesa: ${b.payment}`;if(b.payment==="Card")x+=` — ${b.cardPaid?"PAGUAR":"PA PAGUAR"}`;x+="\n";linesForTable(t).forEach(a=>x+=`${a.name}: ${a.qty} × ${money(a.price)} = ${money(a.subtotal)}\n`);x+=`----------------\nTOTALI: ${money(total(t))}`;if(db[t].received!=="")x+=`\nShuma e marrë: ${money(db[t].received)}\nBakshishi: ${money(tipForTable(t))}`;return x}
 function shareCurrent(){if(total(current)<=0)return alert("Tavolina është bosh.");shareText(invoiceText(current))}
-function printCurrent(){if(total(current)<=0)return alert("Tavolina është bosh.");$("printArea").innerHTML=`<div style="font-family:Arial;max-width:420px;margin:auto"><h2>Taste Home</h2>${invoiceText(current).replace(/\n/g,"<br>")}</div>`;window.print()}
+function printCurrent(){
+ if(total(current)<=0)return alert("Tavolina është bosh.");
+ $("printArea").innerHTML=`
+ <div style="font-family:Arial;max-width:720px;margin:auto;color:#111;font-size:24px;line-height:1.55">
+   <h1 style="font-size:38px;margin:0 0 18px">Taste Home</h1>
+   <div>${invoiceText(current).replace(/\n/g,"<br>")}</div>
+ </div>`;
+ window.print();
+}
 function closeCurrent(){
  if(total(current)<=0)return alert("Tavolina është bosh.");
  if(db[current].payment==="Card"&&!db[current].cardPaid&&!confirm("Card është PAPAGUAR. Ta mbyll tavolinën gjithsesi?"))return;
@@ -730,9 +738,7 @@ function closePrepModal(){$("prepModal").classList.add("hidden")}
 
 function drawService(){
  drawPrepSummary();
- $("serviceList").innerHTML="";let n=0;
- for(let t=1;t<=tableCount;t++){if(!(total(t)>0||people(t)>0||hasRequests(t)||pendingCount(t)))continue;n++;const c=document.createElement("div"),pend=pendingCount(t);c.className="card service-card "+(pend?"waiting":"");c.innerHTML=`<div class="section-title"><div><h3>${db[t].name||"Pa emër"}</h3><div class="meta">${db[t].position}</div></div><span class="badge">👥 ${people(t)}</span></div><div><b>PËRGATIT ${people(t)} ${STAGES[db[t].stage].msg}</b></div>${pend?`<div style="margin-top:6px"><span class="badge warnbadge">🔴 ${pend} pije për t'u çuar</span></div>`:""}${db[t].notes?`<div class="meta" style="margin-top:5px">📝 ${db[t].notes}</div>`:""}<button class="back" style="margin-top:8px;width:100%" onclick="openTable(${t})">Hap tavolinën</button>`;$("serviceList").appendChild(c)}
- if(!n)$("serviceList").innerHTML='<div class="card empty">Nuk ka tavolina aktive.</div>';
+ $("serviceList").innerHTML="";
 }
 
 function jonaForDate(d){
@@ -774,19 +780,19 @@ function printDaily(){
  persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
 
  $("printArea").innerHTML=`
-   <div style="font-family:Arial;max-width:520px;margin:auto;color:#111">
-     <h2 style="margin-bottom:4px">Taste Home — Xhiro Ditore</h2>
-     <div style="margin-bottom:14px">Data: <b>${d}</b></div>
-     <div style="font-size:18px;margin:7px 0">Xhiro: <b>${money(grand)}</b></div>
-     <div style="margin:5px 0">Cash: <b>${money(cash)}</b></div>
-     <div style="margin:5px 0">Card: <b>${money(card)}</b></div>
-     <div style="margin:5px 0">Card paguar: <b>${money(paid)}</b></div>
-     <div style="margin:5px 0">Card papaguar: <b>${money(unpaid)}</b></div>
-     <div style="margin:5px 0">Bakshishe: <b>${money(tips)}</b></div>
-     <div style="margin:5px 0">Persona: <b>${persons}</b></div>
-     <hr style="margin:14px 0">
-     <div style="font-size:22px"><b>JONA: ${money(jona)}</b></div>
-     <div style="margin-top:14px;font-size:12px;color:#555">Fatura të mbyllura: ${day.length}</div>
+   <div style="font-family:Arial;max-width:760px;margin:auto;color:#111;font-size:25px;line-height:1.55">
+     <h1 style="font-size:40px;margin:0 0 8px">Taste Home — Xhiro Ditore</h1>
+     <div style="font-size:25px;margin-bottom:24px">Data: <b>${d}</b></div>
+     <div style="font-size:34px;margin:14px 0">Xhiro: <b>${money(grand)}</b></div>
+     <div style="margin:10px 0">Cash: <b>${money(cash)}</b></div>
+     <div style="margin:10px 0">Card: <b>${money(card)}</b></div>
+     <div style="margin:10px 0">Card paguar: <b>${money(paid)}</b></div>
+     <div style="margin:10px 0">Card papaguar: <b>${money(unpaid)}</b></div>
+     <div style="margin:10px 0">Bakshishe: <b>${money(tips)}</b></div>
+     <div style="margin:10px 0">Persona: <b>${persons}</b></div>
+     <hr style="margin:22px 0;border:0;border-top:2px solid #111">
+     <div style="font-size:36px"><b>JONA: ${money(jona)}</b></div>
+     <div style="margin-top:22px;font-size:20px;color:#444">Fatura të mbyllura: ${day.length}</div>
    </div>`;
  window.print();
 }

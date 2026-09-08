@@ -102,6 +102,51 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 .month-stat-card.diff.bad b{color:var(--red)}
 .month-note{background:#fff7e8;border-radius:12px;padding:9px 11px;margin-top:8px;font-size:11px;color:#6d5b48}
 
+
+/* === PËRGATIT TOTAL — Shërbimi === */
+.prep-title{margin:2px 0 9px;font-size:17px;font-weight:950;color:var(--brand)}
+.prep-sub{font-size:11px;color:var(--muted);margin-bottom:8px}
+.prep-section{margin-bottom:12px}
+.prep-label{font-size:12px;font-weight:900;color:var(--muted);margin:0 0 6px}
+.prep-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.prep-btn{border:0;border-radius:15px;background:#fff;box-shadow:0 2px 9px #00000012;padding:12px 9px;text-align:left;min-height:78px}
+.prep-btn:active{transform:scale(.985)}
+.prep-btn .prep-ico{font-size:22px}
+.prep-btn .prep-num{display:block;font-size:24px;font-weight:950;line-height:1;color:var(--green);margin-top:4px}
+.prep-btn .prep-name{display:block;font-size:12px;font-weight:900;margin-top:4px;color:var(--text)}
+.prep-btn.zero{opacity:.42}
+.prep-btn.waiting .prep-num{color:var(--orange)}
+.prep-divider{height:1px;background:#0000000d;margin:12px 0}
+.prep-modal{position:fixed;inset:0;background:#0008;z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.prep-modal.hidden{display:none}
+.prep-sheet{background:#f7f5ef;border-radius:22px 22px 14px 14px;width:min(620px,100%);max-height:78vh;overflow:auto;padding:14px}
+.prep-sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.prep-sheet-head h3{margin:0;font-size:19px}
+.prep-close{border:0;background:#fff;border-radius:12px;width:38px;height:38px;font-size:20px;font-weight:900}
+.prep-detail{background:#fff;border-radius:14px;padding:11px;margin:7px 0;box-shadow:0 2px 8px #0000000d}
+.prep-detail-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.prep-detail b{font-size:14px}
+.prep-detail .qty{font-size:20px;font-weight:950;color:var(--green);white-space:nowrap}
+.prep-break{font-size:12px;color:var(--text);margin-top:5px;line-height:1.45}
+
+
+/* === OWNER PRIVATE + CARD REGISTER === */
+.owner-lock-note{font-size:11px;color:var(--muted);margin-top:5px}
+.card-register-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+.card-register-stat{background:#fff;border-radius:12px;padding:9px;text-align:center;box-shadow:0 2px 8px #0000000d}
+.card-register-stat b{display:block;font-size:18px;color:var(--green)}
+.card-register-stat span{font-size:10px;color:var(--muted);font-weight:800}
+.card-register-open{width:100%;margin-top:9px}
+.card-ledger-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:#fff;border-radius:13px;padding:10px;margin:7px 0;box-shadow:0 2px 8px #0000000d}
+.card-ledger-main b{font-size:14px}
+.card-ledger-meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.card-ledger-check{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:900;white-space:nowrap}
+.card-ledger-check input{width:22px;height:22px;accent-color:var(--green)}
+.card-ledger-unpaid{outline:2px solid #e8b46b55}
+.card-ledger-filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:7px 0 10px}
+.card-ledger-filters button{padding:9px 6px;font-size:11px}
+.lock-chip{display:inline-block;background:#eee7de;color:var(--brand);padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900}
+
 </style>
 </head>
 <body>
@@ -175,11 +220,33 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
   </div>
 </section>
 
-<section id="serviceView" class="hidden"><div id="serviceList"></div></section>
+<section id="serviceView" class="hidden">
+  <div id="prepSummary"></div>
+  <div id="serviceList"></div>
+</section>
+
+<div id="prepModal" class="prep-modal hidden" onclick="if(event.target===this)closePrepModal()">
+  <div class="prep-sheet">
+    <div class="prep-sheet-head"><h3 id="prepModalTitle">Detajet</h3><button class="prep-close" onclick="closePrepModal()">×</button></div>
+    <div id="prepModalBody"></div>
+  </div>
+</div>
 
 <section id="historyView" class="hidden">
   <div class="card"><label>Data</label><div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px"><button class="back" onclick="shiftHistoryDate(-1)">‹</button><input id="historyDate" type="date" onchange="drawHistory()"><button class="back" onclick="shiftHistoryDate(1)">›</button></div></div>
   <div id="dailyTotal" class="card"></div>
+
+  <div class="card">
+    <div class="section-title">
+      <div>
+        <h3>💳 Regjistri i pagesave me Card</h3>
+        <div class="meta">Të gjitha pagesat · shëno me ✓ kur janë paguar</div>
+      </div>
+      <span class="lock-chip">🔒 Vetëm ti</span>
+    </div>
+    <div id="cardRegisterSummary" class="card-register-grid"></div>
+    <button class="invoice card-register-open" onclick="openAllCardLedger()">Shiko të gjitha pagesat Card</button>
+  </div>
 
   <div class="card">
     <div class="history-jona">
@@ -238,6 +305,18 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 </main>
 
 <div id="cardModal" class="modal hidden" onclick="modalBg(event,'cardModal')"><div class="modalbox"><div class="modalhead"><h3>💳 Card sot</h3><button class="modalclose" onclick="closeModal('cardModal')">Mbyll</button></div><div id="cardModalBody"></div></div></div>
+<div id="allCardModal" class="modal hidden" onclick="modalBg(event,'allCardModal')">
+  <div class="modalbox">
+    <div class="modalhead"><h3>💳 Të gjitha pagesat Card</h3><button class="modalclose" onclick="closeModal('allCardModal')">Mbyll</button></div>
+    <div id="allCardTotals"></div>
+    <div class="card-ledger-filters">
+      <button id="cardFilterAll" onclick="setCardLedgerFilter('all')">Të gjitha</button>
+      <button id="cardFilterPaid" onclick="setCardLedgerFilter('paid')">✅ Paguar</button>
+      <button id="cardFilterUnpaid" onclick="setCardLedgerFilter('unpaid')">⏳ Papaguar</button>
+    </div>
+    <div id="allCardLedgerBody"></div>
+  </div>
+</div>
 <div id="cashModal" class="modal hidden" onclick="modalBg(event,'cashModal')"><div class="modalbox"><div class="modalhead"><h3>💵 Cash sot</h3><button class="modalclose" onclick="closeModal('cashModal')">Mbyll</button></div><div id="cashModalBody"></div></div></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -292,6 +371,7 @@ const MAX_TABLES=13;
 /* Ruajmë historikun e versionit v9. Nëse v9 s'ka të dhëna, lexojmë edhe v11 si fallback. */
 const DB_KEY="taste_home_tables_v9",HIST_KEY="taste_home_history_v9",DATE_KEY="taste_home_workdate_v9",COUNT_KEY="taste_home_tablecount_v9";
 const JONA_KEY="taste_home_jona_daily_v1";
+const OWNER_PIN="1990"; // Kodi për Historia + Statistika (mbrojtje lokale në këtë app)
 const SOURCE_KEY="taste_home_source_breakdown_v1";
 const SOURCE_SEED_2026={"2026-05-01":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-09":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-11":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-16":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-17":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-20":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-23":{"jotform":3,"gyg":0,"outdoor":0},"2026-05-24":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-27":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-28":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-31":{"jotform":5,"gyg":0,"outdoor":0},"2026-06-01":{"jotform":21,"gyg":0,"outdoor":0},"2026-06-03":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-04":{"jotform":11,"gyg":0,"outdoor":0},"2026-06-05":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-06":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-07":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-08":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-09":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-12":{"jotform":5,"gyg":0,"outdoor":0},"2026-06-13":{"jotform":6,"gyg":0,"outdoor":18},"2026-06-15":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-16":{"jotform":8,"gyg":0,"outdoor":0},"2026-06-17":{"jotform":0,"gyg":0,"outdoor":9},"2026-06-19":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-20":{"jotform":4,"gyg":2,"outdoor":18},"2026-06-21":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-22":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-23":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-24":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-25":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-26":{"jotform":1,"gyg":0,"outdoor":0},"2026-06-27":{"jotform":2,"gyg":0,"outdoor":18},"2026-06-28":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-29":{"jotform":12,"gyg":2,"outdoor":0},"2026-06-30":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-01":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-02":{"jotform":4,"gyg":2,"outdoor":0},"2026-07-03":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-04":{"jotform":2,"gyg":2,"outdoor":0},"2026-07-06":{"jotform":5,"gyg":0,"outdoor":0},"2026-07-07":{"jotform":15,"gyg":0,"outdoor":0},"2026-07-08":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-10":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-11":{"jotform":5,"gyg":3,"outdoor":18},"2026-07-12":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-13":{"jotform":0,"gyg":2,"outdoor":0},"2026-07-14":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-15":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-17":{"jotform":3,"gyg":0,"outdoor":0},"2026-07-18":{"jotform":5,"gyg":2,"outdoor":0},"2026-07-19":{"jotform":12,"gyg":0,"outdoor":0},"2026-07-20":{"jotform":4,"gyg":3,"outdoor":0},"2026-07-21":{"jotform":4,"gyg":2,"outdoor":0},"2026-07-22":{"jotform":3,"gyg":2,"outdoor":0},"2026-07-23":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-24":{"jotform":2,"gyg":3,"outdoor":0},"2026-07-25":{"jotform":0,"gyg":0,"outdoor":18},"2026-07-26":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-27":{"jotform":2,"gyg":1,"outdoor":0},"2026-07-28":{"jotform":8,"gyg":0,"outdoor":0},"2026-07-29":{"jotform":13,"gyg":3,"outdoor":0},"2026-07-30":{"jotform":8,"gyg":0,"outdoor":0},"2026-07-31":{"jotform":11,"gyg":0,"outdoor":0},"2026-08-01":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-02":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-03":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-04":{"jotform":17,"gyg":0,"outdoor":0},"2026-08-05":{"jotform":3,"gyg":6,"outdoor":0},"2026-08-06":{"jotform":1,"gyg":0,"outdoor":0},"2026-08-07":{"jotform":2,"gyg":3,"outdoor":0},"2026-08-08":{"jotform":4,"gyg":0,"outdoor":18},"2026-08-09":{"jotform":10,"gyg":3,"outdoor":0},"2026-08-10":{"jotform":3,"gyg":0,"outdoor":0},"2026-08-11":{"jotform":8,"gyg":0,"outdoor":0},"2026-08-12":{"jotform":7,"gyg":0,"outdoor":0},"2026-08-13":{"jotform":23,"gyg":0,"outdoor":0},"2026-08-14":{"jotform":4,"gyg":0,"outdoor":0},"2026-08-15":{"jotform":14,"gyg":0,"outdoor":0},"2026-08-16":{"jotform":9,"gyg":2,"outdoor":0},"2026-08-17":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-18":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-19":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-20":{"jotform":27,"gyg":0,"outdoor":0},"2026-08-21":{"jotform":13,"gyg":0,"outdoor":0},"2026-08-22":{"jotform":9,"gyg":2,"outdoor":18},"2026-08-23":{"jotform":2,"gyg":0,"outdoor":0},"2026-08-24":{"jotform":5,"gyg":0,"outdoor":0},"2026-08-25":{"jotform":8,"gyg":0,"outdoor":0},"2026-08-27":{"jotform":41,"gyg":0,"outdoor":0},"2026-08-28":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-29":{"jotform":19,"gyg":1,"outdoor":0},"2026-08-30":{"jotform":4,"gyg":0,"outdoor":0},"2026-08-31":{"jotform":10,"gyg":2,"outdoor":0}};
 const oldDB9=localStorage.getItem(DB_KEY), oldHist9=localStorage.getItem(HIST_KEY);
@@ -353,8 +433,17 @@ function shiftHistoryDate(n){$("historyDate").value=shiftDate($("historyDate").v
 function hideAll(){document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));["tabTables","tabService","tabHistory","tabStats"].forEach(x=>$(x).classList.remove("active"))}
 function showTables(){hideAll();$("tablesView").classList.remove("hidden");$("tabTables").classList.add("active");drawTables()}
 function showService(){hideAll();$("serviceView").classList.remove("hidden");$("tabService").classList.add("active");drawService()}
-function showHistory(){hideAll();$("historyView").classList.remove("hidden");$("tabHistory").classList.add("active");$("historyDate").value=$("workDate").value;drawHistory()}
-function showStats(){hideAll();$("statsView").classList.remove("hidden");$("tabStats").classList.add("active");fillStatsControls();drawStats()}
+function ownerUnlocked(){return sessionStorage.getItem("taste_home_owner_unlocked")==="1"}
+function requireOwner(){
+ if(ownerUnlocked())return true;
+ const p=prompt("🔒 Fut kodin për Historia / Statistika:");
+ if(p===null)return false;
+ if(String(p)===OWNER_PIN){sessionStorage.setItem("taste_home_owner_unlocked","1");return true}
+ alert("Kodi nuk është i saktë.");
+ return false;
+}
+function showHistory(){if(!requireOwner())return;hideAll();$("historyView").classList.remove("hidden");$("tabHistory").classList.add("active");$("historyDate").value=$("workDate").value;drawHistory()}
+function showStats(){if(!requireOwner())return;hideAll();$("statsView").classList.remove("hidden");$("tabStats").classList.add("active");fillStatsControls();drawStats()}
 
 function activeForDate(t,d){return total(t)>0}
 function liveRows(payment){
@@ -565,7 +654,82 @@ function closeCurrent(){
 }
 function clearCurrent(){if(confirm("Ta fshij pa e ruajtur në histori?")){const pos=db[current].position;db[current]=blank(current);db[current].position=pos;save();showTables()}}
 
+
+function prepPendingOrders(){
+ return Object.values(kitchenOrders||{}).filter(o=>o && o.status!=="ready");
+}
+function prepFoodKey(o){
+ const s=String(o.stageLabel||"").toUpperCase();
+ if(s==="MEZET E PARA")return "mez1";
+ if(s==="MEZET E DYTA")return "mez2";
+ if(s==="SUPA"||s==="SUPË")return "soup";
+ if(s==="IMAM + QOFTE")return "main";
+ if(s==="ËMBËLSIRA")return "dessert";
+ return "";
+}
+function prepFoodQty(o){return Math.max(0,Number(o.people)||0)}
+function prepDrinkQty(o){return Math.max(0,Number(o.drinkQty)||1)}
+function prepDetails(kind,key){
+ const rows=[];
+ prepPendingOrders().forEach(o=>{
+   if(kind==="drink"){
+     if(String(o.drinkKey||"")!==key)return;
+     rows.push({o,qty:prepDrinkQty(o)});
+   }else{
+     if(prepFoodKey(o)!==key)return;
+     rows.push({o,qty:prepFoodQty(o)});
+   }
+ });
+ rows.sort((a,b)=>(Number(a.o.createdAt)||0)-(Number(b.o.createdAt)||0));
+ return rows;
+}
+function prepTotal(kind,key){return prepDetails(kind,key).reduce((s,x)=>s+x.qty,0)}
+function prepButton(kind,key,ico,name){
+ const n=prepTotal(kind,key);
+ return `<button class="prep-btn ${n?"waiting":"zero"}" onclick="openPrepModal('${kind}','${key}','${ico} ${name.replace(/'/g,"&#39;")}')"><span class="prep-ico">${ico}</span><span class="prep-num">${n}</span><span class="prep-name">${name}</span></button>`;
+}
+function drawPrepSummary(){
+ const el=$("prepSummary"); if(!el)return;
+ el.innerHTML=`<div class="card">
+   <div class="prep-title">👨‍🍳 PËRGATIT TOTAL</div>
+   <div class="prep-sub">Kliko mbi një artikull për të parë tavolinat dhe sasitë.</div>
+   <div class="prep-section"><div class="prep-label">🍽️ USHQIMET</div><div class="prep-grid">
+     ${prepButton("food","mez1","🥗","Mezet e para")}
+     ${prepButton("food","mez2","🍆","Mezet e dyta")}
+     ${prepButton("food","soup","🥣","Supa")}
+     ${prepButton("food","main","🍽️","Imam + Qofte")}
+     ${prepButton("food","dessert","🍰","Ëmbëlsira")}
+   </div></div>
+   <div class="prep-divider"></div>
+   <div class="prep-section"><div class="prep-label">🥂 PIJET</div><div class="prep-grid">
+     ${prepButton("drink","beer","🍺","Birra")}
+     ${prepButton("drink","red","🍷","Verë e kuqe")}
+     ${prepButton("drink","white","🥂","Verë e bardhë")}
+     ${prepButton("drink","juice","🍇","Grape Juice")}
+   </div></div>
+ </div>`;
+}
+function openPrepModal(kind,key,title){
+ const rows=prepDetails(kind,key);
+ $("prepModalTitle").textContent=`${title} — TOTAL ${rows.reduce((s,x)=>s+x.qty,0)}`;
+ if(!rows.length){
+   $("prepModalBody").innerHTML='<div class="prep-detail">Asgjë në pritje.</div>';
+ }else{
+   $("prepModalBody").innerHTML=rows.map(({o,qty})=>{
+     const where=o.position||`Tavolina ${o.table||""}`;
+     const who=o.name?` — ${o.name}`:"";
+     const breakdown=Array.isArray(o.menuBreakdown)&&o.menuBreakdown.length
+       ? `<div class="prep-break">${o.menuBreakdown.join("<br>")}</div>`:"";
+     const notes=o.notes?`<div class="prep-break">📝 ${o.notes}</div>`:"";
+     return `<div class="prep-detail"><div class="prep-detail-top"><div><b>${where}${who}</b><div class="meta">👥 ${Number(o.people)||0} persona</div></div><div class="qty">${qty}</div></div>${breakdown}${notes}</div>`;
+   }).join("");
+ }
+ $("prepModal").classList.remove("hidden");
+}
+function closePrepModal(){$("prepModal").classList.add("hidden")}
+
 function drawService(){
+ drawPrepSummary();
  $("serviceList").innerHTML="";let n=0;
  for(let t=1;t<=tableCount;t++){if(!(total(t)>0||people(t)>0||hasRequests(t)||pendingCount(t)))continue;n++;const c=document.createElement("div"),pend=pendingCount(t);c.className="card service-card "+(pend?"waiting":"");c.innerHTML=`<div class="section-title"><div><h3>${db[t].name||"Pa emër"}</h3><div class="meta">${db[t].position}</div></div><span class="badge">👥 ${people(t)}</span></div><div><b>PËRGATIT ${people(t)} ${STAGES[db[t].stage].msg}</b></div>${pend?`<div style="margin-top:6px"><span class="badge warnbadge">🔴 ${pend} pije për t'u çuar</span></div>`:""}${db[t].notes?`<div class="meta" style="margin-top:5px">📝 ${db[t].notes}</div>`:""}<button class="back" style="margin-top:8px;width:100%" onclick="openTable(${t})">Hap tavolinën</button>`;$("serviceList").appendChild(c)}
  if(!n)$("serviceList").innerHTML='<div class="card empty">Nuk ka tavolina aktive.</div>';
@@ -596,6 +760,7 @@ function drawHistorySummaryOnly(){
  jona=jonaForDate(d);
  $("dailyTotal").innerHTML=`<b style="font-size:20px;color:var(--green)">Xhiro: ${money(grand)}</b> · 🎁 ${money(tips)}<br><span class="meta">Cash ${money(cash)} · Card ${money(card)} · ✅ ${money(paid)} · ⏳ ${money(unpaid)}</span><br><b style="display:inline-block;margin-top:7px;color:var(--brand)">JONA: ${money(jona)}</b>`;
  if($("jonaAmount") && document.activeElement!==$("jonaAmount")) $("jonaAmount").value=jonaDaily[d]??"";
+ drawCardRegisterSummary();
 }
 function printDaily(){
  const d=$("historyDate").value,day=filtered(),
@@ -638,7 +803,87 @@ function drawHistory(){
 function shareInvoice(id){const inv=history.find(x=>x.id===id);if(!inv)return;let x=`Taste Home\n${inv.date}\n${inv.position||""}${inv.name?" — "+inv.name:""}\nPersona: ${inv.persons||0}\n`;(inv.lines||[]).forEach(a=>x+=`${a.name}: ${a.qty} × ${money(a.price)} = ${money(a.subtotal)}\n`);x+=`TOTALI: ${money(inv.total)}\nBakshish: ${money(inv.tip||0)}`;shareText(x)}
 function deleteInvoice(id){if(confirm("Ta fshij faturën?")){history=history.filter(x=>x.id!==id);save();drawHistory()}}
 function clearHistoryForDate(){const d=$("historyDate").value;if(confirm("T'i fshij të gjitha faturat e "+d+"?")){history=history.filter(x=>x.date!==d);save();drawHistory()}}
-function shareDaily(){const day=filtered(),grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0);shareText(`Taste Home — ${$("historyDate").value}\nFatura: ${day.length}\nXhiro: ${money(grand)}\nBakshish: ${money(tips)}\nTotali marrë: ${money(grand+tips)}`)}
+function shareDaily(){
+ const d=$("historyDate").value,day=filtered(),
+ grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),
+ tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),
+ cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
+ card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
+ paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0),
+ jona=jonaForDate(d);
+ const txt=`Taste Home — ${d}
+Fatura: ${day.length}
+Persona: ${persons}
+
+Xhiro: ${money(grand)}
+💵 Cash: ${money(cash)}
+💳 Card: ${money(card)}
+✅ Card paguar: ${money(paid)}
+⏳ Card papaguar: ${money(unpaid)}
+
+🎁 Bakshishe: ${money(tips)}
+💰 Totali marrë: ${money(grand+tips)}
+👤 JONA: ${money(jona)}`;
+ shareText(txt);
+}
+
+
+let cardLedgerFilter="all";
+function allHistoricalCardRows(){
+ return history.filter(x=>x.payment==="Card").slice().sort((a,b)=>{
+   const da=String(a.date||"")+" "+String(a.closedAt||"");
+   const dbb=String(b.date||"")+" "+String(b.closedAt||"");
+   return dbb.localeCompare(da);
+ });
+}
+function drawCardRegisterSummary(){
+ const el=$("cardRegisterSummary"); if(!el)return;
+ const rows=allHistoricalCardRows(),
+ total=rows.reduce((s,x)=>s+(Number(x.total)||0),0),
+ paid=rows.filter(x=>x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ unpaid=rows.filter(x=>!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
+ el.innerHTML=`
+  <div class="card-register-stat"><b>${money(total)}</b><span>TOTAL CARD</span></div>
+  <div class="card-register-stat"><b>${money(paid)}</b><span>✅ PAGUAR</span></div>
+  <div class="card-register-stat"><b>${money(unpaid)}</b><span>⏳ PAPAGUAR</span></div>`;
+}
+function setCardLedgerFilter(v){cardLedgerFilter=v;drawAllCardLedger()}
+function openAllCardLedger(){cardLedgerFilter="all";drawAllCardLedger();$("allCardModal").classList.remove("hidden")}
+function toggleHistoricalCardPaid(id,checked){
+ const x=history.find(a=>String(a.id)===String(id));
+ if(!x)return;
+ x.cardPaid=!!checked;
+ save();
+ drawCardRegisterSummary();
+ drawHistorySummaryOnly();
+ drawAllCardLedger();
+ drawLive();
+}
+function drawAllCardLedger(){
+ const all=allHistoricalCardRows(),
+ total=all.reduce((s,x)=>s+(Number(x.total)||0),0),
+ paid=all.filter(x=>x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ unpaid=all.filter(x=>!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
+ $("allCardTotals").innerHTML=`<div class="card-register-grid">
+  <div class="card-register-stat"><b>${money(total)}</b><span>TOTAL</span></div>
+  <div class="card-register-stat"><b>${money(paid)}</b><span>✅ PAGUAR</span></div>
+  <div class="card-register-stat"><b>${money(unpaid)}</b><span>⏳ PAPAGUAR</span></div>
+ </div>`;
+ ["all","paid","unpaid"].forEach(v=>{const b=$("cardFilter"+v[0].toUpperCase()+v.slice(1));if(b)b.classList.toggle("selected",cardLedgerFilter===v)});
+ let rows=all;
+ if(cardLedgerFilter==="paid")rows=rows.filter(x=>x.cardPaid);
+ if(cardLedgerFilter==="unpaid")rows=rows.filter(x=>!x.cardPaid);
+ $("allCardLedgerBody").innerHTML=rows.length?rows.map(inv=>`
+  <div class="card-ledger-row ${inv.cardPaid?"":"card-ledger-unpaid"}">
+   <div class="card-ledger-main">
+    <b>${inv.name||"Pa emër"} · ${money(inv.total)}</b>
+    <div class="card-ledger-meta">${inv.date||""} · ${inv.position||""}${inv.tip?` · 🎁 ${money(inv.tip)}`:""}</div>
+   </div>
+   <label class="card-ledger-check"><input type="checkbox" ${inv.cardPaid?"checked":""} onchange="toggleHistoricalCardPaid('${inv.id}',this.checked)"> Paguar</label>
+  </div>`).join(""):'<div class="card empty">Nuk ka pagesa Card në këtë filtër.</div>';
+}
 
 function openCardList(){const rows=liveRows("Card"),paid=rows.filter(x=>x.paid),unpaid=rows.filter(x=>!x.paid);$("cardModalBody").innerHTML=`<div class="card"><div class="section-title"><h3>✅ PAGUARA</h3><b>${money(paid.reduce((s,x)=>s+x.total,0))}</b></div>${paid.length?paid.map(x=>payRow(x,false)).join(""):'<div class="meta">Asnjë.</div>'}</div><div class="card"><div class="section-title"><h3>⏳ PAPAGUARA</h3><b>${money(unpaid.reduce((s,x)=>s+x.total,0))}</b></div>${unpaid.length?unpaid.map(x=>payRow(x,true)).join(""):'<div class="meta">Asnjë.</div>'}</div>`;$("cardModal").classList.remove("hidden")}
 function openCashList(){const rows=liveRows("Cash");$("cashModalBody").innerHTML=`<div class="card"><div class="section-title"><h3>Cash sot</h3><b>${money(rows.reduce((s,x)=>s+x.total,0))}</b></div>${rows.length?rows.map(x=>payRow(x,false)).join(""):'<div class="meta">Asnjë.</div>'}</div>`;$("cashModal").classList.remove("hidden")}
@@ -792,6 +1037,7 @@ function startFirebaseSync(){
  fbdb.ref("kitchenOrders").on("value",snap=>{
    kitchenOrders=snap.val()||{};
    if(!$("tablesView").classList.contains("hidden"))drawTables();
+   if(!$("serviceView").classList.contains("hidden"))drawService();
  },err=>{
    console.error("Firebase kitchenOrders:",err);
    firebaseReady=false;

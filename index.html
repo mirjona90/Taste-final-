@@ -147,6 +147,17 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 .card-ledger-filters button{padding:9px 6px;font-size:11px}
 .lock-chip{display:inline-block;background:#eee7de;color:var(--brand);padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900}
 
+
+.prep-ready-btn{width:100%;margin-top:10px;border:0;border-radius:14px;padding:14px 12px;
+font-size:15px;font-weight:950;background:var(--green);color:#fff;box-shadow:0 3px 10px #00000018}
+.prep-ready-btn:disabled{background:#d8d3cc;color:#8e8881;box-shadow:none}
+.table-status-ready{color:var(--green);font-weight:900;font-size:11px;margin-top:3px}
+.table-status-wait{color:var(--orange);font-weight:900;font-size:11px;margin-top:3px}
+
+.mixedbox{margin-top:10px;padding:11px;border-radius:14px;background:#f7f2ea}
+.mixedgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mixedtotal{font-size:12px;font-weight:900;margin-top:8px}
+.prep-modal-ready{width:100%;margin-top:12px;border:0;border-radius:14px;padding:14px;font-size:15px;font-weight:950;background:var(--green);color:#fff}
 </style>
 </head>
 <body>
@@ -190,9 +201,20 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 
   <div class="card">
     <div class="section-title"><h3>💳 Pagesa</h3><b id="tableTotal"></b></div>
-    <div class="paybuttons"><button id="cashBtn" class="paybtn" onclick="setPayment('Cash')">💵 CASH</button><button id="cardBtn" class="paybtn" onclick="setPayment('Card')">💳 CARD</button></div>
+    <div class="paybuttons" style="grid-template-columns:repeat(3,1fr)">
+      <button id="cashBtn" class="paybtn" onclick="setPayment('Cash')">💵 CASH</button>
+      <button id="cardBtn" class="paybtn" onclick="setPayment('Card')">💳 CARD</button>
+      <button id="mixedBtn" class="paybtn" onclick="setPayment('Mixed')">💵+💳 TË DYJA</button>
+    </div>
+    <div id="mixedBox" class="mixedbox hidden">
+      <div class="mixedgrid">
+        <div><label>💵 Cash</label><input id="mixedCash" type="number" min="0" step=".01" inputmode="decimal" oninput="setMixedCash(this.value)"></div>
+        <div><label>💳 Card</label><input id="mixedCard" type="number" readonly></div>
+      </div>
+      <div id="mixedTotalCheck" class="mixedtotal"></div>
+    </div>
     <div id="cardBox" class="hidden">
-      <label class="paidcheck"><input id="cardPaid" type="checkbox" onchange="setCardPaid(this.checked)"> ✅ Card e paguar</label>
+      <label class="paidcheck"><input id="cardPaid" type="checkbox" onchange="setCardPaid(this.checked)"> ✅ Pjesa Card e paguar</label>
       <label>Shënim Card</label><input id="cardNote" placeholder="p.sh. Visa / 2 pagesa" oninput="updateDetails()">
     </div>
     <div class="tipgrid">
@@ -386,7 +408,7 @@ let tableCount=Math.max(10,Math.min(13,Number(localStorage.getItem(COUNT_KEY)||1
 const $=id=>document.getElementById(id);
 
 function positionFor(t){return t<=10?BASE_POSITIONS[t-1]:`➕ Tavolinë Shtesë ${t-10}`}
-function blank(t){const q={},sent={},served={};ITEMS.forEach(i=>q[i.k]=sent[i.k]=served[i.k]=0);return{q,sent,served,name:"",reservedPeople:0,notes:"",updated:null,stage:0,requests:{},payment:"Cash",cardPaid:true,cardNote:"",received:"",workDate:"",position:positionFor(t)}}
+function blank(t){const q={},sent={},served={};ITEMS.forEach(i=>q[i.k]=sent[i.k]=served[i.k]=0);return{q,sent,served,name:"",reservedPeople:0,notes:"",updated:null,stage:0,requests:{},payment:"Cash",cardPaid:true,cardNote:"",cashAmount:0,cardAmount:0,received:"",workDate:"",position:positionFor(t)}}
 function normalize(t){
  if(!db[t])db[t]=blank(t);
  const b=db[t];b.q=b.q||{};b.sent=b.sent||{};b.served=b.served||{};
@@ -396,7 +418,7 @@ function normalize(t){
  if(b.name&&/^Tavolina\s+\d+$/i.test(b.name))b.name="";
  if(b.reservedPeople==null)b.reservedPeople=Number(b.persons)||0;
  if(!b.payment)b.payment="Cash";if(typeof b.cardPaid!=="boolean")b.cardPaid=b.payment==="Cash";
- if(b.cardNote==null)b.cardNote="";if(b.received==null)b.received=b.receivedAmount??"";
+ if(b.cardNote==null)b.cardNote="";if(b.cashAmount==null)b.cashAmount=0;if(b.cardAmount==null)b.cardAmount=0;if(b.received==null)b.received=b.receivedAmount??"";
  if(typeof b.stage!=="number")b.stage=0;if(!b.requests)b.requests={};if(b.workDate==null)b.workDate="";
 }
 for(let t=1;t<=MAX_TABLES;t++)normalize(t);
@@ -405,6 +427,8 @@ history.forEach(x=>{
  if(x.tip==null)x.tip=Math.max(0,(Number(x.received||x.receivedAmount)||Number(x.total)||0)-(Number(x.total)||0));
  if(x.received==null)x.received=Number(x.receivedAmount)||Number(x.total)||0;
  if(typeof x.cardPaid!=="boolean")x.cardPaid=x.payment==="Cash";
+ if(x.cashAmount==null)x.cashAmount=x.payment==="Cash"?(Number(x.total)||0):0;
+ if(x.cardAmount==null)x.cardAmount=x.payment==="Card"?(Number(x.total)||0):0;
 });
 function save(){
  localStorage.setItem(DB_KEY,JSON.stringify(db));
@@ -455,26 +479,39 @@ function liveRows(payment){
 function drawLive(){
  const d=isoDate(),closed=history.filter(x=>x.date===d);
  let sales=closed.reduce((s,x)=>s+(Number(x.total)||0),0),tips=closed.reduce((s,x)=>s+(Number(x.tip)||0),0),
- cash=closed.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
- card=closed.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
- unpaid=closed.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
- for(let t=1;t<=tableCount;t++){if(!activeForDate(t,d))continue;const v=total(t);sales+=v;tips+=tipForTable(t);if(db[t].payment==="Card"){card+=v;if(!db[t].cardPaid)unpaid+=v}else cash+=v}
+ cash=closed.reduce((s,x)=>s+paymentCashAmount(x),0),
+ card=closed.reduce((s,x)=>s+paymentCardAmount(x),0),
+ unpaid=closed.filter(x=>hasCardPart(x)&&!x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0);
+ for(let t=1;t<=tableCount;t++){if(!activeForDate(t,d))continue;const v=total(t);sales+=v;tips+=tipForTable(t);cash+=paymentCashAmount(db[t],t);card+=paymentCardAmount(db[t],t);if(hasCardPart(db[t],t)&&!db[t].cardPaid)unpaid+=paymentCardAmount(db[t],t)}
  $("liveSales").textContent=money(sales);$("liveTips").textContent=money(tips);$("liveCash").textContent=money(cash);$("liveCard").textContent=money(card);$("liveUnpaid").textContent=money(unpaid);
 }
-function latestKitchenForTable(t){
- const arr=Object.values(kitchenOrders||{}).filter(o=>Number(o.table)===Number(t));
- if(!arr.length)return null;
- arr.sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
- return arr[0];
+function tableKitchenStatus(t){
+ // Mos shfaq status të vjetër te tavolinat bosh.
+ if(total(t)<=0 && people(t)<=0)return "";
+ const arr=Object.values(kitchenOrders||{}).filter(o=>o&&Number(o.table)===Number(t));
+ if(!arr.length)return "";
+
+ const drinkReady=arr.some(o=>o.stageLabel==="PIJE"&&o.status==="ready");
+ const drinkPending=arr.some(o=>o.stageLabel==="PIJE"&&o.status!=="ready");
+ const foodReady=arr.some(o=>o.stageLabel!=="PIJE"&&o.status==="ready");
+ const foodPending=arr.some(o=>o.stageLabel!=="PIJE"&&o.status!=="ready");
+
+ let s="";
+ if(drinkReady) s+=`<div class="table-status-ready">🥂 Pijet janë gati</div>`;
+ else if(drinkPending) s+=`<div class="table-status-wait">🥂 Pijet në përgatitje</div>`;
+
+ if(foodPending) s+=`<div class="table-status-wait">👨‍🍳 Kuzhina në përgatitje</div>`;
+ else if(foodReady) s+=`<div class="table-status-ready">✅ Kuzhina gati</div>`;
+ return s;
 }
 
 function drawTables(){
  drawLive();$("tables").innerHTML="";
  for(let t=1;t<=tableCount;t++){
   const p=pendingCount(t),el=document.createElement("button");
-  el.className="table "+(p?"alert":total(t)>0||people(t)>0?"active":"")+(db[t].payment==="Card"&&!db[t].cardPaid&&total(t)>0?" unpaid":"");
-  const ko=latestKitchenForTable(t),ks=ko?(ko.status==="ready"?`<div style="color:var(--green);font-weight:900;font-size:11px;margin-top:3px">✅ Kuzhina gati</div>`:`<div style="color:var(--orange);font-weight:900;font-size:11px;margin-top:3px">👨‍🍳 Në përgatitje</div>`):"";
-   el.innerHTML=`<div class="position">${db[t].position}</div><div class="guest">${db[t].name||"Pa emër"}</div><div class="meta">👥 ${people(t)} persona</div><div class="amount">${money(total(t))}</div>${p?`<div class="redtxt">🔴 ${p} pije për t'u çuar</div>`:""}${db[t].payment==="Card"&&!db[t].cardPaid&&total(t)>0?`<div class="redtxt">💳 Card pa paguar</div>`:""}${ks}`;
+  el.className="table "+(p?"alert":total(t)>0||people(t)>0?"active":"")+(hasCardPart(db[t],t)&&!db[t].cardPaid&&total(t)>0?" unpaid":"");
+  const ks=tableKitchenStatus(t);
+   el.innerHTML=`<div class="position">${db[t].position}</div><div class="guest">${db[t].name||"Pa emër"}</div><div class="meta">👥 ${people(t)} persona</div><div class="amount">${money(total(t))}</div>${p?`<div class="redtxt">🔴 ${p} pije për t'u çuar</div>`:""}${hasCardPart(db[t],t)&&!db[t].cardPaid&&total(t)>0?`<div class="redtxt">💳 ${money(paymentCardAmount(db[t],t))} Card pa paguar</div>`:""}${ks}`;
   el.onclick=()=>openTable(t);$("tables").appendChild(el);
  }
  $("addTableBtn").classList.toggle("hidden",tableCount>=MAX_TABLES);
@@ -485,9 +522,52 @@ function addExtraTable(){if(tableCount>=MAX_TABLES)return;tableCount++;normalize
 function openTable(t){current=t;hideAll();$("tableView").classList.remove("hidden");$("tableName").value=db[t].name||"";$("notes").value=db[t].notes||"";$("cardNote").value=db[t].cardNote||"";$("received").value=db[t].received!==""?db[t].received:"";drawCurrent()}
 function updateDetails(){const b=db[current];b.name=$("tableName").value.trim();b.notes=$("notes").value.trim();b.cardNote=$("cardNote").value.trim();b.workDate=b.workDate||isoDate();b.updated=stamp();save();drawHeaderOnly()}
 function drawHeaderOnly(){$("tableHeader").textContent=`${db[current].position} · ${db[current].name||"Pa emër"}`;$("topTotal").textContent=money(total(current));$("autoPeople").textContent=`👥 ${people(current)} persona`;$("tableTotal").textContent=money(total(current));drawTip()}
-function setPayment(p){db[current].payment=p;if(p==="Cash")db[current].cardPaid=true;else if(p==="Card"&&db[current].cardPaid===true)db[current].cardPaid=false;db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawPayment();drawLive()}
+function paymentCashAmount(x,t){
+ const tot=t?total(t):(Number(x.total)||0);
+ if(x.payment==="Mixed")return Math.max(0,Number(x.cashAmount)||0);
+ return x.payment==="Cash"?tot:0;
+}
+function paymentCardAmount(x,t){
+ const tot=t?total(t):(Number(x.total)||0);
+ if(x.payment==="Mixed")return Math.max(0,Number(x.cardAmount)||0);
+ return x.payment==="Card"?tot:0;
+}
+function hasCardPart(x,t){return paymentCardAmount(x,t)>0}
+function setPayment(p){
+ const b=db[current],tot=total(current);b.payment=p;
+ if(p==="Cash"){b.cashAmount=tot;b.cardAmount=0;b.cardPaid=true}
+ if(p==="Card"){b.cashAmount=0;b.cardAmount=tot;b.cardPaid=false}
+ if(p==="Mixed"){
+   b.cashAmount=Math.min(tot,Math.max(0,Number(b.cashAmount)||0));
+   b.cardAmount=Math.max(0,tot-b.cashAmount);b.cardPaid=false;
+ }
+ b.workDate=b.workDate||isoDate();b.updated=stamp();save();drawPayment();drawLive();
+}
+function setMixedCash(v){
+ const b=db[current],tot=total(current);
+ b.cashAmount=Math.min(tot,Math.max(0,Number(v)||0));
+ b.cardAmount=Math.max(0,tot-b.cashAmount);
+ b.updated=stamp();save();drawPayment();drawLive();
+}
 function setCardPaid(v){db[current].cardPaid=!!v;db[current].updated=stamp();save();drawPayment();drawLive()}
-function drawPayment(){$("cashBtn").classList.toggle("selected",db[current].payment==="Cash");$("cardBtn").classList.toggle("selected",db[current].payment==="Card");$("cardBox").classList.toggle("hidden",db[current].payment!=="Card");$("cardPaid").checked=!!db[current].cardPaid}
+function drawPayment(){
+ const b=db[current],tot=total(current);
+ $("cashBtn").classList.toggle("selected",b.payment==="Cash");
+ $("cardBtn").classList.toggle("selected",b.payment==="Card");
+ $("mixedBtn").classList.toggle("selected",b.payment==="Mixed");
+ $("mixedBox").classList.toggle("hidden",b.payment!=="Mixed");
+ $("cardBox").classList.toggle("hidden",!hasCardPart(b,current));
+ if(b.payment==="Cash"){b.cashAmount=tot;b.cardAmount=0}
+ if(b.payment==="Card"){b.cashAmount=0;b.cardAmount=tot}
+ if(b.payment==="Mixed"){
+   b.cashAmount=Math.min(tot,Math.max(0,Number(b.cashAmount)||0));
+   b.cardAmount=Math.max(0,tot-b.cashAmount);
+   $("mixedCash").value=b.cashAmount||"";
+   $("mixedCard").value=(Number(b.cardAmount)||0).toFixed(2);
+   $("mixedTotalCheck").textContent=`Totali ${money(b.cashAmount+b.cardAmount)} / ${money(tot)}`;
+ }
+ $("cardPaid").checked=!!b.cardPaid;
+}
 function setReceived(v){db[current].received=v===""?"":Math.max(0,Number(v)||0);db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawTip();drawLive()}
 function drawTip(){const box=$("tipBox");if(db[current].received===""){box.className="tipbox";box.textContent="€0.00";return}const d=(Number(db[current].received)||0)-total(current);if(d>=0){box.className="tipbox good";box.textContent=money(d)}else{box.className="tipbox bad";box.textContent="Mungojnë "+money(Math.abs(d))}}
 
@@ -652,16 +732,22 @@ function printCurrent(){
  </div>`;
  window.print();
 }
+function clearKitchenForTable(t){
+ const ids=Object.values(kitchenOrders||{}).filter(o=>o&&Number(o.table)===Number(t)).map(o=>o.id);
+ ids.forEach(id=>delete kitchenOrders[id]);
+ if(firebaseReady&&fbdb&&ids.length){const u={};ids.forEach(id=>u[`kitchenOrders/${id}`]=null);fbdb.ref().update(u).catch(e=>console.error("Pastrimi kitchenOrders",e))}
+}
 function closeCurrent(){
  if(total(current)<=0)return alert("Tavolina është bosh.");
- if(db[current].payment==="Card"&&!db[current].cardPaid&&!confirm("Card është PAPAGUAR. Ta mbyll tavolinën gjithsesi?"))return;
- if(!confirm(`Ta mbyll ${db[current].name||"Pa emër"} te ${db[current].position}?`))return;
- const b=db[current],received=b.received===""?total(current):Number(b.received)||0;
- history.unshift({id:Date.now(),table:current,position:b.position,name:b.name||"",persons:people(current),notes:b.notes,payment:b.payment,cardPaid:b.payment==="Cash"?true:!!b.cardPaid,cardNote:b.cardNote,date:b.workDate||isoDate(),closedAt:stamp(),lines:linesForTable(current),total:total(current),received,tip:Math.max(0,received-total(current))});
+ const b=db[current],cardPart=paymentCardAmount(b,current);
+ if(cardPart>0&&!b.cardPaid&&!confirm(`Pjesa Card ${money(cardPart)} është PAPAGUAR. Ta mbyll tavolinën gjithsesi?`))return;
+ if(!confirm(`Ta mbyll ${b.name||"Pa emër"} te ${b.position}?`))return;
+ const received=b.received===""?total(current):Number(b.received)||0;
+ history.unshift({id:Date.now(),table:current,position:b.position,name:b.name||"",persons:people(current),notes:b.notes,payment:b.payment,cashAmount:paymentCashAmount(b,current),cardAmount:paymentCardAmount(b,current),cardPaid:cardPart<=0?true:!!b.cardPaid,cardNote:b.cardNote,date:b.workDate||isoDate(),closedAt:stamp(),lines:linesForTable(current),total:total(current),received,tip:Math.max(0,received-total(current))});
+ clearKitchenForTable(current);
  const pos=b.position;db[current]=blank(current);db[current].position=pos;save();showTables();
 }
-function clearCurrent(){if(confirm("Ta fshij pa e ruajtur në histori?")){const pos=db[current].position;db[current]=blank(current);db[current].position=pos;save();showTables()}}
-
+function clearCurrent(){if(confirm("Ta fshij pa e ruajtur në histori?")){clearKitchenForTable(current);const pos=db[current].position;db[current]=blank(current);db[current].position=pos;save();showTables()}}
 
 function prepPendingOrders(){
  return Object.values(kitchenOrders||{}).filter(o=>o && o.status!=="ready");
@@ -696,6 +782,30 @@ function prepButton(kind,key,ico,name){
  const n=prepTotal(kind,key);
  return `<button class="prep-btn ${n?"waiting":"zero"}" onclick="openPrepModal('${kind}','${key}','${ico} ${name.replace(/'/g,"&#39;")}')"><span class="prep-ico">${ico}</span><span class="prep-num">${n}</span><span class="prep-name">${name}</span></button>`;
 }
+
+function prepPendingDrinkOrders(){
+ return Object.values(kitchenOrders||{}).filter(o=>o&&o.stageLabel==="PIJE"&&o.status!=="ready");
+}
+function markAllPrepDrinksReady(){
+ const rows=prepPendingDrinkOrders();
+ if(!rows.length)return;
+ if(!firebaseReady||!fbdb){alert("Firebase nuk është lidhur ende. Provo përsëri pas pak.");return}
+ const updates={},now=Date.now();
+ rows.forEach(o=>{
+   updates[`kitchenOrders/${o.id}/status`]="ready";
+   updates[`kitchenOrders/${o.id}/readyAt`]=now;
+   updates[`kitchenOrders/${o.id}/updatedAt`]=now;
+ });
+ fbdb.ref().update(updates).then(()=>{
+   // Listener-i i Firebase do rifreskojë Shërbimin dhe Tavolinat.
+   drawPrepSummary();
+   drawTables();
+ }).catch(e=>{
+   console.error("Pijet gati:",e);
+   alert("Nuk u ruajt statusi. Provo përsëri.");
+ });
+}
+
 function drawPrepSummary(){
  const el=$("prepSummary"); if(!el)return;
  el.innerHTML=`<div class="card">
@@ -714,7 +824,11 @@ function drawPrepSummary(){
      ${prepButton("drink","red","🍷","Verë e kuqe")}
      ${prepButton("drink","white","🥂","Verë e bardhë")}
      ${prepButton("drink","juice","🍇","Grape Juice")}
-   </div></div>
+   </div>
+   <button class="prep-ready-btn" ${prepPendingDrinkOrders().length?"":"disabled"} onclick="markAllPrepDrinksReady()">
+     ${prepPendingDrinkOrders().length?"✅ U BËNË GATI — PIJET":"✅ PIJET JANË GATI"}
+   </button>
+   </div>
  </div>`;
 }
 function openPrepModal(kind,key,title){
@@ -731,8 +845,17 @@ function openPrepModal(kind,key,title){
      const notes=o.notes?`<div class="prep-break">📝 ${o.notes}</div>`:"";
      return `<div class="prep-detail"><div class="prep-detail-top"><div><b>${where}${who}</b><div class="meta">👥 ${Number(o.people)||0} persona</div></div><div class="qty">${qty}</div></div>${breakdown}${notes}</div>`;
    }).join("");
+   if(kind==="food") $("prepModalBody").innerHTML+=`<button class="prep-modal-ready" onclick="markPrepFoodReady('${key}')">✅ U BËNË GATI — ${title}</button>`;
  }
  $("prepModal").classList.remove("hidden");
+}
+function markPrepFoodReady(key){
+ const rows=prepDetails("food",key);
+ if(!rows.length)return closePrepModal();
+ if(!firebaseReady||!fbdb)return alert("Firebase nuk është lidhur ende.");
+ const updates={},now=Date.now();
+ rows.forEach(({o})=>{updates[`kitchenOrders/${o.id}/status`]="ready";updates[`kitchenOrders/${o.id}/readyAt`]=now;updates[`kitchenOrders/${o.id}/updatedAt`]=now});
+ fbdb.ref().update(updates).then(()=>{closePrepModal();drawPrepSummary();drawTables()}).catch(()=>alert("Nuk u ruajt statusi. Provo përsëri."));
 }
 function closePrepModal(){$("prepModal").classList.add("hidden")}
 
@@ -759,10 +882,10 @@ function drawHistorySummaryOnly(){
  const d=$("historyDate").value,day=filtered(),
  grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),
  tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),
- cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
- card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
- paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
- unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ cash=day.reduce((s,x)=>s+paymentCashAmount(x),0),
+ card=day.reduce((s,x)=>s+paymentCardAmount(x),0),
+ paid=day.filter(x=>hasCardPart(x)&&x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),
+ unpaid=day.filter(x=>hasCardPart(x)&&!x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),
  jona=jonaForDate(d);
  $("dailyTotal").innerHTML=`<b style="font-size:20px;color:var(--green)">Xhiro: ${money(grand)}</b> · 🎁 ${money(tips)}<br><span class="meta">Cash ${money(cash)} · Card ${money(card)} · ✅ ${money(paid)} · ⏳ ${money(unpaid)}</span><br><b style="display:inline-block;margin-top:7px;color:var(--brand)">JONA: ${money(jona)}</b>`;
  if($("jonaAmount") && document.activeElement!==$("jonaAmount")) $("jonaAmount").value=jonaDaily[d]??"";
@@ -772,10 +895,10 @@ function printDaily(){
  const d=$("historyDate").value,day=filtered(),
  grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),
  tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),
- cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
- card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
- paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
- unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ cash=day.reduce((s,x)=>s+paymentCashAmount(x),0),
+ card=day.reduce((s,x)=>s+paymentCardAmount(x),0),
+ paid=day.filter(x=>hasCardPart(x)&&x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),
+ unpaid=day.filter(x=>hasCardPart(x)&&!x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),
  jona=jonaForDate(d),
  persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
 
@@ -804,7 +927,7 @@ function drawHistory(){
  const day=filtered();
  drawHistorySummaryOnly();
  $("historyBox").innerHTML=day.length?"":'<div class="card empty">Nuk ka fatura për këtë datë.</div>';
- day.forEach(inv=>{const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="section-title"><div><h3>${inv.name||"Pa emër"}</h3><div class="meta">${inv.position||""}</div></div><b>${money(inv.total)}</b></div><div class="meta">${inv.closedAt}</div><div><span class="badge">👥 ${inv.persons||0}</span><span class="badge">${inv.payment||""}</span>${inv.payment==="Card"?`<span class="badge ${!inv.cardPaid?"warnbadge":""}">${inv.cardPaid?"✅ Paguar":"⏳ Papaguar"}</span>`:""}<span class="badge">🎁 ${money(inv.tip||0)}</span></div>${(inv.lines||[]).map(x=>`<div class="invoice-line"><span>${x.name} × ${x.qty}</span><b>${money(x.subtotal)}</b></div>`).join("")}<div class="meta">Marrë: ${money(inv.received||inv.total)} · Bakshish: ${money(inv.tip||0)}</div><div class="actions"><button class="invoice" onclick="shareInvoice(${inv.id})">WhatsApp</button><button class="delete" onclick="deleteInvoice(${inv.id})">Fshij</button></div>`;$("historyBox").appendChild(c)});
+ day.forEach(inv=>{const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="section-title"><div><h3>${inv.name||"Pa emër"}</h3><div class="meta">${inv.position||""}</div></div><b>${money(inv.total)}</b></div><div class="meta">${inv.closedAt}</div><div><span class="badge">👥 ${inv.persons||0}</span><span class="badge">${inv.payment==="Mixed"?`💵 ${money(paymentCashAmount(inv))} + 💳 ${money(paymentCardAmount(inv))}`:(inv.payment||"")}</span>${hasCardPart(inv)?`<span class="badge ${!inv.cardPaid?"warnbadge":""}">${inv.cardPaid?"✅ Card paguar":"⏳ Card papaguar"}</span>`:""}<span class="badge">🎁 ${money(inv.tip||0)}</span></div>${(inv.lines||[]).map(x=>`<div class="invoice-line"><span>${x.name} × ${x.qty}</span><b>${money(x.subtotal)}</b></div>`).join("")}<div class="meta">Marrë: ${money(inv.received||inv.total)} · Bakshish: ${money(inv.tip||0)}</div><div class="actions"><button class="invoice" onclick="shareInvoice(${inv.id})">WhatsApp</button><button class="delete" onclick="deleteInvoice(${inv.id})">Fshij</button></div>`;$("historyBox").appendChild(c)});
 }
 function shareInvoice(id){const inv=history.find(x=>x.id===id);if(!inv)return;let x=`Taste Home\n${inv.date}\n${inv.position||""}${inv.name?" — "+inv.name:""}\nPersona: ${inv.persons||0}\n`;(inv.lines||[]).forEach(a=>x+=`${a.name}: ${a.qty} × ${money(a.price)} = ${money(a.subtotal)}\n`);x+=`TOTALI: ${money(inv.total)}\nBakshish: ${money(inv.tip||0)}`;shareText(x)}
 function deleteInvoice(id){if(confirm("Ta fshij faturën?")){history=history.filter(x=>x.id!==id);save();drawHistory()}}
@@ -813,10 +936,10 @@ function shareDaily(){
  const d=$("historyDate").value,day=filtered(),
  grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),
  tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),
- cash=day.filter(x=>x.payment==="Cash").reduce((s,x)=>s+(Number(x.total)||0),0),
- card=day.filter(x=>x.payment==="Card").reduce((s,x)=>s+(Number(x.total)||0),0),
- paid=day.filter(x=>x.payment==="Card"&&x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
- unpaid=day.filter(x=>x.payment==="Card"&&!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
+ cash=day.reduce((s,x)=>s+paymentCashAmount(x),0),
+ card=day.reduce((s,x)=>s+paymentCardAmount(x),0),
+ paid=day.filter(x=>hasCardPart(x)&&x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),
+ unpaid=day.filter(x=>hasCardPart(x)&&!x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),
  persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0),
  jona=jonaForDate(d);
  const txt=`Taste Home — ${d}
@@ -838,7 +961,7 @@ Xhiro: ${money(grand)}
 
 let cardLedgerFilter="all";
 function allHistoricalCardRows(){
- return history.filter(x=>x.payment==="Card").slice().sort((a,b)=>{
+ return history.filter(x=>hasCardPart(x)).slice().sort((a,b)=>{
    const da=String(a.date||"")+" "+String(a.closedAt||"");
    const dbb=String(b.date||"")+" "+String(b.closedAt||"");
    return dbb.localeCompare(da);
@@ -847,9 +970,9 @@ function allHistoricalCardRows(){
 function drawCardRegisterSummary(){
  const el=$("cardRegisterSummary"); if(!el)return;
  const rows=allHistoricalCardRows(),
- total=rows.reduce((s,x)=>s+(Number(x.total)||0),0),
- paid=rows.filter(x=>x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
- unpaid=rows.filter(x=>!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
+ total=rows.reduce((s,x)=>s+paymentCardAmount(x),0),
+ paid=rows.filter(x=>x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),
+ unpaid=rows.filter(x=>!x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0);
  el.innerHTML=`
   <div class="card-register-stat"><b>${money(total)}</b><span>TOTAL CARD</span></div>
   <div class="card-register-stat"><b>${money(paid)}</b><span>✅ PAGUAR</span></div>
@@ -869,9 +992,9 @@ function toggleHistoricalCardPaid(id,checked){
 }
 function drawAllCardLedger(){
  const all=allHistoricalCardRows(),
- total=all.reduce((s,x)=>s+(Number(x.total)||0),0),
- paid=all.filter(x=>x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0),
- unpaid=all.filter(x=>!x.cardPaid).reduce((s,x)=>s+(Number(x.total)||0),0);
+ total=all.reduce((s,x)=>s+paymentCardAmount(x),0),
+ paid=all.filter(x=>x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),
+ unpaid=all.filter(x=>!x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0);
  $("allCardTotals").innerHTML=`<div class="card-register-grid">
   <div class="card-register-stat"><b>${money(total)}</b><span>TOTAL</span></div>
   <div class="card-register-stat"><b>${money(paid)}</b><span>✅ PAGUAR</span></div>
@@ -884,7 +1007,7 @@ function drawAllCardLedger(){
  $("allCardLedgerBody").innerHTML=rows.length?rows.map(inv=>`
   <div class="card-ledger-row ${inv.cardPaid?"":"card-ledger-unpaid"}">
    <div class="card-ledger-main">
-    <b>${inv.name||"Pa emër"} · ${money(inv.total)}</b>
+    <b>${inv.name||"Pa emër"} · 💳 ${money(paymentCardAmount(inv))}</b>
     <div class="card-ledger-meta">${inv.date||""} · ${inv.position||""}${inv.tip?` · 🎁 ${money(inv.tip)}`:""}</div>
    </div>
    <label class="card-ledger-check"><input type="checkbox" ${inv.cardPaid?"checked":""} onchange="toggleHistoricalCardPaid('${inv.id}',this.checked)"> Paguar</label>

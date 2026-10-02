@@ -158,19 +158,47 @@ font-size:15px;font-weight:950;background:var(--green);color:#fff;box-shadow:0 3
 .mixedgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .mixedtotal{font-size:12px;font-weight:900;margin-top:8px}
 .prep-modal-ready{width:100%;margin-top:12px;border:0;border-radius:14px;padding:14px;font-size:15px;font-weight:950;background:var(--green);color:#fff}
+
+/* FINAL: role separation */
+.role-badge{display:inline-flex;align-items:center;gap:6px;background:#fff3df;border:1px solid #e6c999;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;margin-top:6px}
+.role-switch{border:0;background:#5d4435;color:#fff;border-radius:10px;padding:7px 10px;font-size:11px;font-weight:900}
+body.waiter #tablesView>.live,
+body.waiter #tabHistory,body.waiter #tabStats,
+body.waiter #tableView .adminOnly{display:none!important}
+body.waiter #menus .price{display:none!important}
+body.waiter #topTotal,body.waiter .table .amount,
+body.waiter .table .redtxt{display:none!important}
+.waiter-note{display:none}
+body.waiter .waiter-note{display:block;background:#fff7e8;border:1px solid #efd7aa;padding:10px;border-radius:12px;margin:8px 0;font-size:12px;font-weight:800}
+.login-overlay{position:fixed;inset:0;z-index:99999;background:#f4eee7;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{width:min(430px,100%);background:#fff;border-radius:22px;padding:22px;box-shadow:0 12px 40px #0002}
+.login-card h2{margin:0 0 5px}.login-grid{display:grid;gap:9px;margin-top:15px}
+.login-grid button{padding:15px;border:0;border-radius:14px;font-weight:950;font-size:15px;background:#5d4435;color:#fff}
+.login-grid button.waiter-login{background:#2f6b55}
+.waiter-settings{display:grid;grid-template-columns:1fr 110px;gap:7px;margin:7px 0}
+
 </style>
 </head>
 <body>
-<header><div class="headrow"><div><h1>Taste Home Pro</h1><small>Shërbimi i mbrëmjes</small></div><div class="datebar"><button onclick="shiftWorkDate(-1)">‹</button><input id="workDate" type="date" onchange="saveWorkDate()"><button onclick="shiftWorkDate(1)">›</button></div></div></header>
+<header><div class="headrow"><div><h1>Taste Home Pro</h1><small>Shërbimi i mbrëmjes</small><div><span id="roleBadge" class="role-badge">🔐 Hyrja</span> <button class="role-switch" onclick="logoutRole()">Ndrysho përdorues</button></div></div><div class="datebar"><button onclick="shiftWorkDate(-1)">‹</button><input id="workDate" type="date" onchange="saveWorkDate()"><button onclick="shiftWorkDate(1)">›</button></div></div></header>
 <nav>
 <button id="tabTables" class="navbtn active" onclick="showTables()">🪑 Tavolinat</button>
 <button id="tabService" class="navbtn" onclick="showService()">🍽️ Shërbimi</button>
 <button id="tabHistory" class="navbtn" onclick="showHistory()">🧾 Historia</button>
 <button id="tabStats" class="navbtn" onclick="showStats()">📊 Statistika</button>
-</nav>
+<button id="waiterSettingsBtn" class="navbtn" onclick="editWaiters()">👥 Kamarierët</button><button id="priceSettingsBtn" class="navbtn" onclick="editPrices()">💶 Çmimet</button></nav>
+
+<div id="roleLogin" class="login-overlay">
+ <div class="login-card">
+  <h2>🏡 Taste Home Pro</h2>
+  <div class="meta">Zgjidh përdoruesin. Admini ka financat; kamarieri vetëm shërbimin.</div>
+  <div id="roleLoginButtons" class="login-grid"></div>
+ </div>
+</div>
+
 <main>
 <section id="tablesView">
-  <div class="card live">
+  <div class="card live adminOnly">
     <div class="livetop"><div><div class="meta">💰 XHIRO SOT</div><div id="liveSales" class="livetotal">€0.00</div></div><div style="text-align:right"><div class="meta">🎁 Bakshishe</div><b id="liveTips">€0.00</b></div></div>
     <div class="livechips">
       <button class="livechip" onclick="openCashList()">💵 Cash<b id="liveCash">€0.00</b></button>
@@ -190,17 +218,43 @@ font-size:15px;font-weight:950;background:var(--green);color:#fff;box-shadow:0 3
       <label>Emri i rezervimit / klientit</label>
       <input id="tableName" placeholder="p.sh. Ella Wise" oninput="updateDetails()">
     </div>
+    <div id="extraNameBox" class="hidden" style="margin-top:10px">
+      <label>Emri i Tavolinës Extra</label>
+      <input id="extraTableName" placeholder="p.sh. Tarraca / Oborri / VIP" oninput="renameExtraTable(this.value)">
+    </div>
     <div id="autoPeople" class="people">👥 0 persona</div>
     <label>Shënime</label><textarea id="notes" class="notes" placeholder="p.sh. pa alkool..." oninput="updateDetails()"></textarea>
   </div>
 
-  <div class="card"><div class="section-title"><h3>👥 Menu</h3><span class="meta">Personat llogariten vetë</span></div><div id="menus"></div></div>
+  <div class="card"><div class="section-title"><h3>👥 Menu</h3><span class="meta">Personat llogariten vetë</span></div><div class="waiter-note">👤 Kamarier: emri, personat, fazat, kërkesat dhe pijet. Financat shihen vetëm nga Admin.</div><div id="menus"></div></div>
   <div class="card"><div class="section-title"><h3>🍽️ Shërbimi</h3><span class="meta">Zgjidh fazën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="sendKitchenUpdate()">👨‍🍳 DËRGO KUZHINËS</button></div>
   <div class="card"><h3>⚡ Kërkesa të shpejta</h3><div id="requestButtons" class="reqgrid"></div><button class="next" onclick="sendSelectedRequests()">👨‍🍳 DËRGO KUZHINËS</button></div>
-  <div class="card"><div class="section-title"><h3>🥂 Pijet</h3><span class="meta">Zgjidh pijet, pastaj dërgo</span></div><div id="drinkTiles" class="drinktiles"></div><div id="drinkDetails"></div><button class="next" onclick="sendPendingDrinks()">👨‍🍳 DËRGO KUZHINËS</button></div>
+  <div class="card"><div class="section-title"><h3>🥂 Pijet</h3><span class="meta">⚡ Shkojnë direkt në Kitchen</span></div><div id="drinkTiles" class="drinktiles"></div><div id="drinkDetails"></div></div>
 
-  <div class="card">
+  <div class="card" adminOnly>
     <div class="section-title"><h3>💳 Pagesa</h3><b id="tableTotal"></b></div>
+    <div class="card adminOnly" style="margin:12px 0;padding:12px">
+      <div class="section-title"><h3>✏️ Edito tavolinën</h3><span class="meta">Vetëm Admin</span></div>
+      <label>Lloji i rregullimit</label>
+      <select id="adjustType" onchange="setAdjustmentType(this.value)">
+        <option value="none">Pa rregullim</option>
+        <option value="guide">Guide — Falas</option>
+        <option value="influencer">Influencer — Falas</option>
+        <option value="discount">Zbritje %</option><option value="discountEuro">Zbritje €</option>
+        <option value="lek">Konvertim Lek → Euro</option>
+        <option value="custom">Total manual €</option>
+      </select>
+      <div id="discountBox" class="hidden"><label>Zbritja %</label><input id="discountPct" type="number" min="0" max="100" step="1" inputmode="decimal" placeholder="p.sh. 10" oninput="setDiscountPct(this.value)"></div><div id="discountEuroBox" class="hidden"><label>Zbritja €</label><input id="discountEuro" type="number" min="0" step=".01" inputmode="decimal" placeholder="p.sh. 5" oninput="setDiscountEuro(this.value)"></div>
+      <div id="lekBox" class="hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div><label>Shuma Lek</label><input id="lekAmount" type="number" min="0" step="1" inputmode="decimal" oninput="setLekConversion()"></div>
+          <div><label>Kursi Lek / €</label><input id="lekRate" type="number" min="0.01" step=".01" inputmode="decimal" placeholder="p.sh. 100" oninput="setLekConversion()"></div>
+        </div>
+        <div id="lekResult" class="meta" style="margin-top:6px"></div>
+      </div>
+      <div id="customBox" class="hidden"><label>Totali final €</label><input id="customTotal" type="number" min="0" step=".01" inputmode="decimal" oninput="setCustomTotal(this.value)"></div>
+      <div id="adjustSummary" style="font-weight:900;margin-top:8px"></div>
+    </div>
     <div class="paybuttons" style="grid-template-columns:repeat(3,1fr)">
       <button id="cashBtn" class="paybtn" onclick="setPayment('Cash')">💵 CASH</button>
       <button id="cardBtn" class="paybtn" onclick="setPayment('Card')">💳 CARD</button>
@@ -223,7 +277,7 @@ font-size:15px;font-weight:950;background:var(--green);color:#fff;box-shadow:0 3
     </div>
   </div>
 
-  <div class="action-zone">
+  <div class="action-zone adminOnly">
     <div class="action-zone-title">Fatura</div>
     <div class="action-pair">
       <button class="print" onclick="printCurrent()">🖨️ Printo</button>
@@ -231,12 +285,12 @@ font-size:15px;font-weight:950;background:var(--green);color:#fff;box-shadow:0 3
     </div>
   </div>
 
-  <div class="action-zone">
+  <div class="action-zone adminOnly">
     <div class="action-zone-title">Mbyllja e tavolinës</div>
     <button class="close action-close" onclick="closeCurrent()">✅ Mbyll tavolinën</button>
   </div>
 
-  <div class="action-zone">
+  <div class="action-zone adminOnly">
     <div class="action-zone-title">Kujdes</div>
     <button class="delete action-delete" onclick="clearCurrent()">🗑️ Fshije pa ruajtur</button>
   </div>
@@ -369,7 +423,8 @@ try{
   });
 }catch(e){console.warn("Firebase nuk u inicializua",e)}
 
-const ITEMS=[
+const PRICE_KEY="taste_home_prices_v1";
+const DEFAULT_ITEMS=[
  {k:"normal",n:"Menu Normale",p:25,type:"menu"},
  {k:"veg",n:"Menu Vegjet",p:25,type:"menu"},
  {k:"kids",n:"Menu Kids",p:15,type:"menu"},
@@ -379,6 +434,8 @@ const ITEMS=[
  {k:"white",n:"Verë e bardhë",p:2.5,type:"drink",ico:"🥂"},
  {k:"juice",n:"Grape Juice",p:2.5,type:"drink",ico:"🍇"}
 ];
+let savedPrices=JSON.parse(localStorage.getItem(PRICE_KEY)||"{}");
+const ITEMS=DEFAULT_ITEMS.map(i=>({...i,p:(savedPrices[i.k]!=null&&!isNaN(Number(savedPrices[i.k])))?Number(savedPrices[i.k]):i.p}));
 const STAGES=[
  {short:"Mezet<br>e para",msg:"MEZET E PARA"},
  {short:"Mezet<br>e dyta",msg:"MEZET E DYTA"},
@@ -394,6 +451,14 @@ const MAX_TABLES=13;
 const DB_KEY="taste_home_tables_v9",HIST_KEY="taste_home_history_v9",DATE_KEY="taste_home_workdate_v9",COUNT_KEY="taste_home_tablecount_v9";
 const JONA_KEY="taste_home_jona_daily_v1";
 const OWNER_PIN="1990"; // Kodi për Historia + Statistika (mbrojtje lokale në këtë app)
+const WAITER_CFG_KEY="taste_home_waiters_v1";
+let waiterCfg=JSON.parse(localStorage.getItem(WAITER_CFG_KEY)||"null")||[
+ {id:"w1",name:"Kamarier 1",pin:"1111"},
+ {id:"w2",name:"Kamarier 2",pin:"2222"},
+ {id:"w3",name:"Kamarier 3",pin:"3333"}
+];
+let currentRole=sessionStorage.getItem("taste_home_role")||"", currentUserName=sessionStorage.getItem("taste_home_user_name")||"";
+
 const SOURCE_KEY="taste_home_source_breakdown_v1";
 const SOURCE_SEED_2026={"2026-05-01":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-09":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-11":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-16":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-17":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-20":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-23":{"jotform":3,"gyg":0,"outdoor":0},"2026-05-24":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-27":{"jotform":4,"gyg":0,"outdoor":0},"2026-05-28":{"jotform":2,"gyg":0,"outdoor":0},"2026-05-31":{"jotform":5,"gyg":0,"outdoor":0},"2026-06-01":{"jotform":21,"gyg":0,"outdoor":0},"2026-06-03":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-04":{"jotform":11,"gyg":0,"outdoor":0},"2026-06-05":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-06":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-07":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-08":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-09":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-12":{"jotform":5,"gyg":0,"outdoor":0},"2026-06-13":{"jotform":6,"gyg":0,"outdoor":18},"2026-06-15":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-16":{"jotform":8,"gyg":0,"outdoor":0},"2026-06-17":{"jotform":0,"gyg":0,"outdoor":9},"2026-06-19":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-20":{"jotform":4,"gyg":2,"outdoor":18},"2026-06-21":{"jotform":4,"gyg":0,"outdoor":0},"2026-06-22":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-23":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-24":{"jotform":0,"gyg":2,"outdoor":0},"2026-06-25":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-26":{"jotform":1,"gyg":0,"outdoor":0},"2026-06-27":{"jotform":2,"gyg":0,"outdoor":18},"2026-06-28":{"jotform":2,"gyg":0,"outdoor":0},"2026-06-29":{"jotform":12,"gyg":2,"outdoor":0},"2026-06-30":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-01":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-02":{"jotform":4,"gyg":2,"outdoor":0},"2026-07-03":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-04":{"jotform":2,"gyg":2,"outdoor":0},"2026-07-06":{"jotform":5,"gyg":0,"outdoor":0},"2026-07-07":{"jotform":15,"gyg":0,"outdoor":0},"2026-07-08":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-10":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-11":{"jotform":5,"gyg":3,"outdoor":18},"2026-07-12":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-13":{"jotform":0,"gyg":2,"outdoor":0},"2026-07-14":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-15":{"jotform":2,"gyg":0,"outdoor":0},"2026-07-17":{"jotform":3,"gyg":0,"outdoor":0},"2026-07-18":{"jotform":5,"gyg":2,"outdoor":0},"2026-07-19":{"jotform":12,"gyg":0,"outdoor":0},"2026-07-20":{"jotform":4,"gyg":3,"outdoor":0},"2026-07-21":{"jotform":4,"gyg":2,"outdoor":0},"2026-07-22":{"jotform":3,"gyg":2,"outdoor":0},"2026-07-23":{"jotform":7,"gyg":0,"outdoor":0},"2026-07-24":{"jotform":2,"gyg":3,"outdoor":0},"2026-07-25":{"jotform":0,"gyg":0,"outdoor":18},"2026-07-26":{"jotform":6,"gyg":0,"outdoor":0},"2026-07-27":{"jotform":2,"gyg":1,"outdoor":0},"2026-07-28":{"jotform":8,"gyg":0,"outdoor":0},"2026-07-29":{"jotform":13,"gyg":3,"outdoor":0},"2026-07-30":{"jotform":8,"gyg":0,"outdoor":0},"2026-07-31":{"jotform":11,"gyg":0,"outdoor":0},"2026-08-01":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-02":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-03":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-04":{"jotform":17,"gyg":0,"outdoor":0},"2026-08-05":{"jotform":3,"gyg":6,"outdoor":0},"2026-08-06":{"jotform":1,"gyg":0,"outdoor":0},"2026-08-07":{"jotform":2,"gyg":3,"outdoor":0},"2026-08-08":{"jotform":4,"gyg":0,"outdoor":18},"2026-08-09":{"jotform":10,"gyg":3,"outdoor":0},"2026-08-10":{"jotform":3,"gyg":0,"outdoor":0},"2026-08-11":{"jotform":8,"gyg":0,"outdoor":0},"2026-08-12":{"jotform":7,"gyg":0,"outdoor":0},"2026-08-13":{"jotform":23,"gyg":0,"outdoor":0},"2026-08-14":{"jotform":4,"gyg":0,"outdoor":0},"2026-08-15":{"jotform":14,"gyg":0,"outdoor":0},"2026-08-16":{"jotform":9,"gyg":2,"outdoor":0},"2026-08-17":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-18":{"jotform":12,"gyg":0,"outdoor":0},"2026-08-19":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-20":{"jotform":27,"gyg":0,"outdoor":0},"2026-08-21":{"jotform":13,"gyg":0,"outdoor":0},"2026-08-22":{"jotform":9,"gyg":2,"outdoor":18},"2026-08-23":{"jotform":2,"gyg":0,"outdoor":0},"2026-08-24":{"jotform":5,"gyg":0,"outdoor":0},"2026-08-25":{"jotform":8,"gyg":0,"outdoor":0},"2026-08-27":{"jotform":41,"gyg":0,"outdoor":0},"2026-08-28":{"jotform":6,"gyg":0,"outdoor":0},"2026-08-29":{"jotform":19,"gyg":1,"outdoor":0},"2026-08-30":{"jotform":4,"gyg":0,"outdoor":0},"2026-08-31":{"jotform":10,"gyg":2,"outdoor":0}};
 const oldDB9=localStorage.getItem(DB_KEY), oldHist9=localStorage.getItem(HIST_KEY);
@@ -408,17 +473,19 @@ let tableCount=Math.max(10,Math.min(13,Number(localStorage.getItem(COUNT_KEY)||1
 const $=id=>document.getElementById(id);
 
 function positionFor(t){return t<=10?BASE_POSITIONS[t-1]:`➕ Tavolinë Shtesë ${t-10}`}
-function blank(t){const q={},sent={},served={};ITEMS.forEach(i=>q[i.k]=sent[i.k]=served[i.k]=0);return{q,sent,served,name:"",reservedPeople:0,notes:"",updated:null,stage:0,requests:{},payment:"Cash",cardPaid:true,cardNote:"",cashAmount:0,cardAmount:0,received:"",workDate:"",position:positionFor(t)}}
+function blank(t){const q={},sent={},served={};ITEMS.forEach(i=>q[i.k]=sent[i.k]=served[i.k]=0);return{q,sent,served,priceSnapshot:{},name:"",reservedPeople:0,notes:"",waiterName:"",updated:null,stage:0,requests:{},payment:"Cash",cardPaid:true,cardNote:"",cashAmount:0,cardAmount:0,received:"",adjustType:"none",discountPct:0,discountEuro:0,lekAmount:0,lekRate:100,customTotal:"",workDate:"",position:positionFor(t)}}
 function normalize(t){
  if(!db[t])db[t]=blank(t);
- const b=db[t];b.q=b.q||{};b.sent=b.sent||{};b.served=b.served||{};
+ const b=db[t];b.q=b.q||{};b.sent=b.sent||{};b.served=b.served||{};b.priceSnapshot=b.priceSnapshot||{};
  if(b.q.menu!=null&&b.q.normal==null)b.q.normal=b.q.menu||0;
  ITEMS.forEach(i=>{if(b.q[i.k]==null)b.q[i.k]=0;if(b.sent[i.k]==null)b.sent[i.k]=0;if(b.served[i.k]==null)b.served[i.k]=0});
- b.position=positionFor(t);
+ if(!b.position)b.position=positionFor(t);
+ if(t<=10)b.position=positionFor(t);
  if(b.name&&/^Tavolina\s+\d+$/i.test(b.name))b.name="";
  if(b.reservedPeople==null)b.reservedPeople=Number(b.persons)||0;
  if(!b.payment)b.payment="Cash";if(typeof b.cardPaid!=="boolean")b.cardPaid=b.payment==="Cash";
  if(b.cardNote==null)b.cardNote="";if(b.cashAmount==null)b.cashAmount=0;if(b.cardAmount==null)b.cardAmount=0;if(b.received==null)b.received=b.receivedAmount??"";
+ if(!b.adjustType)b.adjustType="none";if(b.discountPct==null)b.discountPct=0;if(b.discountEuro==null)b.discountEuro=0;if(b.lekAmount==null)b.lekAmount=0;if(b.lekRate==null)b.lekRate=100;if(b.customTotal==null)b.customTotal="";
  if(typeof b.stage!=="number")b.stage=0;if(!b.requests)b.requests={};if(b.workDate==null)b.workDate="";
 }
 for(let t=1;t<=MAX_TABLES;t++)normalize(t);
@@ -436,9 +503,70 @@ function save(){
  localStorage.setItem(JONA_KEY,JSON.stringify(jonaDaily));
  localStorage.setItem(SOURCE_KEY,JSON.stringify(sourceDaily));
  localStorage.setItem(COUNT_KEY,String(tableCount));
+ syncLiveService();
 }
+let liveSyncTimer=null;
+function operationalTable(t){
+ const b=db[t];return {q:b.q,sent:b.sent,served:b.served,priceSnapshot:b.priceSnapshot||{},name:b.name||"",reservedPeople:b.reservedPeople||0,notes:b.notes||"",stage:b.stage||0,requests:b.requests||{},workDate:b.workDate||"",position:b.position||positionFor(t),waiterName:b.waiterName||"",updatedAt:Date.now()};
+}
+function syncLiveService(){
+ if(remoteApplying||!firebaseReady||!fbdb)return;
+ clearTimeout(liveSyncTimer);liveSyncTimer=setTimeout(()=>{
+   const tables={};for(let t=1;t<=tableCount;t++)tables[t]=operationalTable(t);
+   fbdb.ref("liveService").update({tables,tableCount,updatedAt:Date.now()}).catch(e=>console.warn("Live service sync:",e));
+ },120);
+}
+function startLiveServiceSync(){
+ if(!fbdb||window.__liveServiceStarted)return;window.__liveServiceStarted=true;
+ fbdb.ref("liveService").on("value",snap=>{
+   const v=snap.val();if(!v||!v.tables)return;
+   remoteApplying=true;
+   tableCount=Math.max(10,Math.min(MAX_TABLES,Number(v.tableCount)||tableCount));
+   for(let t=1;t<=tableCount;t++){
+     normalize(t);const r=v.tables[t];if(!r)continue;
+     ["q","sent","served","priceSnapshot","name","reservedPeople","notes","stage","requests","workDate","position","waiterName"].forEach(key=>{if(r[key]!==undefined)db[t][key]=r[key]});
+   }
+   localStorage.setItem(DB_KEY,JSON.stringify(db));localStorage.setItem(COUNT_KEY,String(tableCount));
+   remoteApplying=false;
+   if(!$("tablesView").classList.contains("hidden"))drawTables();
+   if(!$("tableView").classList.contains("hidden"))drawCurrent();
+ },e=>console.warn("Live service read:",e));
+}
+
 function money(v){return "€"+Number(v||0).toFixed(2)} function stamp(){return new Date().toLocaleString("sq-AL")}
-function total(t){return ITEMS.reduce((s,i)=>s+(Number(db[t].q[i.k])||0)*i.p,0)}
+function editTableItemPrice(k){
+ if(!isAdmin())return;
+ const item=ITEMS.find(i=>i.k===k);if(!item)return;
+ const currentPrice=unitPriceForTable(current,item);
+ const v=prompt(`${item.n} — çmimi vetëm për këtë tavolinë (€):`,String(currentPrice));
+ if(v===null)return;
+ const n=Number(String(v).replace(",","."));
+ if(!Number.isFinite(n)||n<0)return alert("Çmim jo i vlefshëm.");
+ db[current].priceSnapshot=db[current].priceSnapshot||{};
+ db[current].priceSnapshot[k]=Math.round(n*100)/100;
+ db[current].updated=stamp();save();drawCurrent();drawLive();
+}
+function unitPriceForTable(t,item){const b=db[t];return (b.priceSnapshot&&b.priceSnapshot[item.k]!=null)?Number(b.priceSnapshot[item.k]):item.p}
+function baseTotal(t){return ITEMS.reduce((s,i)=>s+(Number(db[t].q[i.k])||0)*unitPriceForTable(t,i),0)}
+function total(t){
+ const b=db[t],base=baseTotal(t),type=b.adjustType||"none";
+ if(type==="guide"||type==="influencer")return 0;
+ if(type==="discount")return Math.max(0,base*(1-Math.min(100,Math.max(0,Number(b.discountPct)||0))/100));
+ if(type==="discountEuro")return Math.max(0,base-Math.max(0,Number(b.discountEuro)||0));
+ if(type==="lek"){const a=Math.max(0,Number(b.lekAmount)||0),r=Math.max(.01,Number(b.lekRate)||100);return a/r}
+ if(type==="custom"&&b.customTotal!=="")return Math.max(0,Number(b.customTotal)||0);
+ return base;
+}
+function adjustmentLabel(t){
+ const b=db[t],type=b.adjustType||"none";
+ if(type==="guide")return "Guide — Falas";
+ if(type==="influencer")return "Influencer — Falas";
+ if(type==="discount")return `Zbritje ${Number(b.discountPct)||0}%`;
+ if(type==="discountEuro")return `Zbritje €${Number(b.discountEuro)||0}`;
+ if(type==="lek")return `${Number(b.lekAmount)||0} Lek ÷ ${Number(b.lekRate)||100}`;
+ if(type==="custom")return "Total manual";
+ return "";
+}
 function menuPeople(t){return ["normal","veg","kids","group"].reduce((s,k)=>s+(Number(db[t].q[k])||0),0)}
 function people(t){return menuPeople(t)}
 function pending(t,k){return Math.max(0,(db[t].q[k]||0)-(db[t].served[k]||0))}
@@ -454,6 +582,60 @@ function shiftWorkDate(n){$("workDate").value=shiftDate(isoDate(),n);saveWorkDat
 function setToday(){$("workDate").value=new Date().toISOString().slice(0,10);saveWorkDate()}
 function shiftHistoryDate(n){$("historyDate").value=shiftDate($("historyDate").value,n);drawHistory()}
 
+
+function isAdmin(){return currentRole==="admin"}
+function roleName(){return isAdmin()?"Jona / Admin":(currentUserName||"Kamarier")}
+function renderRoleLogin(){
+ const box=$("roleLoginButtons"); if(!box)return;
+ box.innerHTML=`<button onclick="loginAdmin()">🔐 ADMIN</button>`+
+ waiterCfg.map((w,i)=>`<button class="waiter-login" onclick="loginWaiter(${i})">👤 ${w.name}</button>`).join("");
+}
+function applyRole(){
+ document.body.classList.toggle("waiter",currentRole==="waiter");
+ const rb=$("roleBadge"); if(rb)rb.textContent=isAdmin()?"🔐 ADMIN — Jona":`👤 ${roleName()}`;
+ if($("roleLogin"))$("roleLogin").classList.toggle("hidden",!!currentRole);
+ if(currentRole==="waiter" && (!$("historyView").classList.contains("hidden")||!$("statsView").classList.contains("hidden")))showTables();
+ drawTables();
+}
+function loginAdmin(){
+ const p=prompt("PIN Admin:"); if(p===null)return;
+ if(String(p)!==OWNER_PIN)return alert("PIN i gabuar.");
+ currentRole="admin";currentUserName="Jona";sessionStorage.setItem("taste_home_role",currentRole);sessionStorage.setItem("taste_home_user_name",currentUserName);
+ sessionStorage.setItem("taste_home_owner_unlocked","1");applyRole();
+}
+function loginWaiter(i){
+ const w=waiterCfg[i];if(!w)return;const p=prompt(`PIN — ${w.name}:`);if(p===null)return;
+ if(String(p)!==String(w.pin))return alert("PIN i gabuar.");
+ currentRole="waiter";currentUserName=w.name;sessionStorage.setItem("taste_home_role",currentRole);sessionStorage.setItem("taste_home_user_name",currentUserName);applyRole();
+}
+function logoutRole(){sessionStorage.removeItem("taste_home_role");sessionStorage.removeItem("taste_home_user_name");sessionStorage.removeItem("taste_home_owner_unlocked");currentRole="";currentUserName="";renderRoleLogin();applyRole()}
+function editPrices(){
+ if(!isAdmin())return alert("Vetëm Admin mund të ndryshojë çmimet.");
+ const old=Object.fromEntries(ITEMS.map(i=>[i.k,i.p]));
+ const labels={normal:"Menu Normale",veg:"Menu Vegjet",kids:"Menu Kids",group:"Grup",beer:"Birrë",red:"Verë e kuqe",white:"Verë e bardhë",juice:"Grape Juice"};
+ for(const item of ITEMS){
+   const v=prompt(`${labels[item.k]} — çmimi €:`,String(item.p));
+   if(v===null){ITEMS.forEach(i=>i.p=old[i.k]);return alert("Ndryshimi u anulua.");}
+   const n=Number(String(v).replace(",","."));
+   if(!Number.isFinite(n)||n<0){ITEMS.forEach(i=>i.p=old[i.k]);return alert("Çmim jo i vlefshëm. Nuk u ndryshua asgjë.");}
+   item.p=Math.round(n*100)/100;
+ }
+ const obj=Object.fromEntries(ITEMS.map(i=>[i.k,i.p]));
+ localStorage.setItem(PRICE_KEY,JSON.stringify(obj));
+ drawTables();
+ if(!$("tableView").classList.contains("hidden"))drawCurrent();
+ alert("Çmimet e reja u ruajtën. Faturat e mbyllura në histori nuk ndryshojnë.");
+}
+function editWaiters(){
+ if(!isAdmin())return;
+ waiterCfg.forEach((w,i)=>{
+   const n=prompt(`Emri i Kamarierit ${i+1}:`,w.name); if(n===null)return;
+   const p=prompt(`PIN për ${n}:`,w.pin); if(p===null)return;
+   waiterCfg[i]={...w,name:n.trim()||w.name,pin:String(p).trim()||w.pin};
+ });
+ localStorage.setItem(WAITER_CFG_KEY,JSON.stringify(waiterCfg));renderRoleLogin();alert("3 kamarierët u ruajtën në këtë pajisje.");
+}
+
 function hideAll(){document.querySelectorAll("main section").forEach(x=>x.classList.add("hidden"));["tabTables","tabService","tabHistory","tabStats"].forEach(x=>$(x).classList.remove("active"))}
 function showTables(){hideAll();$("tablesView").classList.remove("hidden");$("tabTables").classList.add("active");drawTables()}
 function showService(){hideAll();$("serviceView").classList.remove("hidden");$("tabService").classList.add("active");drawService()}
@@ -466,8 +648,8 @@ function requireOwner(){
  alert("Kodi nuk është i saktë.");
  return false;
 }
-function showHistory(){if(!requireOwner())return;hideAll();$("historyView").classList.remove("hidden");$("tabHistory").classList.add("active");$("historyDate").value=$("workDate").value;drawHistory()}
-function showStats(){if(!requireOwner())return;hideAll();$("statsView").classList.remove("hidden");$("tabStats").classList.add("active");fillStatsControls();drawStats()}
+function showHistory(){if(!isAdmin())return alert("Vetëm Admin.");if(!requireOwner())return;hideAll();$("historyView").classList.remove("hidden");$("tabHistory").classList.add("active");$("historyDate").value=$("workDate").value;drawHistory()}
+function showStats(){if(!isAdmin())return alert("Vetëm Admin.");if(!requireOwner())return;hideAll();$("statsView").classList.remove("hidden");$("tabStats").classList.add("active");fillStatsControls();drawStats()}
 
 function activeForDate(t,d){return total(t)>0}
 function liveRows(payment){
@@ -511,7 +693,7 @@ function drawTables(){
   const p=pendingCount(t),el=document.createElement("button");
   el.className="table "+(p?"alert":total(t)>0||people(t)>0?"active":"")+(hasCardPart(db[t],t)&&!db[t].cardPaid&&total(t)>0?" unpaid":"");
   const ks=tableKitchenStatus(t);
-   el.innerHTML=`<div class="position">${db[t].position}</div><div class="guest">${db[t].name||"Pa emër"}</div><div class="meta">👥 ${people(t)} persona</div><div class="amount">${money(total(t))}</div>${p?`<div class="redtxt">🔴 ${p} pije për t'u çuar</div>`:""}${hasCardPart(db[t],t)&&!db[t].cardPaid&&total(t)>0?`<div class="redtxt">💳 ${money(paymentCardAmount(db[t],t))} Card pa paguar</div>`:""}${ks}`;
+   el.innerHTML=`<div class="position">${db[t].position}</div><div class="guest">${db[t].name||"Pa emër"}</div><div class="meta">👥 ${people(t)} persona${db[t].waiterName?` · 👤 ${db[t].waiterName}`:""}</div><div class="amount">${money(total(t))}</div>${p?`<div class="redtxt">🔴 ${p} pije për t'u çuar</div>`:""}${hasCardPart(db[t],t)&&!db[t].cardPaid&&total(t)>0?`<div class="redtxt">💳 ${money(paymentCardAmount(db[t],t))} Card pa paguar</div>`:""}${ks}`;
   el.onclick=()=>openTable(t);$("tables").appendChild(el);
  }
  $("addTableBtn").classList.toggle("hidden",tableCount>=MAX_TABLES);
@@ -519,9 +701,54 @@ function drawTables(){
 }
 function addExtraTable(){if(tableCount>=MAX_TABLES)return;tableCount++;normalize(tableCount);db[tableCount].position=positionFor(tableCount);save();drawTables()}
 
-function openTable(t){current=t;hideAll();$("tableView").classList.remove("hidden");$("tableName").value=db[t].name||"";$("notes").value=db[t].notes||"";$("cardNote").value=db[t].cardNote||"";$("received").value=db[t].received!==""?db[t].received:"";drawCurrent()}
+function openTable(t){current=t;if(currentRole==="waiter"&&!db[t].waiterName){db[t].waiterName=roleName();save();}hideAll();$("tableView").classList.remove("hidden");$("tableName").value=db[t].name||"";$("notes").value=db[t].notes||"";$("cardNote").value=db[t].cardNote||"";$("received").value=db[t].received!==""?db[t].received:"";drawCurrent()}
 function updateDetails(){const b=db[current];b.name=$("tableName").value.trim();b.notes=$("notes").value.trim();b.cardNote=$("cardNote").value.trim();b.workDate=b.workDate||isoDate();b.updated=stamp();save();drawHeaderOnly()}
-function drawHeaderOnly(){$("tableHeader").textContent=`${db[current].position} · ${db[current].name||"Pa emër"}`;$("topTotal").textContent=money(total(current));$("autoPeople").textContent=`👥 ${people(current)} persona`;$("tableTotal").textContent=money(total(current));drawTip()}
+function setAdjustmentType(v){
+ const b=db[current];b.adjustType=v||"none";
+ if(v==="guide"||v==="influencer"){b.received="";b.payment="Cash";b.cardPaid=true;b.cashAmount=0;b.cardAmount=0}
+ b.updated=stamp();save();drawCurrent();drawLive();
+}
+function setDiscountPct(v){db[current].discountPct=Math.min(100,Math.max(0,Number(v)||0));db[current].updated=stamp();save();drawCurrent();drawLive()}
+function setDiscountEuro(v){db[current].discountEuro=Math.max(0,Number(v)||0);db[current].updated=stamp();save();drawCurrent();drawLive()}
+function setLekConversion(){
+ db[current].lekAmount=Math.max(0,Number($("lekAmount").value)||0);
+ db[current].lekRate=Math.max(.01,Number($("lekRate").value)||100);
+ db[current].updated=stamp();save();drawCurrent();drawLive();
+}
+function setCustomTotal(v){db[current].customTotal=v===""?"":Math.max(0,Number(v)||0);db[current].updated=stamp();save();drawCurrent();drawLive()}
+function drawAdjustment(){
+ const b=db[current],type=b.adjustType||"none";
+ $("adjustType").value=type;
+ $("discountBox").classList.toggle("hidden",type!=="discount");
+ $("discountEuroBox").classList.toggle("hidden",type!=="discountEuro");
+ $("lekBox").classList.toggle("hidden",type!=="lek");
+ $("customBox").classList.toggle("hidden",type!=="custom");
+ $("discountPct").value=b.discountPct||"";
+ $("discountEuro").value=b.discountEuro||"";
+ $("lekAmount").value=b.lekAmount||"";
+ $("lekRate").value=b.lekRate||100;
+ $("customTotal").value=b.customTotal;
+ $("lekResult").textContent=type==="lek"?`= ${money(total(current))}`:"";
+ const lab=adjustmentLabel(current),base=baseTotal(current);
+ $("adjustSummary").textContent=lab?`${lab} · ${money(base)} → ${money(total(current))}`:"";
+}
+function drawHeaderOnly(){
+ $("tableHeader").textContent=`${db[current].position} · ${db[current].name||"Pa emër"}`;
+ $("topTotal").textContent=money(total(current));
+ $("autoPeople").textContent=`👥 ${people(current)} persona`;
+ $("tableTotal").textContent=money(total(current));
+ $("extraNameBox").classList.toggle("hidden",current<=10);
+ if(current>10)$("extraTableName").value=db[current].position||positionFor(current);
+ drawTip();
+}
+function renameExtraTable(v){
+ if(current<=10)return;
+ const name=String(v||"").trim();
+ db[current].position=name||positionFor(current);
+ db[current].updated=stamp();save();
+ $("tableHeader").textContent=`${db[current].position} · ${db[current].name||"Pa emër"}`;
+ syncOpenKitchenOrderMeta(current);
+}
 function paymentCashAmount(x,t){
  const tot=t?total(t):(Number(x.total)||0);
  if(x.payment==="Mixed")return Math.max(0,Number(x.cashAmount)||0);
@@ -575,7 +802,7 @@ function drawCurrent(){
  drawHeaderOnly();drawPayment();
  $("statusButtons").innerHTML="";STAGES.forEach((s,n)=>{const b=document.createElement("button");b.className="status-btn "+(db[current].stage===n?"selected":"");b.innerHTML=s.short;b.onclick=()=>{db[current].stage=n;db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawCurrent()};$("statusButtons").appendChild(b)});
  $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="reqbtn "+(db[current].requests[r]?"selected":"");b.textContent=(db[current].requests[r]?"✓ ":"")+r;b.onclick=()=>toggleQuickRequest(r);$("requestButtons").appendChild(b)});
- $("menus").innerHTML="";ITEMS.filter(i=>i.type==="menu").forEach(i=>{const r=document.createElement("div");r.className="row";r.innerHTML=`<div><div class="name">${i.n}</div><div class="price">${money(i.p)}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${db[current].q[i.k]}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div>`;$("menus").appendChild(r)});
+ $("menus").innerHTML="";ITEMS.filter(i=>i.type==="menu").forEach(i=>{const r=document.createElement("div");r.className="row";r.innerHTML=`<div><div class="name">${i.n}</div><div class="price">${isAdmin()?`<button type="button" onclick="event.stopPropagation();editTableItemPrice('${i.k}')" style="border:0;background:#fff3df;border-radius:8px;padding:4px 7px;font-weight:900">✏️ ${money(unitPriceForTable(current,i))}</button>`:money(unitPriceForTable(current,i))}</div></div><div class="counter"><button class="minus" onclick="change('${i.k}',-1)">−</button><b>${db[current].q[i.k]}</b><button class="plus" onclick="change('${i.k}',1)">+</button></div>`;$("menus").appendChild(r)});
  drawDrinks();
 }
 function drawDrinks(){
@@ -585,11 +812,56 @@ function drawDrinks(){
 function change(k,d){
  const item=ITEMS.find(i=>i.k===k);
  const before=Number(db[current].q[k]||0);
- db[current].q[k]=Math.max(0,before+d);
- if((db[current].served[k]||0)>db[current].q[k])db[current].served[k]=db[current].q[k];
- if(item&&item.type==="drink"&&(db[current].sent[k]||0)>db[current].q[k])db[current].sent[k]=db[current].q[k];
+ const after=Math.max(0,before+d);
+ const actualDelta=after-before;
+ db[current].q[k]=after;
+ db[current].priceSnapshot=db[current].priceSnapshot||{};
+ if(before===0&&after>0&&item)db[current].priceSnapshot[k]=item.p;
+ if(after===0)delete db[current].priceSnapshot[k];
+ if((db[current].served[k]||0)>after)db[current].served[k]=after;
  db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();
  drawCurrent();drawLive();
+ if(item&&item.type==="drink"&&actualDelta!==0)syncDrinkToKitchen(item,actualDelta);
+}
+
+function syncOpenKitchenOrderMeta(t){
+ if(!firebaseReady||!fbdb)return;
+ const b=db[t],updates={};
+ Object.values(kitchenOrders||{}).filter(o=>o&&Number(o.table)===Number(t)&&o.status!=="ready").forEach(o=>{
+   updates[`kitchenOrders/${o.id}/position`]=b.position;
+   updates[`kitchenOrders/${o.id}/name`]=b.name||"";
+   updates[`kitchenOrders/${o.id}/people`]=people(t);
+   updates[`kitchenOrders/${o.id}/updatedAt`]=Date.now();
+ });
+ if(Object.keys(updates).length)fbdb.ref().update(updates).catch(e=>console.error("Meta kitchen:",e));
+}
+function syncDrinkToKitchen(item,delta){
+ if(!firebaseReady||!fbdb){
+   alert("Pija u ruajt në tavolinë, por Kitchen nuk është lidhur. Kontrollo internetin.");
+   return;
+ }
+ const b=db[current],key=`drink_${current}_${item.k}`,ref=fbdb.ref("kitchenOrders/"+key);
+ ref.transaction(existing=>{
+   // Nëse porosia e mëparshme është bërë gati, + krijon një porosi të re operative.
+   if(!existing||existing.status==="ready"){
+     if(delta<0)return existing||null;
+     return {id:key,table:current,position:b.position,name:b.name||"",people:people(current),
+       stageLabel:"PIJE",waiterName:roleName(),instruction:drinkKitchenText(item,delta),notes:b.notes||"",requests:[],
+       menuBreakdown:[],drinkKey:item.k,drinkQty:delta,status:"pending",
+       createdAt:Date.now(),updatedAt:Date.now()};
+   }
+   const qty=Math.max(0,(Number(existing.drinkQty)||0)+delta);
+   if(qty===0)return null;
+   return {...existing,position:b.position,name:b.name||"",people:people(current),
+     drinkQty:qty,waiterName:roleName(),instruction:drinkKitchenText(item,qty),updatedAt:Date.now()};
+ }).then(()=>{
+   // sent mbahet vetëm për përputhshmëri me versionet e vjetra.
+   db[current].sent[item.k]=db[current].q[item.k]||0;
+   save();drawCurrent();drawLive();
+ }).catch(e=>{
+   console.error("Auto-send pije:",e);
+   alert("Pija nuk shkoi në Kitchen. Provo përsëri.");
+ });
 }
 
 function drinkKitchenText(item,qty){
@@ -616,9 +888,9 @@ function sendPendingDrinks(){
    return ref.transaction(existing=>{
      if(existing && existing.status!=="ready"){
        const newQty=(Number(existing.drinkQty)||1)+qty;
-       return {...existing,id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",drinkKey:item.k,drinkQty:newQty,instruction:drinkKitchenText(item,newQty),updatedAt:Date.now()};
+       return {...existing,id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",waiterName:roleName(),drinkKey:item.k,drinkQty:newQty,instruction:drinkKitchenText(item,newQty),updatedAt:Date.now()};
      }
-     return {id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",instruction:drinkKitchenText(item,qty),notes:b.notes||"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:qty,status:"pending",createdAt:Date.now(),updatedAt:Date.now()};
+     return {id:key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"PIJE",waiterName:roleName(),instruction:drinkKitchenText(item,qty),notes:b.notes||"",requests:[],menuBreakdown:[],drinkKey:item.k,drinkQty:qty,status:"pending",createdAt:Date.now(),updatedAt:Date.now()};
    }).then(()=>{ b.sent[item.k]=Number(b.sent[item.k]||0)+qty; });
  });
 
@@ -695,7 +967,7 @@ function sendKitchenUpdate(){
  const b=db[current],stage=STAGES[b.stage],n=people(current);
  const req=Object.keys(b.requests||{}).filter(k=>b.requests[k]);
  const order={
-   table:current,position:b.position,name:b.name||"",people:n,stage:b.stage,stageLabel:stage.msg,
+   table:current,position:b.position,name:b.name||"",people:n,waiterName:roleName(),stage:b.stage,stageLabel:stage.msg,
    instruction:`PËRGATIT ${n} ${stage.msg}`,notes:b.notes||"",requests:req,
    status:"pending",createdAt:Date.now()
  };
@@ -722,12 +994,12 @@ function sendKitchenUpdate(){
  db[current].requests={};db[current].updated=stamp();save();drawCurrent();drawTables();
 }
 function invoiceText(t){const b=db[t];let x=`Taste Home\nData: ${b.workDate||isoDate()}\n${b.position}${b.name?" — "+b.name:""}\nPersona: ${people(t)}\nPagesa: ${b.payment}`;if(b.payment==="Card")x+=` — ${b.cardPaid?"PAGUAR":"PA PAGUAR"}`;x+="\n";linesForTable(t).forEach(a=>x+=`${a.name}: ${a.qty} × ${money(a.price)} = ${money(a.subtotal)}\n`);x+=`----------------\nTOTALI: ${money(total(t))}`;if(db[t].received!=="")x+=`\nShuma e marrë: ${money(db[t].received)}\nBakshishi: ${money(tipForTable(t))}`;return x}
-function shareCurrent(){if(total(current)<=0)return alert("Tavolina është bosh.");shareText(invoiceText(current))}
-function printCurrent(){
+function shareCurrent(){if(!isAdmin())return alert("Vetëm Admin.");if(total(current)<=0)return alert("Tavolina është bosh.");shareText(invoiceText(current))}
+function printCurrent(){if(!isAdmin())return alert("Vetëm Admin.");
  if(total(current)<=0)return alert("Tavolina është bosh.");
  $("printArea").innerHTML=`
- <div style="font-family:Arial;max-width:720px;margin:auto;color:#111;font-size:24px;line-height:1.55">
-   <h1 style="font-size:38px;margin:0 0 18px">Taste Home</h1>
+ <div style="font-family:Arial;max-width:720px;margin:auto;color:#111;font-size:32px;line-height:1.6">
+   <h1 style="font-size:50px;margin:0 0 22px">Taste Home</h1>
    <div>${invoiceText(current).replace(/\n/g,"<br>")}</div>
  </div>`;
  window.print();
@@ -737,17 +1009,17 @@ function clearKitchenForTable(t){
  ids.forEach(id=>delete kitchenOrders[id]);
  if(firebaseReady&&fbdb&&ids.length){const u={};ids.forEach(id=>u[`kitchenOrders/${id}`]=null);fbdb.ref().update(u).catch(e=>console.error("Pastrimi kitchenOrders",e))}
 }
-function closeCurrent(){
+function closeCurrent(){if(!isAdmin())return alert("Vetëm Admin mund ta mbyllë tavolinën.");
  if(total(current)<=0)return alert("Tavolina është bosh.");
  const b=db[current],cardPart=paymentCardAmount(b,current);
  if(cardPart>0&&!b.cardPaid&&!confirm(`Pjesa Card ${money(cardPart)} është PAPAGUAR. Ta mbyll tavolinën gjithsesi?`))return;
  if(!confirm(`Ta mbyll ${b.name||"Pa emër"} te ${b.position}?`))return;
  const received=b.received===""?total(current):Number(b.received)||0;
- history.unshift({id:Date.now(),table:current,position:b.position,name:b.name||"",persons:people(current),notes:b.notes,payment:b.payment,cashAmount:paymentCashAmount(b,current),cardAmount:paymentCardAmount(b,current),cardPaid:cardPart<=0?true:!!b.cardPaid,cardNote:b.cardNote,date:b.workDate||isoDate(),closedAt:stamp(),lines:linesForTable(current),total:total(current),received,tip:Math.max(0,received-total(current))});
+ history.unshift({id:Date.now(),table:current,position:b.position,name:b.name||"",persons:people(current),notes:b.notes,adjustType:b.adjustType||"none",adjustLabel:adjustmentLabel(current),discountPct:Number(b.discountPct)||0,discountEuro:Number(b.discountEuro)||0,lekAmount:Number(b.lekAmount)||0,lekRate:Number(b.lekRate)||100,baseTotal:baseTotal(current),payment:b.payment,cashAmount:paymentCashAmount(b,current),cardAmount:paymentCardAmount(b,current),cardPaid:cardPart<=0?true:!!b.cardPaid,cardNote:b.cardNote,date:b.workDate||isoDate(),closedAt:stamp(),lines:linesForTable(current),total:total(current),received,tip:Math.max(0,received-total(current))});
  clearKitchenForTable(current);
  const pos=b.position;db[current]=blank(current);db[current].position=pos;save();showTables();
 }
-function clearCurrent(){if(confirm("Ta fshij pa e ruajtur në histori?")){clearKitchenForTable(current);const pos=db[current].position;db[current]=blank(current);db[current].position=pos;save();showTables()}}
+function clearCurrent(){if(!isAdmin())return alert("Vetëm Admin.");if(confirm("Ta fshij pa e ruajtur në histori?")){clearKitchenForTable(current);const pos=db[current].position;db[current]=blank(current);db[current].position=pos;save();showTables()}}
 
 function prepPendingOrders(){
  return Object.values(kitchenOrders||{}).filter(o=>o && o.status!=="ready");
@@ -903,8 +1175,8 @@ function printDaily(){
  persons=day.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
 
  $("printArea").innerHTML=`
-   <div style="font-family:Arial;max-width:760px;margin:auto;color:#111;font-size:25px;line-height:1.55">
-     <h1 style="font-size:40px;margin:0 0 8px">Taste Home — Xhiro Ditore</h1>
+   <div style="font-family:Arial;max-width:760px;margin:auto;color:#111;font-size:31px;line-height:1.6">
+     <h1 style="font-size:48px;margin:0 0 10px">Taste Home — Xhiro Ditore</h1>
      <div style="font-size:25px;margin-bottom:24px">Data: <b>${d}</b></div>
      <div style="font-size:34px;margin:14px 0">Xhiro: <b>${money(grand)}</b></div>
      <div style="margin:10px 0">Cash: <b>${money(cash)}</b></div>
@@ -1023,10 +1295,10 @@ function closeModal(id){$(id).classList.add("hidden")}function modalBg(e,id){if(
 
 
 const SOURCE_MONTHLY_2026=[
- {month:"Maj",total:130,jotform:32,gyg:0,outdoor:0,zbulo:null,walkin:null,diff:0,other:98,note:"Për Majin kemi totalin mujor, jo totalet ditore; prandaj 98 mbeten Të tjera pa i ndarë Zbulo/Pa prenotim."},
- {month:"Qershor",total:297,jotform:103,gyg:12,outdoor:63,zbulo:112,walkin:11,diff:-4},
- {month:"Korrik",total:349,jotform:150,gyg:25,outdoor:36,zbulo:135,walkin:20,diff:-17},
- {month:"Gusht",total:479,jotform:299,gyg:17,outdoor:36,zbulo:105,walkin:28,diff:-6,note:"Gusht: deri më 30/08; 31/08 nuk është futur sepse totali real i ditës nuk ishte mbyllur."}
+ {month:"Maj",revenue:800,total:130,jotform:32,gyg:0,outdoor:0,zbulo:null,walkin:null,diff:0,other:98,note:"Për Majin kemi totalin mujor, jo totalet ditore; prandaj 98 mbeten Të tjera pa i ndarë Zbulo/Pa prenotim."},
+ {month:"Qershor",revenue:3820,total:297,jotform:103,gyg:12,outdoor:63,zbulo:112,walkin:11,diff:-4},
+ {month:"Korrik",revenue:4915,total:349,jotform:150,gyg:25,outdoor:36,zbulo:135,walkin:20,diff:-17},
+ {month:"Gusht",revenue:8440,total:479,jotform:299,gyg:17,outdoor:36,zbulo:105,walkin:28,diff:-6,note:"Gusht: deri më 30/08; 31/08 nuk është futur sepse totali real i ditës nuk ishte mbyllur."}
 ];
 
 function sourceRow(d){
@@ -1079,6 +1351,11 @@ function drawSourceStats(arr){
      </div>
 
      <div class="month-card-grid">
+       <div class="month-stat-card money">
+         <span>💰 Xhiro mujore e dhënë</span>
+         <b>${money(m.revenue||0)}</b>
+         <small>baseline historik</small>
+       </div>
        <div class="month-stat-card">
          <span>📝 Jotform</span>
          <b>${m.jotform}</b>
@@ -1160,7 +1437,7 @@ function drawStats(){
  drawSourceStats(arr);
  chart("peopleChart",pv,"num",labels);chart("revenueChart",rv,"money",labels);chart("tipsChart",tv,"money",labels,true);
 }
-function startFirebaseSync(){
+function startFirebaseSync(){startLiveServiceSync();
  if(firebaseSyncStarted||!firebaseReady||!fbdb)return;
  firebaseSyncStarted=true;
  fbdb.ref("kitchenOrders").on("value",snap=>{
@@ -1174,6 +1451,8 @@ function startFirebaseSync(){
 }
 
 save();drawTables();
+
+renderRoleLogin();applyRole();
 </script>
 </body>
 </html>

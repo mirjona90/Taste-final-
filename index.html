@@ -168,8 +168,6 @@ body.waiter #tableView .adminOnly{display:none!important}
 body.waiter #menus .price{display:none!important}
 body.waiter #topTotal,body.waiter .table .amount,
 body.waiter .table .redtxt{display:none!important}
-.waiter-note{display:none}
-body.waiter .waiter-note{display:block;background:#fff7e8;border:1px solid #efd7aa;padding:10px;border-radius:12px;margin:8px 0;font-size:12px;font-weight:800}
 .login-overlay{position:fixed;inset:0;z-index:99999;background:#f4eee7;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-card{width:min(430px,100%);background:#fff;border-radius:22px;padding:22px;box-shadow:0 12px 40px #0002}
 .login-card h2{margin:0 0 5px}.login-grid{display:grid;gap:9px;margin-top:15px}
@@ -229,7 +227,7 @@ body.waiter .redtxt{display:none!important}
 <div id="roleLogin" class="login-overlay">
  <div class="login-card">
   <h2>🏡 Taste Home Pro</h2>
-  <div class="meta">Zgjidh përdoruesin. Admini ka financat; kamarieri vetëm shërbimin.</div>
+  <div class="meta">Zgjidh përdoruesin</div>
   <div id="roleLoginButtons" class="login-grid"></div>
  </div>
 </div>
@@ -272,7 +270,7 @@ body.waiter .redtxt{display:none!important}
     <label>Shënime</label><textarea id="notes" class="notes" placeholder="p.sh. pa alkool..." oninput="updateDetails()"></textarea>
   </div>
 
-  <div class="card"><div class="section-title"><h3>👥 Menu</h3><span class="meta">Personat llogariten vetë</span></div><div class="waiter-note">👤 Kamarier: tavolina, emri, personat, fazat, pijet dhe kërkesat. Pa çmime dhe pa financa.</div><div id="menus"></div></div>
+  <div class="card"><div class="section-title"><h3>👥 Menu</h3><span class="meta">Personat llogariten vetë</span></div><div id="menus"></div></div>
   <div class="card"><div class="section-title"><h3>🍽️ Shërbimi</h3><span class="meta">Zgjidh fazën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="sendKitchenUpdate()">👨‍🍳 DËRGO KUZHINËS</button></div>
   <div class="card"><h3>⚡ Kërkesa të shpejta</h3><div id="requestButtons" class="reqgrid"></div><button class="next" onclick="sendSelectedRequests()">👨‍🍳 DËRGO KUZHINËS</button></div>
   <div class="card"><div class="section-title"><h3>🥂 Pijet</h3><span class="meta">⚡ Shkojnë direkt në Kitchen</span></div><div id="drinkTiles" class="drinktiles"></div><div id="drinkDetails"></div></div>

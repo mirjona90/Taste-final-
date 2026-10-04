@@ -796,7 +796,18 @@ function drawTables(){
 }
 function addExtraTable(){if(tableCount>=MAX_TABLES)return;tableCount++;normalize(tableCount);db[tableCount].position=positionFor(tableCount);save();drawTables()}
 
-function openTable(t){current=t;if(currentRole==="waiter"&&!db[t].waiterName){db[t].waiterName=roleName();save();}hideAll();$("tableView").classList.remove("hidden");$("tableName").value=db[t].name||"";$("notes").value=db[t].notes||"";$("cardNote").value=db[t].cardNote||"";$("received").value=db[t].received!==""?db[t].received:"";drawCurrent()}
+function isolateTableState(t){
+ normalize(t);
+ const b=db[t];
+ // Çdo tavolinë mban objektet e veta. Asnjë sasi pijesh nuk ndahet me tavolinat e tjera.
+ b.q={...(b.q||{})};
+ b.sent={...(b.sent||{})};
+ b.served={...(b.served||{})};
+ b.priceSnapshot={...(b.priceSnapshot||{})};
+ b.freeDrinks={...(b.freeDrinks||{})};
+ b.requests={...(b.requests||{})};
+}
+function openTable(t){current=Number(t);isolateTableState(current);if(currentRole==="waiter"&&!db[current].waiterName){db[current].waiterName=roleName();save();}hideAll();$("tableView").classList.remove("hidden");$("tableName").value=db[current].name||"";$("notes").value=db[current].notes||"";$("cardNote").value=db[current].cardNote||"";$("received").value=db[current].received!==""?db[current].received:"";drawCurrent()}
 function updateDetails(){const b=db[current];b.name=$("tableName").value.trim();b.notes=$("notes").value.trim();b.cardNote=$("cardNote").value.trim();b.workDate=b.workDate||isoDate();b.updated=stamp();save();drawHeaderOnly()}
 function setAdjustmentType(v){if(!isAdmin())return;db[current].adjustType=v;db[current].updated=stamp();save();drawCurrent();drawLive()}
 function setDiscountPct(v){if(!isAdmin())return;db[current].discountPct=Math.min(100,Math.max(0,Number(v)||0));db[current].updated=stamp();save();drawCurrent();drawLive()}
@@ -929,18 +940,26 @@ function closeFreeDrinks(){$("freeDrinkModal").classList.add("hidden")}
 function saveFreeDrinks(){db[current].freeDrinks=db[current].freeDrinks||{};document.querySelectorAll('[data-free-drink]').forEach(el=>{const k=el.dataset.freeDrink,max=Number(db[current].q[k])||0;db[current].freeDrinks[k]=Math.max(0,Math.min(max,Number(el.value)||0))});save();closeFreeDrinks();drawCurrent();drawLive()}
 function drawFreeDrinkSummary(){const a=ITEMS.filter(i=>i.type==="drink"&&(Number(db[current].freeDrinks?.[i.k])||0)>0).map(i=>`${i.ico} ${i.n} ×${db[current].freeDrinks[i.k]}`);$("freeDrinkSummary").textContent=a.length?`Falas: ${a.join(" · ")}`:""}
 function change(k,d){
+ const tableId=Number(current);
+ isolateTableState(tableId);
+ const b=db[tableId];
  const item=ITEMS.find(i=>i.k===k);
- const before=Number(db[current].q[k]||0);
+ if(!item)return;
+ const before=Number(b.q[k])||0;
  const after=Math.max(0,before+d);
  const actualDelta=after-before;
- db[current].q[k]=after;
- db[current].priceSnapshot=db[current].priceSnapshot||{};
- if(before===0&&after>0&&item)db[current].priceSnapshot[k]=item.p;
- if(after===0)delete db[current].priceSnapshot[k];
- if((db[current].served[k]||0)>after)db[current].served[k]=after;
- db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();
+ b.q[k]=after;
+ if(before===0&&after>0)b.priceSnapshot[k]=item.p;
+ if(after===0)delete b.priceSnapshot[k];
+ if((Number(b.served[k])||0)>after)b.served[k]=after;
+ if((Number(b.sent[k])||0)>after)b.sent[k]=after;
+ if((Number(b.freeDrinks[k])||0)>after)b.freeDrinks[k]=after;
+ b.workDate=b.workDate||isoDate();
+ b.updated=stamp();
+ // Ruaj vetëm gjendjen e kësaj tavoline në db; tavolinat e tjera nuk preken.
+ save();
  drawCurrent();drawLive();
- if(item&&item.type==="drink"&&actualDelta!==0)syncDrinkToKitchen(item,actualDelta);
+ if(item.type==="drink"&&actualDelta!==0)syncDrinkToKitchen(item,actualDelta,tableId);
 }
 
 function syncOpenKitchenOrderMeta(t){
@@ -954,28 +973,28 @@ function syncOpenKitchenOrderMeta(t){
  });
  if(Object.keys(updates).length)fbdb.ref().update(updates).catch(e=>console.error("Meta kitchen:",e));
 }
-function syncDrinkToKitchen(item,delta){
+function syncDrinkToKitchen(item,delta,tableId=current){
  if(!firebaseReady||!fbdb){
    alert("Pija u ruajt në tavolinë, por Kitchen nuk është lidhur. Kontrollo internetin.");
    return;
  }
- const b=db[current],key=`drink_${current}_${item.k}`,ref=fbdb.ref("kitchenOrders/"+key);
+ const b=db[tableId],key=`drink_${tableId}_${item.k}`,ref=fbdb.ref("kitchenOrders/"+key);
  ref.transaction(existing=>{
    // Nëse porosia e mëparshme është bërë gati, + krijon një porosi të re operative.
    if(!existing||existing.status==="ready"){
      if(delta<0)return existing||null;
-     return {id:key,table:current,position:b.position,name:b.name||"",people:people(current),
+     return {id:key,table:tableId,position:b.position,name:b.name||"",people:people(tableId),
        stageLabel:"PIJE",waiterName:roleName(),instruction:drinkKitchenText(item,delta),notes:b.notes||"",requests:[],
        menuBreakdown:[],drinkKey:item.k,drinkQty:delta,status:"pending",
        createdAt:Date.now(),updatedAt:Date.now()};
    }
    const qty=Math.max(0,(Number(existing.drinkQty)||0)+delta);
    if(qty===0)return null;
-   return {...existing,position:b.position,name:b.name||"",people:people(current),
+   return {...existing,position:b.position,name:b.name||"",people:people(tableId),
      drinkQty:qty,waiterName:roleName(),instruction:drinkKitchenText(item,qty),updatedAt:Date.now()};
  }).then(()=>{
    // sent mbahet vetëm për përputhshmëri me versionet e vjetra.
-   db[current].sent[item.k]=db[current].q[item.k]||0;
+   db[tableId].sent[item.k]=db[tableId].q[item.k]||0;
    save();drawCurrent();drawLive();
  }).catch(e=>{
    console.error("Auto-send pije:",e);

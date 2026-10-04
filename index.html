@@ -1045,8 +1045,25 @@ function sendPendingDrinks(){
    alert("Pijet nuk u dërguan në kuzhinë. Kontrollo lidhjen/lejen Firebase.");
  });
 }
-function markOne(k){db[current].served[k]=Math.min(db[current].q[k]||0,(db[current].served[k]||0)+1);db[current].updated=stamp();save();drawCurrent();drawLive()}
-function markAll(k){db[current].served[k]=db[current].q[k]||0;db[current].updated=stamp();save();drawCurrent();drawLive()}
+function markOne(k){
+ const b=db[current];
+ b.served[k]=Math.min(b.q[k]||0,(b.served[k]||0)+1);
+ b.updated=stamp();save();drawCurrent();drawLive();
+}
+function markAll(k){
+ const tableId=Number(current),b=db[tableId];
+ b.served[k]=b.q[k]||0;
+ b.sent[k]=b.q[k]||0;
+ b.updated=stamp();save();drawCurrent();drawLive();
+ // ADMIN dhe KAMARIER përdorin të njëjtën rrjedhë operative: U DËRGUAN mbyll edhe kartën e pijes në Kitchen.
+ if(firebaseReady&&fbdb){
+   const key=`drink_${tableId}_${k}`;
+   fbdb.ref(`kitchenOrders/${key}`).once('value').then(snap=>{
+     if(!snap.exists())return;
+     return fbdb.ref(`kitchenOrders/${key}`).update({status:'ready',readyAt:Date.now(),updatedAt:Date.now()});
+   }).catch(e=>console.error('U DËRGUAN pije:',e));
+ }
+}
 function nextStage(){sendKitchenUpdate()}
 
 function linesForTable(t){

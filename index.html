@@ -60,7 +60,7 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 .modal{position:fixed;inset:0;z-index:100;background:#0008;display:flex;align-items:flex-end;justify-content:center;padding:10px}.modalbox{width:min(680px,100%);max-height:84vh;overflow:auto;background:var(--bg);border-radius:18px 18px 10px 10px;padding:11px}.modalhead{display:flex;align-items:center;justify-content:space-between}.modalhead h3{margin:0}.modalclose{background:#e9dfd6;border-radius:9px;padding:8px 10px;font-weight:900}.payrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:#fff;border-radius:11px;padding:9px;margin:6px 0}.payrow .who{font-weight:900}.payrow button{background:var(--green);color:#fff;border-radius:8px;padding:8px 9px;font-weight:850}
 #printArea{display:none}
 
-.drink-order-card{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px}.drink-counter{display:grid;grid-template-columns:42px 44px 42px;align-items:center;justify-content:center;gap:6px;margin-top:6px}.drink-counter button{width:42px;height:42px;border:0;border-radius:12px;font-size:24px;font-weight:950}.drink-counter .minus{background:#f1e7df;color:#6f332d}.drink-counter .plus{background:var(--green);color:#fff}.drink-counter button:disabled{opacity:.35}.drink-counter b{font-size:22px;line-height:42px;text-align:center;background:#f7f4f0;border-radius:10px}.drink-pending{font-weight:850;color:var(--red);margin-top:2px}
+.drink-order-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;user-select:none;min-height:128px;transition:transform .08s ease,background .08s ease}.drink-order-card:active{transform:scale(.97);background:#f8f5f1}.drink-qty{font-size:20px;font-weight:950;line-height:1;margin-top:3px}.drink-mini-minus{position:absolute;left:6px;bottom:6px;width:30px;height:30px;border:0;border-radius:999px;background:#f1e7df;color:#6f332d;font-size:20px;font-weight:950;display:flex;align-items:center;justify-content:center}.drink-mini-minus:disabled{opacity:.28}.drink-pending{font-weight:850;color:var(--red);margin-top:2px}
 @media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.drinktiles{grid-template-columns:repeat(4,1fr)}}
 @media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:20px;background:#fff}}
 
@@ -917,15 +917,18 @@ function drawDrinks(){
  ITEMS.filter(i=>i.type==="drink").forEach(i=>{
   const q=Number(db[current].q[i.k])||0,p=pending(current,i.k),card=document.createElement("div");
   card.className="drinktile drink-order-card";
+  card.setAttribute("role","button"); card.setAttribute("tabindex","0");
+  card.setAttribute("aria-label",`${itemNameForTable(current,i)}: ${q}. Kliko për të shtuar një.`);
   card.innerHTML=`${p?`<span class="badgealert">${p}</span>`:""}
    <div class="ico">${i.ico}</div>
    <div class="dn">${itemNameForTable(current,i)}</div>
    ${isAdmin()?`<div class="dp">${money(unitPriceForTable(current,i))}</div>`:""}
-   <div class="drink-counter" aria-label="Sasia ${itemNameForTable(current,i)}">
-    <button type="button" class="minus" onclick="change('${i.k}',-1)" ${q<=0?'disabled':''}>−</button>
-    <b>${q}</b>
-    <button type="button" class="plus" onclick="change('${i.k}',1)">+</button>
-   </div>`;
+   <div class="drink-qty">×${q}</div>
+   <button type="button" class="drink-mini-minus" aria-label="Hiq një ${itemNameForTable(current,i)}" ${q<=0?'disabled':''}>−</button>`;
+  const addOne=()=>change(i.k,1);
+  card.addEventListener("click",e=>{if(e.target.closest(".drink-mini-minus"))return;addOne();});
+  card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();addOne();}});
+  card.querySelector(".drink-mini-minus").addEventListener("click",e=>{e.stopPropagation();change(i.k,-1);});
   wrap.appendChild(card);
  });
  $("drinkDetails").innerHTML="";

@@ -60,7 +60,7 @@ input,textarea,select{width:100%;border:1px solid #d9cfc6;border-radius:9px;padd
 .modal{position:fixed;inset:0;z-index:100;background:#0008;display:flex;align-items:flex-end;justify-content:center;padding:10px}.modalbox{width:min(680px,100%);max-height:84vh;overflow:auto;background:var(--bg);border-radius:18px 18px 10px 10px;padding:11px}.modalhead{display:flex;align-items:center;justify-content:space-between}.modalhead h3{margin:0}.modalclose{background:#e9dfd6;border-radius:9px;padding:8px 10px;font-weight:900}.payrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:#fff;border-radius:11px;padding:9px;margin:6px 0}.payrow .who{font-weight:900}.payrow button{background:var(--green);color:#fff;border-radius:8px;padding:8px 9px;font-weight:850}
 #printArea{display:none}
 
-.drink-order-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;user-select:none;min-height:128px;transition:transform .08s ease,background .08s ease}.drink-order-card:active{transform:scale(.97);background:#f8f5f1}.drink-qty{font-size:20px;font-weight:950;line-height:1;margin-top:3px}.drink-mini-minus{position:absolute;left:6px;bottom:6px;width:30px;height:30px;border:0;border-radius:999px;background:#f1e7df;color:#6f332d;font-size:20px;font-weight:950;display:flex;align-items:center;justify-content:center}.drink-mini-minus:disabled{opacity:.28}.drink-pending{font-weight:850;color:var(--red);margin-top:2px}
+.drink-main{width:100%;min-height:88px;border:0;background:transparent;border-radius:13px;padding:9px 30px 9px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text);font:inherit;cursor:pointer}.drink-main:active{background:#f8f5f1}.drink-main .ico{display:block}.drink-main .dn{display:block}.drink-main .dp{display:block}.drink-qty{display:block;font-size:16px;font-weight:950;line-height:1;margin-top:2px}.drink-new{display:block;min-height:15px;font-size:11px;font-weight:900;color:var(--red);margin-top:2px}.drink-mini-minus{position:absolute;left:6px;bottom:6px;width:30px;height:30px;border:0;border-radius:999px;background:#f1e7df;color:#6f332d;font-size:20px;font-weight:950;display:flex;align-items:center;justify-content:center}.drink-mini-minus:disabled{opacity:.28}.drink-pending{font-weight:850;color:var(--red);margin-top:2px}
 @media(min-width:650px){.grid{grid-template-columns:repeat(3,1fr)}.drinktiles{grid-template-columns:repeat(4,1fr)}}
 @media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:20px;background:#fff}}
 
@@ -290,7 +290,12 @@ body.waiter .redtxt{display:none!important}
   </div>
 
   <div class="card section-card menu-sec"><div class="section-title"><h3>🍽️ MENU</h3><span class="meta">Personat llogariten vetë</span></div><div id="menus"></div></div>
-  <div class="card section-card drink-sec"><div class="section-title"><h3>🥂 PIJET</h3><span class="meta">Beer · Red Wine · White Wine · Grape Juice</span></div><div id="drinkTiles" class="drinktiles"></div><div id="drinkDetails"></div><button class="freebtn adminOnly" onclick="openFreeDrinks()">🎁 PIJE FALAS</button><div id="freeDrinkSummary" class="free-summary adminOnly"></div></div>
+  <div class="card section-card drink-sec"><div class="section-title"><h3>🥂 PIJET</h3><span class="meta">Beer · Red Wine · White Wine · Grape Juice</span></div><div id="drinkTiles" class="drinktiles">
+  <div class="drinktile" data-drink-card="beer"><button type="button" class="drink-main" onclick="drinkAdd('beer')"><span class="ico">🍺</span><span class="dn">BEER</span><span class="dp adminOnly">€3.50</span><span id="drinkQty_beer" class="drink-qty">×0</span><span id="drinkNew_beer" class="drink-new"></span></button><button type="button" id="drinkMinus_beer" class="drink-mini-minus" onclick="drinkMinus('beer')" disabled>−</button></div>
+  <div class="drinktile" data-drink-card="red"><button type="button" class="drink-main" onclick="drinkAdd('red')"><span class="ico">🍷</span><span class="dn">RED WINE</span><span class="dp adminOnly">€2.50</span><span id="drinkQty_red" class="drink-qty">×0</span><span id="drinkNew_red" class="drink-new"></span></button><button type="button" id="drinkMinus_red" class="drink-mini-minus" onclick="drinkMinus('red')" disabled>−</button></div>
+  <div class="drinktile" data-drink-card="white"><button type="button" class="drink-main" onclick="drinkAdd('white')"><span class="ico">🥂</span><span class="dn">WHITE WINE</span><span class="dp adminOnly">€2.50</span><span id="drinkQty_white" class="drink-qty">×0</span><span id="drinkNew_white" class="drink-new"></span></button><button type="button" id="drinkMinus_white" class="drink-mini-minus" onclick="drinkMinus('white')" disabled>−</button></div>
+  <div class="drinktile" data-drink-card="juice"><button type="button" class="drink-main" onclick="drinkAdd('juice')"><span class="ico">🍇</span><span class="dn">GRAPE JUICE</span><span class="dp adminOnly">€2.50</span><span id="drinkQty_juice" class="drink-qty">×0</span><span id="drinkNew_juice" class="drink-new"></span></button><button type="button" id="drinkMinus_juice" class="drink-mini-minus" onclick="drinkMinus('juice')" disabled>−</button></div>
+</div><div id="drinkDetails"></div><button class="freebtn adminOnly" onclick="openFreeDrinks()">🎁 PIJE FALAS</button><div id="freeDrinkSummary" class="free-summary adminOnly"></div></div>
   <div class="card section-card service-sec"><div class="section-title"><h3>👨‍🍳 SHËRBIMI</h3><span class="meta">Zgjidh fazën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="sendKitchenUpdate()">👨‍🍳 DËRGO KUZHINËS</button></div>
   <div class="card"><h3>⚡ Kërkesa të shpejta</h3><div id="requestButtons" class="reqgrid"></div><button class="next" onclick="sendSelectedRequests()">👨‍🍳 DËRGO KUZHINËS</button></div>
 
@@ -913,30 +918,25 @@ function setGroupNormal(v){db[current].groupNormal=Math.max(0,Number(v)||0);sync
 function setGroupVeg(v){db[current].groupVeg=Math.max(0,Number(v)||0);syncGroupQty();db[current].workDate=db[current].workDate||isoDate();save();drawCurrent();drawLive();syncOpenKitchenOrderMeta(current)}
 function setGroupGuides(v){db[current].groupGuides=Math.max(0,Number(v)||0);db[current].workDate=db[current].workDate||isoDate();save();drawCurrent();drawLive();syncOpenKitchenOrderMeta(current)}
 function drawDrinks(){
- const wrap=$("drinkTiles"); wrap.innerHTML=""; wrap.className="drinktiles";
  ITEMS.filter(i=>i.type==="drink").forEach(i=>{
-  const q=Number(db[current].q[i.k])||0,p=pending(current,i.k),card=document.createElement("div");
-  card.className="drinktile drink-order-card";
-  card.setAttribute("role","button"); card.setAttribute("tabindex","0");
-  card.setAttribute("aria-label",`${itemNameForTable(current,i)}: ${q}. Kliko për të shtuar një.`);
-  card.innerHTML=`${p?`<span class="badgealert">${p}</span>`:""}
-   <div class="ico">${i.ico}</div>
-   <div class="dn">${itemNameForTable(current,i)}</div>
-   ${isAdmin()?`<div class="dp">${money(unitPriceForTable(current,i))}</div>`:""}
-   <div class="drink-qty">×${q}</div>
-   <button type="button" class="drink-mini-minus" aria-label="Hiq një ${itemNameForTable(current,i)}" ${q<=0?'disabled':''}>−</button>`;
-  const addOne=()=>change(i.k,1);
-  card.addEventListener("click",e=>{if(e.target.closest(".drink-mini-minus"))return;addOne();});
-  card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();addOne();}});
-  card.querySelector(".drink-mini-minus").addEventListener("click",e=>{e.stopPropagation();change(i.k,-1);});
-  wrap.appendChild(card);
+  const q=Number(db[current].q[i.k])||0;
+  const qty=$("drinkQty_"+i.k), fresh=$("drinkNew_"+i.k), minus=$("drinkMinus_"+i.k), card=document.querySelector(`[data-drink-card="${i.k}"]`);
+  const p=pending(current,i.k);
+  if(qty)qty.textContent=`×${q}`;
+  if(fresh)fresh.textContent=p>0?`+${p} të reja`:"";
+  if(minus)minus.disabled=q<=0;
+  if(card){
+    card.setAttribute("aria-label",`${itemNameForTable(current,i)}: ${q}. Kliko për të shtuar një.`);
+    let badge=card.querySelector(".badgealert");
+    if(p>0){if(!badge){badge=document.createElement("span");badge.className="badgealert";card.appendChild(badge)}badge.textContent=p}else if(badge)badge.remove();
+  }
  });
  $("drinkDetails").innerHTML="";
  ITEMS.filter(i=>i.type==="drink"&&(db[current].q[i.k]||0)>0).forEach(i=>{
   const q=Number(db[current].q[i.k])||0,s=Math.min(Number(db[current].served[i.k])||0,q),p=pending(current,i.k);
   if(p<=0)return;
   const d=document.createElement("div");d.className="drinkdetail";
-  d.innerHTML=`<div class="drinkhead"><b>${i.ico} ${itemNameForTable(current,i)}</b><span class="meta">Gjithsej ${q}</span></div><div class="delivery"><div>Porositur<b>${q}</b></div><div>Dërguar<b>${s}</b></div><div class="pending">Pret<b>${p}</b></div></div><div class="deliverBtns single"><button onclick="markAll('${i.k}')">✓ U DËRGUAN ${p}</button></div>`;
+  d.innerHTML=`<div class="drinkhead"><b>${i.ico} ${itemNameForTable(current,i)}</b><span class="meta">Gjithsej ${q}</span></div><div class="delivery"><div>Porositur<b>${q}</b></div><div>Dërguar<b>${s}</b></div><div class="pending">Pret<b>${p}</b></div></div><div class="deliverBtns single"><button type="button" onclick="markAll('${i.k}')">✓ U DËRGUAN ${p}</button></div>`;
   $("drinkDetails").appendChild(d);
  });
  drawFreeDrinkSummary();
@@ -948,25 +948,30 @@ function drawFreeDrinkSummary(){const a=ITEMS.filter(i=>i.type==="drink"&&(Numbe
 function change(k,d){
  const tableId=Number(current);
  isolateTableState(tableId);
- const b=db[tableId];
- const item=ITEMS.find(i=>i.k===k);
+ const b=db[tableId], item=ITEMS.find(i=>i.k===k);
  if(!item)return;
- const before=Number(b.q[k])||0;
- const after=Math.max(0,before+d);
- const actualDelta=after-before;
+ const before=Math.max(0,Number(b.q[k])||0);
+ let after=Math.max(0,before+Number(d||0));
+ const served=Math.max(0,Number(b.served[k])||0);
+ if(item.type==="drink" && after<served)after=served;
  b.q[k]=after;
  if(before===0&&after>0)b.priceSnapshot[k]=item.p;
  if(after===0)delete b.priceSnapshot[k];
- if((Number(b.served[k])||0)>after)b.served[k]=after;
  if((Number(b.sent[k])||0)>after)b.sent[k]=after;
  if((Number(b.freeDrinks[k])||0)>after)b.freeDrinks[k]=after;
- b.workDate=b.workDate||isoDate();
- b.updated=stamp();
- // Ruaj vetëm gjendjen e kësaj tavoline në db; tavolinat e tjera nuk preken.
- save();
- drawCurrent();drawLive();
- if(item.type==="drink"&&actualDelta!==0)syncDrinkToKitchen(item,actualDelta,tableId);
+ b.workDate=b.workDate||isoDate(); b.updated=stamp();
+ try{localStorage.setItem(DB_KEY,JSON.stringify(db));}catch(e){console.error(e)}
+ if(item.type==="drink"){
+   drawDrinks(); drawHeaderOnly(); drawPayment();
+   setTimeout(()=>{try{drawLive();syncLiveService()}catch(e){console.error(e)}},0);
+ }else{
+   try{save()}catch(e){console.error(e)}
+   drawCurrent(); try{drawLive()}catch(e){console.error(e)}
+ }
 }
+function drinkAdd(k){ change(k,1); }
+function drinkMinus(k){ change(k,-1); }
+
 
 function syncOpenKitchenOrderMeta(t){
  if(!firebaseReady||!fbdb)return;
@@ -1051,12 +1056,23 @@ function markOne(k){
  b.updated=stamp();save();drawCurrent();drawLive();
 }
 function markAll(k){
- const tableId=Number(current),b=db[tableId];
- b.served[k]=b.q[k]||0;
- b.sent[k]=b.q[k]||0;
- b.updated=stamp();save();drawCurrent();drawLive();
- // ADMIN dhe KAMARIER përdorin të njëjtën rrjedhë operative: U DËRGUAN mbyll edhe kartën e pijes në Kitchen.
+ const tableId=Number(current);
+ isolateTableState(tableId);
+ const b=db[tableId],q=Math.max(0,Number(b.q[k])||0);
+ // Mbyll vetëm porosinë e re: totali q mbetet, ndërsa pending bëhet 0 menjëherë.
+ b.served[k]=q;
+ b.sent[k]=q;
+ b.updated=stamp();
+ try{localStorage.setItem(DB_KEY,JSON.stringify(db));}catch(e){console.error(e)}
+ drawDrinks();drawHeaderOnly();drawPayment();drawLive();
+ // Shtyje menjëherë të njëjtën gjendje në liveService që listener-i të mos rikthejë served të vjetër.
  if(firebaseReady&&fbdb){
+   const liveUpdates={};
+   liveUpdates[`liveService/tables/${tableId}/q/${k}`]=q;
+   liveUpdates[`liveService/tables/${tableId}/sent/${k}`]=q;
+   liveUpdates[`liveService/tables/${tableId}/served/${k}`]=q;
+   liveUpdates[`liveService/tables/${tableId}/updatedAt`]=Date.now();
+   fbdb.ref().update(liveUpdates).catch(e=>console.error('Live U DËRGUAN:',e));
    const key=`drink_${tableId}_${k}`;
    fbdb.ref(`kitchenOrders/${key}`).once('value').then(snap=>{
      if(!snap.exists())return;

@@ -372,6 +372,15 @@ main{padding:10px 12px 30px!important;max-width:720px!important}
 button{touch-action:manipulation}input,select{accent-color:#284638}
 @media(max-width:380px){#tables .table{padding:10px!important}#tables .table .position{font-size:15px!important}}
 </style>
+<style id="date-visibility-fix">
+/* Native date control: visible on dark and light headers, including Android Chrome */
+.datebar{background:#fff!important;border:1px solid #dce3d9!important;min-width:0;flex-shrink:0}
+.datebar input[type="date"]{color:#233c30!important;background:#fff!important;color-scheme:light!important;width:137px!important;min-width:0;font-size:14px!important;font-weight:700!important;padding:8px 2px!important;opacity:1!important;-webkit-text-fill-color:#233c30!important}
+.datebar input[type="date"]::-webkit-datetime-edit{color:#233c30!important}
+.datebar input[type="date"]::-webkit-calendar-picker-indicator{filter:none!important;opacity:1!important}
+.datebar button{background:#edf1e9!important;color:#294739!important;min-width:28px!important}
+@media(max-width:390px){header h1{font-size:17px!important}.headrow{gap:5px!important}.datebar{gap:2px!important}.datebar input[type="date"]{width:124px!important;font-size:12px!important}.datebar button{padding:7px 5px!important}}
+</style>
 </head>
 <style id="taste-home-premium-pos">
 /* Taste Home Pro — understated premium POS, no ornamental UI */
@@ -1938,17 +1947,18 @@ closeCurrent=function(){if(!isAdmin())return alert("Vetëm Admin mund ta mbyllë
 editClosedInvoice=function(id){if(!isAdmin())return;const inv=history.find(x=>String(x.id)===String(id));if(!inv)return;if(!inv.snapshot){alert("Kjo faturë e vjetër nuk ka snapshot të plotë. Mund të modifikohet vetëm me të dhënat që janë ruajtur në faturë.");return}const t=Number(inv.table)||1;db[t]=JSON.parse(JSON.stringify(inv.snapshot));normalize(t);db[t].reopenInvoiceId=inv.id;db[t].workDate=inv.date;db[t].position=inv.position||db[t].position;db[t].name=inv.name||db[t].name;db[t].agency=inv.agency||"";db[t].agencyPaid=inv.agencyPaid||"unpaid";save();openTable(t)};
 // beer backward-compatible stats: count beer + birre, but use max when both coexist in same invoice
 function beerQtyHistory(arr){
+ const norm=v=>String(v??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+ const isBeer=v=>/^(beer|birre|birra|birrat|birre\s*x?\s*\d+)$/.test(norm(v));
+ const qty=x=>Number(x.qty??x.quantity??x.count??x.sasia??0)||0;
  return arr.reduce((sum,inv)=>{
   const lines=historyLines(inv);
-  const isBeer=x=>[x.key,x.k,x.name].some(v=>/^(beer|birre|birrë)$/i.test(String(v||"").trim()));
-  const beerLines=lines.filter(isBeer);
-  // When both spellings describe the same invoice quantity, prefer the canonical
-  // "beer" entries rather than adding the same drinks twice.
-  const canonical=beerLines.filter(x=>[x.key,x.k].some(v=>String(v||"").toLowerCase()==="beer"));
-  const fromLines=(canonical.length?canonical:beerLines).reduce((n,x)=>n+(Number(x.qty)||0),0);
-  const q=inv.q||inv.snapshot?.q||{};
-  const legacy=Math.max(Number(q.beer)||0,Number(q.birre)||0,Number(q["birrë"])||0);
-  return sum+(beerLines.length?fromLines:legacy);
+  const beerLines=lines.filter(x=>[x.key,x.k,x.name,x.label,x.title].some(isBeer));
+  // Multiple genuine beer lines represent separate orders; a duplicate alias
+  // within one line is only counted once.
+  const fromLines=beerLines.reduce((n,x)=>n+qty(x),0);
+  const q=inv.q||inv.snapshot?.q||inv.quantities||{};
+  const legacy=Object.entries(q).filter(([k])=>isBeer(k)).reduce((n,[,v])=>Math.max(n,Number(v)||0),0);
+  return sum+(beerLines.length?Math.max(fromLines,legacy):legacy);
  },0);
 }
 const __qtyHistory=qtyHistory;qtyHistory=function(arr,i){if(i&&i.k==="beer")return beerQtyHistory(arr);return __qtyHistory(arr,i)};

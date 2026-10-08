@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#7b2d26">
+<meta name="theme-color" content="#294739">
 <title>Taste Home Pro</title>
 <style>
 :root{
@@ -232,8 +232,193 @@ body.waiter .redtxt{display:none!important}
 @media(max-width:430px){.financeGrid{grid-template-columns:repeat(2,1fr)!important}.print-preview-body{font-size:18px}}
 
 .expense-card{padding:8px 12px}.expense-toggle{width:100%;border:0;background:transparent;display:flex;justify-content:space-between;align-items:center;text-align:left;padding:7px 2px;color:var(--text);gap:12px}.expense-toggle>span{display:flex;align-items:center;gap:10px;min-width:0}.expense-toggle>span:first-child{flex-direction:column;align-items:flex-start;gap:2px}.expense-toggle small{font-size:11px;color:var(--muted);font-weight:750}.expense-toggle i{font-style:normal;font-size:26px;color:var(--muted);line-height:1}.drink-order-list{display:flex;flex-direction:column;gap:8px}.drink-order-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;background:#fff;border:1px solid var(--line);border-radius:14px}.drink-order-name{display:flex;align-items:center;gap:9px;min-width:0}.drink-order-ico{font-size:25px}.drink-order-name b{display:block;font-size:14px}.drink-order-name small{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-top:2px}.drink-order-name small.drink-pending{color:var(--red)}.drink-order-row .drink-counter{margin-top:0;grid-template-columns:40px 38px 40px;gap:4px;flex:0 0 auto}.drink-order-row .drink-counter button{width:40px;height:40px}.drink-order-row .drink-counter b{font-size:20px;line-height:40px}
+
+/* ===== Taste Home Calm Final UI ===== */
+:root{--th-cream:#fbf8f3;--th-line:#e9e1d7;--th-text:#3f352d;--th-muted:#81766d}
+body{background:var(--th-cream);color:var(--th-text)}
+#tablesView,#tableView,#historyView,#statsView{max-width:760px;margin:0 auto}
+.tables-zone{margin-top:10px}.zone-heading{font-size:12px;letter-spacing:.08em;color:var(--th-muted);margin:5px 3px 8px}
+.grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}
+.table{min-height:94px!important;padding:6px!important;border:1px solid var(--th-line)!important;box-shadow:none!important;background:#fff!important}
+.table.alert{border-color:#e8a09a!important;background:#fff8f7!important}.table.active{background:#fafcf8!important}
+.table-open-btn{min-height:66px!important}.table-tools{gap:4px!important}.table-tools button{font-size:9px!important;padding:4px 5px!important}
+.money-compact{border:1px solid var(--th-line);box-shadow:none}.money-pocket-btn{background:#f3ead9!important;padding:9px 12px!important}.money-pocket-btn .pocketTotal{font-size:19px!important}
+.section-card{box-shadow:none!important;border:1px solid rgba(0,0,0,.05)!important;border-left-width:5px!important}.section-card h3{font-size:14px!important;margin:0}.section-card .meta{font-size:10px!important}
+.menu-sec{background:#fff8ee!important}.drink-sec{background:#f4f9f3!important}.service-sec{background:#f3f6fb!important}.pay-sec{background:#f8f4fb!important}.request-sec{background:#fff0ef!important}
+.menu-compact{padding:8px!important}.menu-compact .name{font-size:12px!important}.menu-compact .price{font-size:10px!important}
+.drinktiles{gap:6px!important}.drinktile{min-height:88px!important}.drink-main{min-height:86px!important;padding:8px 4px!important}.drink-main .ico{font-size:22px!important}.drink-main .dn{font-size:10px!important}.drink-qty{font-size:13px!important}.drink-new{font-size:9px!important}.drink-mini-minus{right:4px!important;top:4px!important;width:23px!important;height:23px!important}
+.request-sec{border-left-color:#d85750!important}.request-sec .reqbtn{background:#ffe4e1!important;color:#8b211d!important;border:1px solid #efb0aa!important}.request-sec .reqbtn:active{background:#d85750!important;color:#fff!important}
+.compact-pay .paybtn{padding:8px 5px!important;font-size:10px!important}.discount-mini{font-size:10px!important}.discount-mini button,.discount-mini input{font-size:10px!important}
+.action-zone{margin-top:8px!important}.action-zone-title{font-size:10px!important;color:var(--th-muted)!important}
+#dailyTotal{padding:8px!important;background:transparent!important;box-shadow:none!important;border:0!important}
+.history-four-clean{display:grid;grid-template-columns:1fr 1fr;gap:8px}.history-four-clean button{border:1px solid var(--th-line);border-radius:14px;background:#fff;padding:11px;text-align:left;min-height:76px;color:var(--th-text)}.history-four-clean b{display:block;font-size:15px}.history-four-clean small{display:block;font-size:9px;color:var(--th-muted);margin-top:4px;line-height:1.35}.history-four-clean .big{font-size:18px;margin-top:3px}.history-revenue-detail{margin-top:8px;padding:10px;border-radius:12px;background:#fff;border:1px solid var(--th-line);font-size:12px}.history-revenue-detail .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0ebe5}.history-revenue-detail .row:last-child{border-bottom:0}.expense-card{display:none}.expense-card.panel-open{display:block}.history-toolbar-clean{margin-top:8px}.daily-stats-card{background:#fff;border:1px solid var(--th-line);border-radius:14px;padding:12px;margin:8px 0}.daily-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.daily-stat{background:#faf8f5;border-radius:10px;padding:8px 5px;text-align:center}.daily-stat b{display:block;font-size:16px}.daily-stat span{font-size:9px;color:var(--th-muted)}
+@media(max-width:380px){.grid{gap:5px!important}.table{padding:5px 3px!important}.history-four-clean{gap:6px}.daily-stats-grid{gap:4px}.daily-stat{padding:7px 3px}}
+
+</style>
+
+<style id="tasteHomeConfig2026">
+.money-compact{padding:8px!important}.money-pocket-btn{width:100%;border:0;border-radius:14px;padding:10px 14px;background:#f3ead9;display:flex;align-items:center;justify-content:space-between;font-weight:900;color:#47382d}.money-pocket-btn .pocketTotal{font-size:21px}.financeGrid{margin-top:8px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important}.table{min-height:105px!important;padding:8px 5px!important;border-radius:13px!important}.table .position{font-size:12px!important}.table .guest{font-size:11px!important}.table .meta,.table .amount{font-size:10px!important}.table .amount{font-weight:900}.section-card.menu-sec{background:#fff8ee;border-left-color:#e7b46c}.section-card.drink-sec{background:#f4f9f3;border-left-color:#88ad82}.section-card.service-sec{background:#f3f6fb;border-left-color:#7e9bc7}.section-card.pay-sec{background:#f8f4fb;border-left-color:#aa8bbd}.section-card.request-sec{background:#fff0ef;border-left:6px solid #d64a43}.request-sec .reqbtn{background:#ffe1df;border-color:#e56b65;color:#8b211d}.reservation-tools{display:grid;grid-template-columns:1fr auto;gap:6px;margin-top:7px}.reservation-tools #agencyPaid{grid-column:1/-1}.drink-mini-minus{left:auto!important;right:5px!important;top:5px!important;bottom:auto!important;width:25px!important;height:25px!important;font-size:17px!important}.drinktile{min-height:100px!important}.drink-main{min-height:96px!important}.drink-new{font-size:10px!important}.discount-mini{display:grid;grid-template-columns:auto repeat(3,44px) 64px;gap:5px;align-items:center;margin-top:8px}.discount-mini button{padding:7px 4px;border:1px solid #ddd;border-radius:8px;background:#fff;font-weight:900}.discount-mini input{padding:7px 5px}.menu-compact{display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px;padding:9px;border-bottom:1px solid #eee}.menu-compact .name{font-size:13px}.menu-compact .price{font-size:11px}.group-mini{display:flex;gap:5px;align-items:center;flex-wrap:wrap}.group-mini input{width:55px;padding:6px;text-align:center}.history-four{display:grid;grid-template-columns:1fr 1fr;gap:8px}.history-four button{border:1px solid #e7e0d9;border-radius:14px;background:#fff;padding:12px;text-align:left}.history-four b{display:block;font-size:17px}.history-four small{font-size:10px;color:#777}.urgent-badge{background:#d33;color:#fff;border-radius:999px;padding:2px 6px;font-size:10px;font-weight:900}
+</style>
+
+<style id="compact-table-drinks-v2">
+/* Compact table identity / reservation */
+.table-identity-card{padding:9px 10px!important}
+.table-identity-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:7px;align-items:center}
+.table-title-big{font-size:19px;font-weight:950;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.table-title-big .table-icon{font-size:21px;margin-right:4px}
+.reservation-inline{display:flex;gap:5px;align-items:center;min-width:0}
+.reservation-inline input{min-width:0;height:36px;padding:7px 8px;font-size:12px}
+.reservation-tools{display:flex!important;gap:4px!important;align-items:center!important;margin-top:4px!important;max-width:100%}
+.reservation-tools select{min-width:0;height:27px!important;padding:2px 5px!important;font-size:9px!important;border-radius:7px!important;border:1px solid #e5ded6;background:#fff}
+.reservation-tools #agencySelect{flex:1;max-width:145px}
+.reservation-tools #agencyPaid{flex:0 1 96px;grid-column:auto!important}
+.reservation-tools button{width:27px;height:27px!important;padding:0!important;font-size:14px!important;border-radius:7px!important;white-space:nowrap}
+.table-identity-card .people{font-size:11px!important;text-align:left!important;margin:4px 0 0!important;color:#777}
+.table-identity-card{padding:7px 9px!important}
+.table-title-big{font-size:21px!important}
+.reservation-inline input{height:32px!important;padding:5px 7px!important;font-size:11px!important;border-radius:8px!important}
+.table-identity-card>label,.table-identity-card>textarea{display:none}
+/* Drinks: big logo, total top-left, minus top-right */
+.drinktiles{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.drinktile{min-height:112px!important;padding:0!important;overflow:visible;background:#fff!important}
+.drink-main{min-height:112px!important;padding:22px 8px 8px!important;gap:3px!important}
+.drink-main .ico{font-size:44px!important;line-height:1!important}
+.drink-main .dn{font-size:11px!important;font-weight:950!important}
+.drink-main .dp{font-size:10px!important}
+.drink-qty{position:absolute;left:7px;top:7px;z-index:3;min-width:28px;height:28px;padding:0 7px;border-radius:999px;background:#efe6d8;color:#2f2924;display:flex!important;align-items:center;justify-content:center;font-size:14px!important;font-weight:950!important;margin:0!important;border:1px solid #ded0bf}
+.drink-mini-minus{left:auto!important;right:7px!important;top:7px!important;bottom:auto!important;z-index:4;width:27px!important;height:27px!important;background:#f6dfdc!important;color:#9a3029!important;border:1px solid #e9bbb6!important;font-size:19px!important;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.drink-new{position:absolute;left:50%;transform:translateX(-50%);bottom:6px;min-height:0!important;margin:0!important;font-size:9px!important;white-space:nowrap}
+.badgealert{top:auto!important;right:6px!important;bottom:6px!important;min-width:20px!important;height:20px!important;font-size:10px!important}
+@media(min-width:650px){.drinktiles{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+</style>
+<style id="albanian-premium">
+:root{--brand:#284738;--green:#365e47;--orange:#b88649;--red:#a64538;--bg:#f6f3eb;--card:#fffefa;--text:#293d32;--muted:#7b887b;--line:#e5e7dc}
+body{background:var(--bg);color:var(--text)}header{background:#284738;border-bottom:3px solid #bd9b65;box-shadow:none}header h1{font-size:18px}nav{background:#f6f3eb}.navbtn{background:#e9ece4;color:#48614d;border-radius:12px}.navbtn.active{background:#284738;color:white}main{max-width:780px}.card,.action-zone{background:#fffefa;border:1px solid #e7e9df;box-shadow:0 3px 16px #263e3110;border-radius:17px}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}.table{min-height:116px!important;padding:12px!important;border:1px solid #e4e8dd!important;border-radius:17px!important;box-shadow:0 3px 12px #263e3110!important;background:#fffefa!important}.table.active{border-color:#8db09a!important;background:#f6faf5!important}.table .position{font-size:15px!important;color:#2e4938;font-weight:850;text-transform:none}.table .guest{font-size:12px!important;color:#6b7c6e;font-weight:600!important}.table .meta,.table .amount{font-size:11px!important}.table:before{content:"";position:absolute;top:9px;right:9px;width:7px;height:7px;border-radius:50%;background:#d3d8ce}.table.active:before{background:#4f9067}
+.money-compact{padding:0!important;overflow:hidden;border:0!important;background:transparent!important;box-shadow:none!important}.money-pocket-btn{background:#284738!important;color:#fff!important;padding:15px 17px!important;border-radius:17px!important;min-height:76px}.money-pocket-btn .pocketTotal{font-size:26px!important;color:#f4e6c9}.financeGrid{background:#fffefa;padding:10px;border-radius:14px}
+.section-card{border-radius:17px!important;border:1px solid #e7e9df!important;box-shadow:0 3px 12px #263e310b!important}.section-card.menu-sec{background:#fffaf0!important;border-left:3px solid #c3a375!important}.section-card.drink-sec{background:#f5f9f3!important;border-left:3px solid #8aa88a!important}.section-card.service-sec{background:#f3f6f4!important;border-left:3px solid #8fa8a1!important}.section-card.pay-sec{background:#fbf8f1!important;border-left:3px solid #c0a67a!important}.section-card.request-sec{background:#fff6f0!important;border-left:3px solid #b87955!important}.table-title-big{font-size:22px!important;color:#284738}.table-identity-card{background:#fffefa!important}input,select,textarea{border-color:#dfe5da;background:#fffefa;color:#31483a}
+.drinktile{border-radius:16px!important;border-color:#e0e8dd!important;box-shadow:0 2px 8px #2847380b}.drink-main .ico{font-size:47px!important}.drink-qty{background:#e3ede0!important;border-color:#d5e2d0!important;color:#2b4c38!important}.drink-mini-minus{background:#f6e6e1!important;color:#a1473d!important}.plus,.next,.close,.action-close{background:#284738!important;color:#fff!important}
+.stats-modes{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important}.stats-modes button{font-size:11px!important;padding:10px 3px!important}.stats-modes button.selected{background:#284738!important}.history-four-clean button{border-color:#e2e8dc!important;border-radius:16px!important}
+.th-stat-hero{background:#284738;color:#fff;padding:17px;border-radius:17px;grid-column:1/-1}.th-stat-hero .eyebrow{font-size:12px;color:#d2decf}.th-stat-hero .total{font-size:29px;font-weight:850;margin:5px 0;color:#fff}.th-stat-hero .foot{display:flex;justify-content:space-between;gap:10px;color:#e5e0cd;font-size:12px}.th-stat-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;grid-column:1/-1}.th-stat-tile{background:#fffefa;border:1px solid #e7e9df;border-radius:14px;padding:12px 5px;text-align:center}.th-stat-tile strong{display:block;font-size:20px;color:#294637}.th-stat-tile span{display:block;font-size:10px;color:#748375}.th-stat-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:12px}.th-stat-tabs button{border-radius:10px;padding:10px 4px;background:#edf0e8;color:#4b6550;font-weight:800;font-size:12px}.th-stat-tabs button.selected{background:#284738;color:#fff}.th-stat-detail{grid-column:1/-1;background:#fffefa;border:1px solid #e7e9df;border-radius:17px;padding:13px}.th-stat-line{display:flex;justify-content:space-between;padding:10px 2px;border-bottom:1px solid #edf0e9;font-size:13px}.th-stat-line:last-child{border-bottom:0}.th-stat-line b{color:#284738}.th-stat-motif{height:12px;opacity:.45;background:repeating-linear-gradient(90deg,transparent 0 7px,#b7955b 7px 9px,transparent 9px 15px);margin-bottom:10px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+</style>
+<style id="taste-home-heritage-2026">
+/* Heritage-inspired textile geometry: original CSS ornament, not an image asset. */
+:root{--heritage-gold:#b99a65;--heritage-red:#a34e43}
+header{position:relative!important;background:#284737!important}
+header:after{content:"";position:absolute;bottom:0;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#b99a65 0 7px,transparent 7px 12px,#f3e6c9 12px 15px,transparent 15px 23px,#b99a65 23px 30px);opacity:.8}
+#tables .table:before{content:"✥"!important;color:#b99a65!important;font-size:22px!important}
+#tables .table .position{font-family:Georgia,serif!important;letter-spacing:.01em!important}
+#tables .table{transition:transform .13s ease,box-shadow .13s ease!important}
+#tables .table:active{transform:scale(.985)!important}
+.money-pocket-btn{position:relative!important;overflow:hidden!important}
+.money-pocket-btn:after{content:"✥  ◇  ✥";position:absolute;right:13px;bottom:5px;color:#b99a65;opacity:.3;font-size:18px;pointer-events:none}
+.section-card h3,.section-card h2{letter-spacing:.045em!important}
+.drinktile{background:#fffdf8!important}.drink-main .ico{font-size:50px!important}
+.drink-mini-minus{z-index:3!important;box-shadow:0 2px 6px #1c322a16!important}
+.th-stat-hero{position:relative;overflow:hidden}.th-stat-hero:after{content:"✥  ◇  ✥";position:absolute;right:12px;top:12px;color:#c7ab75;opacity:.3;font-size:21px}
+.heritage-stats{grid-column:1/-1;display:grid;gap:10px}.heritage-stats .hs-hero{background:#294739;color:#fff;border-radius:17px;padding:18px;position:relative;overflow:hidden}.heritage-stats .hs-hero:after{content:"✥ ◇ ✥";position:absolute;right:13px;top:10px;color:#d4bb8a;opacity:.38}.heritage-stats .hs-kicker{font-size:11px;color:#d7e0d2;letter-spacing:.08em}.heritage-stats .hs-money{font-size:29px;font-weight:850;margin:7px 0}.heritage-stats .hs-sub{font-size:12px;color:#e6e2d4;display:flex;justify-content:space-between;gap:8px}.heritage-stats .hs-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.heritage-stats .hs-tile{background:#fffefa;border:1px solid #e5e9df;border-radius:13px;padding:11px 5px;text-align:center}.heritage-stats .hs-tile strong{display:block;font-size:19px;color:#294739}.heritage-stats .hs-tile span{font-size:10px;color:#778579}.heritage-stats .hs-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.heritage-stats .hs-tabs button{background:#e9eee5;color:#365541;border-radius:10px;padding:11px 3px;font-size:12px;font-weight:800}.heritage-stats .hs-tabs button.selected{background:#294739;color:#fff}.heritage-stats .hs-detail{background:#fffefa;border:1px solid #e5e9df;border-radius:15px;padding:12px}.heritage-stats .hs-line{display:flex;justify-content:space-between;gap:8px;padding:9px 2px;border-bottom:1px solid #edf0e9;font-size:13px}.heritage-stats .hs-line:last-child{border:0}.heritage-stats .hs-line b{color:#294739}
+@media(min-width:650px){#tables.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+</style>
+<style id="taste-home-albanian-heritage-2026">
+/* Subtle Albanian textile geometry, not distracting illustrations */
+:root{--brand:#263f33!important;--bg:#f7f4ec!important;--card:#fffdf8!important}
+header{position:relative;background:#263f33!important;border-bottom:0!important;padding-bottom:15px!important}
+header:after{content:"";position:absolute;bottom:0;left:0;right:0;height:7px;background:repeating-linear-gradient(90deg,#bb9860 0 7px,transparent 7px 11px,#bb9860 11px 14px,transparent 14px 22px);opacity:.85}
+header h1{font-family:Georgia,serif!important;letter-spacing:.045em!important}
+#tables .table{background:#fffdf8!important;transition:transform .12s ease,border-color .12s ease}
+#tables .table:active{transform:scale(.985)}
+#tables .table:before{content:"✥"!important;color:#b6a078!important;font-size:19px!important}
+#tables .table .position{font-family:Georgia,serif!important;font-size:18px!important}
+.table-title-big{font-family:Georgia,serif!important}
+.money-pocket-btn{position:relative;overflow:hidden}
+.money-pocket-btn:after{content:"◇ ✥ ◇";position:absolute;right:16px;top:11px;font-size:19px;letter-spacing:4px;color:#e6c88c;opacity:.45;pointer-events:none}
+.section-card{position:relative;overflow:hidden}
+.section-card .section-title h3{letter-spacing:.035em!important}
+.section-card.menu-sec{border-left:3px solid #bda06d!important}
+.section-card.drink-sec{border-left:3px solid #7b9d82!important}
+.drink-main .ico{font-size:48px!important;line-height:1.25!important}
+.drink-mini-minus{border:1px solid #b5c1b5!important;background:#fffefa!important;color:#344d3b!important;font-weight:800!important}
+.drink-qty{font-weight:800!important}
+.heritage-stats .hs-hero{border:1px solid #536a50;background:linear-gradient(125deg,#263f33,#355d45)!important}
+.heritage-stats .hs-hero:after{content:"◇ ✥ ◇ ✥"!important;font-family:Georgia,serif;font-size:25px!important;letter-spacing:5px;right:12px!important;top:10px!important;color:#dfc48c!important;opacity:.55!important}
+.heritage-stats .hs-detail:before{content:"";display:block;height:6px;margin:0 0 11px;background:repeating-linear-gradient(90deg,#c4aa7b 0 5px,transparent 5px 9px,#c4aa7b 9px 11px,transparent 11px 18px);opacity:.5}
+.heritage-stats .hs-tile strong{font-variant-numeric:tabular-nums}
+.reservation-tools select,.reservation-tools button{max-width:100%;font-size:11px!important}
+@media(max-width:390px){#tables .table .position{font-size:16px!important}.heritage-stats .hs-money{font-size:26px!important}}
+</style>
+
+<style id="chat-approved-ui-2026">
+/* Faithful implementation of the approved cream / olive two-column prototype. */
+:root{--bg:#f5f3ec!important;--brand:#284638!important;--card:#fff!important;--text:#293f32!important;--line:#e5e9df!important}
+body{background:#f5f3ec!important;color:#293f32!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important}
+header{background:#f5f3ec!important;color:#293f32!important;padding:17px 15px 9px!important}header h1{color:#293f32!important;font-size:22px!important;letter-spacing:-.04em!important}header small{color:#7d897e!important}
+nav{margin:0 12px 8px!important;border:1px solid #e6e9e1!important;border-radius:14px!important;padding:4px!important;background:#fff!important}
+nav .navbtn{font-size:11px!important;padding:10px 3px!important}
+main{padding:10px 12px 30px!important;max-width:720px!important}
+#tables.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+#tables .table{background:#fff!important;border:1px solid #e4e9e1!important;border-radius:14px!important;box-shadow:none!important;min-height:108px!important;padding:12px!important;gap:3px!important}
+#tables .table.active{border-color:#a3bca8!important}#tables .table .position{font-size:16px!important;font-weight:700!important;color:#293f32!important;line-height:1.25!important}#tables .table .guest{font-size:11px!important;color:#647567!important;margin:4px 0 0!important}#tables .table .meta{font-size:10px!important;color:#879387!important}
+.table-grid-tools{justify-content:flex-end!important;margin-top:auto!important;gap:3px!important}.table-grid-tools button{font-size:10px!important;border:0!important;background:#f2f5ef!important;border-radius:7px!important;padding:4px 6px!important}
+.money-pocket-btn{background:#284638!important;border-radius:14px!important;box-shadow:none!important;padding:13px 15px!important}.money-compact{margin-bottom:12px!important}
+#tableView .card,#tableView .section-card,#tableView .action-zone,.table-identity-card{border:1px solid #e5e9df!important;border-radius:14px!important;box-shadow:none!important;background:#fff!important}
+.table-title-big{font-size:23px!important;font-weight:750!important;color:#293f32!important}.table-identity-card{padding:10px!important}
+.reservation-tools{gap:4px!important;flex-wrap:wrap!important}.reservation-tools button,.reservation-tools select,#agencyPaid{font-size:11px!important;padding:5px!important;min-height:29px!important}
+.section-card.menu-sec,.section-card.drink-sec,.section-card.service-sec,.section-card.pay-sec,.section-card.request-sec{border-left:1px solid #e5e9df!important;background:#fff!important}
+.section-card.service-sec{background:#edf1e8!important}.section-card.request-sec{background:#fbf0e4!important}
+.drinktiles{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.drinktile{background:#f7f8f4!important;border:1px solid #e4e9df!important;border-radius:13px!important;box-shadow:none!important;min-height:123px!important}
+.drink-main{min-height:117px!important;padding:34px 8px 8px!important}.drink-main .ico{font-size:44px!important}.drink-main .dn{font-size:12px!important;letter-spacing:.01em!important}.drink-qty{top:8px!important;left:8px!important;background:#e1eadf!important;border-radius:9px!important;color:#2f523b!important}.drink-mini-minus{top:8px!important;right:8px!important;background:#fff!important;border:1px solid #dce4db!important;border-radius:8px!important;color:#34523e!important}
+.heritage-stats .hs-hero{background:#294739!important;border-radius:14px!important}.heritage-stats .hs-tile,.heritage-stats .hs-detail,.history-four button,.history-four-clean button{background:#fff!important;border:1px solid #e5e9df!important;border-radius:13px!important;box-shadow:none!important}.heritage-stats .hs-detail:before,.heritage-stats .hs-hero:after{display:none!important}
+button{touch-action:manipulation}input,select{accent-color:#284638}
+@media(max-width:380px){#tables .table{padding:10px!important}#tables .table .position{font-size:15px!important}}
 </style>
 </head>
+<style id="taste-home-premium-pos">
+/* Taste Home Pro — understated premium POS, no ornamental UI */
+:root{--brand:#294739!important;--green:#426b51!important;--orange:#ad7442!important;--red:#a34f46!important;--bg:#f5f3ec!important;--card:#fff!important;--text:#293f32!important;--muted:#788679!important;--line:#e6e9e1!important}
+body{background:var(--bg)!important;color:var(--text)!important;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif!important;font-weight:450;-webkit-font-smoothing:antialiased}
+header{background:#294739!important;color:#fff!important;border:0!important;box-shadow:none!important;padding:13px 14px!important}header h1{font-family:inherit!important;font-size:19px!important;letter-spacing:-.035em!important;font-weight:750!important}header small{font-size:11px!important;color:#cbd8ca!important}
+nav{background:#fff!important;border-bottom:1px solid #e6e9e1!important;box-shadow:none!important;gap:4px!important}nav .navbtn{background:transparent!important;color:#778679!important;border-radius:10px!important;font-weight:650!important}nav .navbtn.active{background:#e6eee5!important;color:#284638!important}
+main{max-width:760px!important;padding:12px 12px 30px!important}
+#tablesView,#tableView,#historyView,#statsView{max-width:720px!important}
+#tables.grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+#tables .table{position:relative!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:5px!important;min-height:120px!important;padding:13px 12px 10px!important;border:1px solid #e3e8df!important;border-radius:16px!important;background:#fff!important;box-shadow:0 3px 12px #1d38250b!important;overflow:hidden!important}
+#tables .table:before{content:none!important}#tables .table:after{content:''!important;position:absolute;top:14px;right:13px;left:auto!important;width:8px;height:8px;border-radius:50%;background:#cdd5cc}
+#tables .table.active{border-color:#a8c3ad!important}#tables .table.active:after{background:#4c9b69}#tables .table.alert{border-color:#d5a78b!important}#tables .table.alert:after{background:#c47b4c}
+#tables .table .position{font-size:16px!important;font-weight:750!important;line-height:1.2!important;color:#294739!important;text-transform:none!important;letter-spacing:-.025em!important;padding-right:9px!important}
+#tables .table .guest{font-size:12px!important;font-weight:500!important;color:#647567!important;margin:5px 0 2px!important}
+#tables .table .meta{font-size:11px!important;color:#879288!important}#tables .table .amount{font-size:12px!important;color:#4a7055!important}
+.table-grid-tools{margin-top:auto!important;justify-content:flex-end!important}.table-grid-tools button{border-radius:7px!important;background:#f3f5f1!important;color:#607364!important;padding:5px 7px!important;font-size:10px!important}
+.money-compact{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;margin:2px 0 16px!important}.money-pocket-btn{background:#294739!important;color:#fff!important;border:0!important;border-radius:16px!important;min-height:76px!important;padding:13px 17px!important;box-shadow:0 4px 16px #24433220!important}.money-pocket-btn .pocketTotal{font-size:25px!important;color:#fff!important;font-weight:750!important}
+.card,.section-card,.action-zone{border-radius:16px!important;border:1px solid #e7ebe3!important;box-shadow:0 2px 12px #2443320a!important;background:#fff!important}.table-title-big{font-family:inherit!important;font-size:23px!important;font-weight:750!important;color:#294739!important;letter-spacing:-.035em!important}.table-identity-card{padding:10px 12px!important}.reservation-tools{gap:5px!important;margin-top:4px!important}.reservation-tools button,.reservation-tools select,#agencyPaid{font-size:11px!important;padding:5px 7px!important;min-height:30px!important}
+.section-card.menu-sec{background:#fff!important;border-left:3px solid #c9b68d!important}.section-card.drink-sec{background:#fbfcfa!important;border-left:3px solid #7fa28a!important}.section-card.service-sec{background:#f9fbf9!important;border-left:3px solid #a4b7a8!important}.section-card.pay-sec{background:#fff!important;border-left:3px solid #b3bcae!important}.section-card.request-sec{background:#fff9f4!important;border-left:3px solid #d49a72!important}
+.drinktiles{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.drinktile{position:relative!important;background:#fff!important;border:1px solid #e3e9e1!important;border-radius:15px!important;min-height:125px!important;box-shadow:0 2px 10px #2847380a!important}.drink-main{min-height:115px!important;padding:34px 8px 9px!important}.drink-main .ico{font-size:43px!important;line-height:1.1!important}.drink-main .dn{font-size:12px!important;font-weight:750!important;color:#314a39!important}.drink-qty{position:absolute!important;top:8px!important;left:8px!important;min-width:27px!important;height:27px!important;border-radius:9px!important;background:#e6eee5!important;color:#2c4b38!important;border:0!important;font-size:14px!important;font-weight:750!important}.drink-mini-minus{position:absolute!important;top:8px!important;right:8px!important;left:auto!important;bottom:auto!important;width:29px!important;height:29px!important;border-radius:9px!important;background:#f4f5f2!important;color:#49604f!important;border:1px solid #dce4db!important;font-size:21px!important;z-index:5!important}.drink-new{font-size:10px!important;color:#ad653d!important}
+.history-four button,.history-four-clean button{background:#fff!important;border:1px solid #e3e9e1!important;border-radius:15px!important;box-shadow:0 2px 10px #2847380a!important}.heritage-stats .hs-hero{background:#294739!important;border:0!important;border-radius:16px!important}.heritage-stats .hs-hero:after{content:none!important}.heritage-stats .hs-detail:before{content:none!important}.heritage-stats .hs-tiles .hs-tile,.heritage-stats .hs-detail{background:#fff!important;border:1px solid #e3e9e1!important}.heritage-stats .hs-tabs button{background:#e9eee7!important;color:#425d48!important}.heritage-stats .hs-tabs button.selected{background:#294739!important;color:#fff!important}
+.stats-modes{grid-template-columns:repeat(4,minmax(0,1fr))!important}.stats-modes button{font-size:11px!important;padding:10px 2px!important}.login-card{border-radius:20px!important;border:1px solid #e0e7dc!important}
+@media(max-width:380px){#tables.grid{gap:8px!important}#tables .table{padding:11px 9px!important}#tables .table .position{font-size:15px!important}}
+
+/* Mobile table card text layout: prevent overlap at all text scales */
+#tables .table{height:auto!important;min-height:142px!important;overflow:hidden!important;gap:8px!important}
+#tables .table-open-area{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:7px!important;min-width:0!important;min-height:79px!important;line-height:1.35!important;white-space:normal!important;overflow:visible!important;font-size:initial!important}
+#tables .table-open-area .position{display:block!important;position:static!important;min-height:0!important;height:auto!important;line-height:1.35!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;margin:0!important;padding:0 10px 0 0!important;font-size:15px!important}
+#tables .table-open-area .guest{display:block!important;position:static!important;height:auto!important;min-height:17px!important;line-height:1.4!important;white-space:normal!important;overflow-wrap:anywhere!important;margin:0!important;font-size:11px!important}
+#tables .table-open-area .meta{display:block!important;position:static!important;height:auto!important;line-height:1.4!important;white-space:normal!important;overflow-wrap:anywhere!important;margin:0!important;font-size:10px!important}
+#tables .table-grid-tools{position:static!important;display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;gap:5px!important;margin-top:auto!important;min-height:25px!important}
+#tables .table-grid-tools button{width:auto!important;min-height:25px!important;line-height:1.2!important;white-space:nowrap!important}
+#tables .table:after{pointer-events:none!important}
+@media(max-width:360px){#tables .table{padding:10px 8px!important}#tables .table-open-area .position{font-size:14px!important}#tables .table-grid-tools button{font-size:9px!important}}
+</style>
+<style id="taste-home-premium-authoritative">
+/* Taste Home — cohesive premium UI, final authoritative layer */
+:root{--bg:#f5f3ec!important;--text:#293f32!important;--muted:#788477!important;--line:#e5e9df!important;--green:#294739!important;--brand:#294739!important;--orange:#bd8654!important}
+html,body{background:#f5f3ec!important;color:#293f32!important;font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important}*{box-sizing:border-box}main{max-width:760px!important;margin:0 auto!important;padding:12px 12px 90px!important}header{background:#f5f3ec!important;color:#293f32!important;border-bottom:0!important;box-shadow:none!important}header h1{font-size:21px!important;letter-spacing:-.04em!important;color:#293f32!important}header small{color:#788477!important}nav{background:#fff!important;border:1px solid #e5e9df!important;border-radius:16px!important;box-shadow:none!important;margin:4px 12px 12px!important;padding:5px!important;gap:3px!important}nav button,.navbtn{font-size:11px!important;min-width:0!important;padding:10px 2px!important;border-radius:10px!important;white-space:normal!important;line-height:1.3!important}nav .active{background:#e6ede4!important;color:#294739!important}
+#tables.grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}#tables .table{display:flex!important;flex-direction:column!important;min-width:0!important;height:auto!important;min-height:132px!important;padding:13px 12px!important;border-radius:15px!important;background:#fff!important;border:1px solid #e3e9e0!important;box-shadow:none!important;gap:7px!important;overflow:hidden!important}#tables .table:before{content:none!important}#tables .table:after{top:13px!important;right:12px!important;width:8px!important;height:8px!important}#tables .table-open-area{min-height:77px!important;display:flex!important;flex-direction:column!important;gap:7px!important;min-width:0!important;width:100%!important;overflow:visible!important;line-height:1.3!important}#tables .table-open-area .position{font-size:16px!important;line-height:1.25!important;font-weight:750!important;white-space:normal!important;overflow-wrap:anywhere!important;min-width:0!important;padding-right:10px!important;color:#293f32!important}#tables .table-open-area .guest{font-size:12px!important;line-height:1.35!important;overflow-wrap:anywhere!important;color:#647567!important}#tables .table-open-area .meta{font-size:10px!important;line-height:1.35!important;color:#849084!important;overflow-wrap:anywhere!important}#tables .table-grid-tools{display:flex!important;gap:5px!important;flex-wrap:wrap!important;position:static!important;margin-top:auto!important}#tables .table-grid-tools button{padding:5px 7px!important;font-size:10px!important;min-height:27px!important;background:#f3f5f1!important;border:0!important;border-radius:7px!important}
+.money-compact{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;margin-bottom:15px!important}.money-pocket-btn{background:#294739!important;color:#fff!important;border-radius:15px!important;padding:17px 16px!important;min-height:75px!important}.money-pocket-btn .pocketTotal{font-size:25px!important;color:#fff!important}.money-pocket-btn span{color:#d7e3d7!important;font-size:12px!important}.tables-zone{border:0!important;padding:0!important;margin:0!important}.zone-heading{font-size:13px!important;color:#536d58!important;letter-spacing:.08em!important;margin:0 0 10px 3px!important}
+#tableView .card,#tableView .section-card,.card,.section-card{border:1px solid #e5e9df!important;border-radius:15px!important;box-shadow:none!important;background:#fff!important;margin-bottom:12px!important}#tableView .section-card{padding:14px!important}#tableView .section-card h3{font-size:14px!important;letter-spacing:.035em!important;color:#293f32!important}.section-title{gap:8px!important;flex-wrap:wrap!important}.section-title .meta{font-size:10px!important;color:#849084!important}.table-identity-card{padding:12px!important}.table-identity-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:center!important;gap:8px!important}.table-title-big{font-size:21px!important;line-height:1.2!important;font-weight:750!important;overflow-wrap:anywhere!important;white-space:normal!important}.reservation-inline input{width:100%!important;min-width:0!important;font-size:12px!important;padding:9px!important;border:1px solid #e4e9df!important;border-radius:9px!important}.reservation-tools{display:flex!important;flex-wrap:wrap!important;gap:6px!important}.reservation-tools select{min-width:0!important;max-width:100%!important;font-size:11px!important}.reservation-tools #agencyPaid{flex-basis:auto!important}.table-identity-card .people{margin-top:5px!important}
+.section-card.menu-sec,.section-card.drink-sec,.section-card.service-sec,.section-card.pay-sec,.section-card.request-sec{border-left:1px solid #e5e9df!important;background:#fff!important}.section-card.service-sec{background:#edf1e8!important}.section-card.request-sec{background:#fbf0e4!important}.drinktiles{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}.drinktile{position:relative!important;min-width:0!important;min-height:142px!important;background:#f7f8f4!important;border:1px solid #e4e9df!important;border-radius:13px!important;overflow:hidden!important;box-shadow:none!important}.drink-main{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;width:100%!important;min-height:140px!important;padding:34px 7px 10px!important}.drink-main .ico{font-size:46px!important;line-height:1.15!important}.drink-main .dn{font-size:12px!important;font-weight:750!important;line-height:1.25!important}.drink-main .dp{font-size:11px!important}.drink-qty{position:absolute!important;top:9px!important;left:9px!important;min-width:29px!important;height:27px!important;border-radius:9px!important;background:#e1eadf!important;color:#2f523b!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:14px!important;padding:0 5px!important}.drink-mini-minus{position:absolute!important;top:9px!important;right:9px!important;left:auto!important;bottom:auto!important;width:29px!important;height:29px!important;border-radius:9px!important;background:#fff!important;border:1px solid #dce4db!important;color:#34523e!important;font-size:21px!important;z-index:5!important}.drink-new{font-size:10px!important;color:#a55a2e!important;min-height:13px!important}.backbar{top:0!important;background:#f5f3ec!important}.back{background:#e6ede4!important;color:#294739!important}.topTotal{color:#294739!important}
+input,select,textarea{max-width:100%;min-width:0}button{touch-action:manipulation}#statsView,#historyView{min-width:0!important} .history-four,.history-four-clean,.daily-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important} .history-four button,.history-four-clean button,.daily-stat{min-width:0!important;overflow-wrap:anywhere!important;border-radius:13px!important} .login-card{background:#fff!important;border-radius:20px!important;color:#293f32!important}
+@media(max-width:360px){main{padding:9px 9px 85px!important}#tables.grid{gap:8px!important}#tables .table{padding:11px 9px!important}#tables .table-open-area .position{font-size:14px!important}.table-title-big{font-size:18px!important}nav{margin-left:9px!important;margin-right:9px!important}}
+</style>
 <body>
 <header><div class="headrow"><div><h1>Taste Home Pro</h1><small>Shërbimi i mbrëmjes</small><div><span id="roleBadge" class="role-badge">🔐 Hyrja</span> <button class="role-switch" onclick="logoutRole()">Ndrysho përdorues</button></div></div><div class="datebar"><button onclick="shiftWorkDate(-1)">‹</button><input id="workDate" type="date" onchange="saveWorkDate()"><button onclick="shiftWorkDate(1)">›</button></div></div></header>
 <nav>
@@ -247,19 +432,19 @@ body.waiter .redtxt{display:none!important}
  <div class="login-card">
   <h2>🏡 Taste Home Pro</h2>
   <div class="meta">Zgjidh përdoruesin.</div>
-  <div id="roleLoginButtons" class="login-grid"></div>
+  <div id="roleLoginButtons" class="login-grid">
+   <button type="button" onclick="loginAdmin()">🔐 ADMIN</button>
+   <button type="button" class="waiter-login" onclick="loginWaiter(0)">👤 KAMARIER 1</button>
+   <button type="button" class="waiter-login" onclick="loginWaiter(1)">👤 KAMARIER 2</button>
+  </div>
  </div>
 </div>
 
 <main>
 <section id="tablesView">
-  <div class="card live adminOnly">
-    <div class="pocketHero">
-      <div class="meta">💰 TOTALI I MARRË SOT</div>
-      <div id="liveReceived" class="pocketTotal">€0.00</div>
-      <div class="meta">Para të arkëtuara realisht</div>
-    </div>
-    <div class="financeGrid">
+  <div class="card live adminOnly money-compact">
+    <button type="button" class="money-pocket-btn" onclick="document.getElementById('financeDetails').classList.toggle('hidden')"><span>💰 NË XHEP</span><b id="liveReceived" class="pocketTotal">€0.00</b></button>
+    <div id="financeDetails" class="financeGrid hidden">
       <div class="financeBox"><span>📈 Xhiro</span><b id="liveSales">€0.00</b></div>
       <div class="financeBox"><span>🎁 Bakshishe</span><b id="liveTips">€0.00</b></div>
       <button class="financeBox" onclick="openCashList()"><span>💵 Cash</span><b id="liveCash">€0.00</b></button>
@@ -270,23 +455,21 @@ body.waiter .redtxt{display:none!important}
     <div style="display:none"><b id="liveCard">€0.00</b></div>
   </div>
   <div class="tables-zone"><div class="zone-heading">🍽️ TAVOLINAT</div><div id="tables" class="grid"></div></div>
-  <button id="addTableBtn" class="addtable" onclick="addExtraTable()">＋ Shto tavolinë</button>
+  <button id="addTableBtn" class="addtable hidden" onclick="addExtraTable()">＋ Shto tavolinë</button>
   <div id="extraInfo" class="meta" style="text-align:center;margin-top:5px"></div>
 </section>
 
 <section id="tableView" class="hidden">
   <div class="backbar"><button class="back" onclick="showTables()">←</button><div id="tableHeader" class="tabletitle"></div><div id="topTotal" class="topTotal"></div></div>
-  <div class="card">
-    <div>
-      <label>Emri i rezervimit / klientit</label>
-      <input id="tableName" placeholder="p.sh. Ella Wise" oninput="updateDetails()">
+  <div class="card table-identity-card">
+    <div class="table-identity-row">
+      <div id="tableIdentityTitle" class="table-title-big"><span class="table-icon">🌿</span>Tavolina</div>
+      <div class="reservation-inline"><input id="tableName" placeholder="Emri i rezervimit" oninput="updateDetails()"></div>
     </div>
-    <div id="extraNameBox" class="hidden" style="margin-top:10px">
-      <label>Emri / titulli i tavolinës</label>
-      <input id="extraTableName" placeholder="p.sh. Terraca / Oborri / VIP" oninput="renameExtraTable(this.value)">
-    </div>
+    <div class="reservation-tools adminOnly"><select id="agencySelect" onchange="setAgency(this.value)"><option value="">Direkt</option></select><button type="button" onclick="addAgency()">＋</button><select id="agencyPaid" onchange="setAgencyPaid(this.value)"><option value="unpaid">○ Pa likuiduar</option><option value="paid">✓ Likuiduar</option></select></div>
+    <div id="extraNameBox" class="hidden"><input id="extraTableName" type="hidden" oninput="renameExtraTable(this.value)"></div>
     <div id="autoPeople" class="people">👥 0 persona</div>
-    <label>Shënime</label><textarea id="notes" class="notes" placeholder="p.sh. pa alkool..." oninput="updateDetails()"></textarea>
+    <textarea id="notes" class="notes" style="display:none" placeholder="Shënime" oninput="updateDetails()"></textarea>
   </div>
 
   <div class="card section-card menu-sec"><div class="section-title"><h3>🍽️ MENU</h3><span class="meta">Personat llogariten vetë</span></div><div id="menus"></div></div>
@@ -297,7 +480,7 @@ body.waiter .redtxt{display:none!important}
   <div class="drinktile" data-drink-card="juice"><button type="button" class="drink-main" onclick="drinkAdd('juice')"><span class="ico">🍇</span><span class="dn">GRAPE JUICE</span><span class="dp adminOnly">€2.50</span><span id="drinkQty_juice" class="drink-qty">×0</span><span id="drinkNew_juice" class="drink-new"></span></button><button type="button" id="drinkMinus_juice" class="drink-mini-minus" onclick="drinkMinus('juice')" disabled>−</button></div>
 </div><div id="drinkDetails"></div><button class="freebtn adminOnly" onclick="openFreeDrinks()">🎁 PIJE FALAS</button><div id="freeDrinkSummary" class="free-summary adminOnly"></div></div>
   <div class="card section-card service-sec"><div class="section-title"><h3>👨‍🍳 SHËRBIMI</h3><span class="meta">Zgjidh fazën</span></div><div id="statusButtons" class="status-grid"></div><button class="next" onclick="sendKitchenUpdate()">👨‍🍳 DËRGO KUZHINËS</button></div>
-  <div class="card"><h3>⚡ Kërkesa të shpejta</h3><div id="requestButtons" class="reqgrid"></div><button class="next" onclick="sendSelectedRequests()">👨‍🍳 DËRGO KUZHINËS</button></div>
+  <div class="card section-card request-sec"><h3>🚨 KËRKESA TË SHPEJTA</h3><div class="meta">Prek një kërkesë — dërgohet menjëherë si detyrë</div><div id="requestButtons" class="reqgrid"></div></div>
 
   <div class="card section-card pay-sec adminOnly">
     <div class="section-title"><h3>💳 PAGESA</h3><b id="tableTotal"></b></div>
@@ -306,12 +489,13 @@ body.waiter .redtxt{display:none!important}
       <button id="cardBtn" class="paybtn" onclick="setPayment('Card')">💳 CARD</button>
       <button id="mixedBtn" class="paybtn" onclick="setPayment('Mixed')">💵+💳 TË DYJA</button>
     </div>
-    <div id="mixedBox" class="mixedbox hidden">
+    <div id="mixedBox" class="mixedbox">
       <div class="mixedgrid">
-        <div><label>💵 Cash</label><input id="mixedCash" type="number" min="0" step=".01" inputmode="decimal" oninput="setMixedCash(this.value)"></div>
-        <div><label>💳 Card</label><input id="mixedCard" type="number" min="0" step=".01" inputmode="decimal" oninput="setMixedCard(this.value)"></div>
+        <div><label>💵 Cash marrë</label><input id="mixedCash" type="number" min="0" step=".01" inputmode="decimal" oninput="setMixedCash(this.value)"></div>
+        <div><label>💳 Card marrë</label><input id="mixedCard" type="number" min="0" step=".01" inputmode="decimal" oninput="setMixedCard(this.value)"></div>
       </div>
       <div id="mixedTotalCheck" class="mixedtotal"></div>
+      <div class="discount-mini"><span>Zbritje</span><button onclick="setSimpleDiscount(5)">5%</button><button onclick="setSimpleDiscount(10)">10%</button><button onclick="setSimpleDiscount(20)">20%</button><input id="discountFixed" type="number" min="0" step=".01" placeholder="€" onchange="setFixedDiscount(this.value)"></div>
     </div>
     <div id="cardBox" class="hidden">
       <label class="paidcheck"><input id="cardPaid" type="checkbox" onchange="setCardPaid(this.checked)"> ✅ Pjesa Card e paguar</label>
@@ -511,7 +695,7 @@ const STAGES=[
 ];
 const REQUESTS=["💧 Ujë","🍞 Bukë"];
 const BASE_POSITIONS=["🥘 Tek Tepsiat","🍇 Tek Hardhia","💧 Tek Çezma","💡 Tek Drita","🍊 Tek Mandarina","🍊 Tek Portokalli","🌳 Nën Fik","🌿 Në Bahçe","🚪 Tek Dera","➕ Tavolinë Extra"];
-const MAX_TABLES=20;
+const MAX_TABLES=18;
 
 /* Ruajmë historikun e versionit v9. Nëse v9 s'ka të dhëna, lexojmë edhe v11 si fallback. */
 const DB_KEY="taste_home_tables_v9",HIST_KEY="taste_home_history_v9",DATE_KEY="taste_home_workdate_v9",COUNT_KEY="taste_home_tablecount_v9";
@@ -524,7 +708,13 @@ let waiterCfg=JSON.parse(localStorage.getItem(WAITER_CFG_KEY)||"null")||[
  {id:"w2",name:"Kamarier 2",pin:"2222"}
 ];
 waiterCfg=(Array.isArray(waiterCfg)?waiterCfg:[]).filter(w=>w&&w.id!=="w3").slice(0,2);
-while(waiterCfg.length<2){const n=waiterCfg.length+1;waiterCfg.push({id:`w${n}`,name:`Kamarier ${n}`,pin:n===1?"1111":"2222"})}
+const DEFAULT_WAITERS=[{id:"w1",name:"Kamarier 1",pin:"1111"},{id:"w2",name:"Kamarier 2",pin:"2222"}];
+for(let i=0;i<2;i++){
+ if(!waiterCfg[i]||typeof waiterCfg[i]!=="object") waiterCfg[i]={...DEFAULT_WAITERS[i]};
+ waiterCfg[i].id=DEFAULT_WAITERS[i].id;
+ waiterCfg[i].name=String(waiterCfg[i].name||DEFAULT_WAITERS[i].name);
+ waiterCfg[i].pin=String(waiterCfg[i].pin||DEFAULT_WAITERS[i].pin);
+}
 localStorage.setItem(WAITER_CFG_KEY,JSON.stringify(waiterCfg));
 let currentRole=sessionStorage.getItem("taste_home_role")||"", currentUserName=sessionStorage.getItem("taste_home_user_name")||"";
 
@@ -540,7 +730,7 @@ let sourceDaily=JSON.parse(localStorage.getItem(SOURCE_KEY)||"{}");
 Object.entries(SOURCE_SEED_2026).forEach(([d,v])=>{
  if(!sourceDaily[d]) sourceDaily[d]={...v};
 });
-let tableCount=20,current=1,statsMode="year";
+let tableCount=18,current=1,statsMode="year";
 const $=id=>document.getElementById(id);
 
 function positionFor(t){return `Tavolina ${t}`}
@@ -560,7 +750,7 @@ function normalize(t){
  if(!b.adjustType)b.adjustType="none";if(b.discountPct==null)b.discountPct=0;if(b.discountEuro==null)b.discountEuro=0;if(b.otherMenuName==null)b.otherMenuName="";if(b.lekAmount==null)b.lekAmount=0;if(b.lekRate==null)b.lekRate=100;if(b.customTotal==null)b.customTotal="";
  if(typeof b.stage!=="number")b.stage=0;if(!b.requests)b.requests={};if(b.workDate==null)b.workDate="";
 }
-for(let t=1;t<=MAX_TABLES;t++)normalize(t);tableCount=20;
+for(let t=1;t<=MAX_TABLES;t++)normalize(t);tableCount=18;
 history.forEach(x=>{
  if(x.position==null)x.position=x.table?positionFor(Number(x.table)):"";
  if(x.tip==null)x.tip=Math.max(0,(Number(x.received||x.receivedAmount)||Number(x.total)||0)-(Number(x.total)||0));
@@ -594,7 +784,7 @@ function startLiveServiceSync(){
  fbdb.ref("liveService").on("value",snap=>{
    const v=snap.val();if(!v||!v.tables)return;
    remoteApplying=true;
-   tableCount=20;
+   tableCount=18;
    for(let t=1;t<=tableCount;t++){
      normalize(t);const r=v.tables[t];if(!r)continue;
      ["q","sent","served","priceSnapshot","name","reservedPeople","notes","stage","requests","workDate","position","tableTitle","groupNormal","groupVeg","groupGuides","freeDrinks","otherMenuName","waiterName"].forEach(key=>{if(r[key]!==undefined)db[t][key]=r[key]});
@@ -758,7 +948,7 @@ function drawLive(){
 
  // Para realisht të arkëtuara: cash + card i paguar + bakshishe.
  // Card i papaguar nuk futet këtu.
- const received=cash+cardPaid+tips;
+ const received=cash;
  $("liveSales").textContent=money(sales);
  $("liveTips").textContent=money(tips);
  $("liveCash").textContent=money(cash);
@@ -797,7 +987,7 @@ function drawTables(){
    el.innerHTML=`<div class="position">${db[t].position}</div><div class="guest">${db[t].name||"Pa emër"}</div><div class="meta">👥 ${people(t)} persona${db[t].waiterName?` · 👤 ${db[t].waiterName}`:""}</div><div class="amount">${money(total(t))}</div>${p?`<div class="redtxt">🔴 ${p} pije për t'u çuar</div>`:""}${hasCardPart(db[t],t)&&!db[t].cardPaid&&total(t)>0?`<div class="redtxt">💳 ${money(paymentCardAmount(db[t],t))} Card pa paguar</div>`:""}${ks}`;
   el.onclick=()=>openTable(t);$("tables").appendChild(el);
  }
- $("addTableBtn").classList.add("hidden"); $("extraInfo").textContent="20 tavolina aktive";
+ $("addTableBtn").classList.add("hidden"); $("extraInfo").textContent="18 tavolina aktive";
 }
 function addExtraTable(){if(tableCount>=MAX_TABLES)return;tableCount++;normalize(tableCount);db[tableCount].position=positionFor(tableCount);save();drawTables()}
 
@@ -832,7 +1022,7 @@ function drawHeaderOnly(){
  $("topTotal").textContent=money(total(current));
  $("autoPeople").textContent=`👥 ${people(current)} persona`;
  $("tableTotal").textContent=money(total(current));
- $("extraNameBox").classList.remove("hidden"); $("extraTableName").value=db[current].position||positionFor(current);
+ if($("extraTableName"))$("extraTableName").value=db[current].position||positionFor(current);
  drawTip();
 }
 function renameExtraTable(v){
@@ -922,7 +1112,7 @@ function drawDrinks(){
   const q=Number(db[current].q[i.k])||0;
   const qty=$("drinkQty_"+i.k), fresh=$("drinkNew_"+i.k), minus=$("drinkMinus_"+i.k), card=document.querySelector(`[data-drink-card="${i.k}"]`);
   const p=pending(current,i.k);
-  if(qty)qty.textContent=`×${q}`;
+  if(qty)qty.textContent=String(q);
   if(fresh)fresh.textContent=p>0?`+${p} të reja`:"";
   if(minus)minus.disabled=q<=0;
   if(card){
@@ -1178,9 +1368,28 @@ function sendKitchenUpdate(){
  }
  db[current].requests={};db[current].updated=stamp();save();drawCurrent();drawTables();
 }
-function invoiceText(t){const b=db[t];let x=`Taste Home\nData: ${b.workDate||isoDate()}\n${b.position}${b.name?" — "+b.name:""}\nPersona: ${people(t)}\nPagesa: ${b.payment}`;if(b.payment==="Card")x+=` — ${b.cardPaid?"PAGUAR":"PA PAGUAR"}`;x+="\n";linesForTable(t).forEach(a=>x+=`${a.name}: ${a.qty} × ${money(a.price)} = ${money(a.subtotal)}\n`);x+=`----------------\nTOTALI: ${money(total(t))}`;if(db[t].received!=="")x+=`\nShuma e marrë: ${money(db[t].received)}\nBakshishi: ${money(tipForTable(t))}`;return x}
+function invoiceText(t){
+ const b=db[t];const names={normal:"Regular Menu",veg:"Vegetarian Menu",kids:"Kids Menu",group:"Group Menu",beer:"Beer",birre:"Beer",red:"Red Wine",white:"White Wine",juice:"Grape Juice"};
+ const base=baseTotal(t),due=total(t),discount=Math.max(0,base-due);
+ let x=`Taste Home\nDate: ${b.workDate||isoDate()}\nTable: ${b.position}${b.name?" — "+b.name:""}\nGuests: ${people(t)}\n`;
+ linesForTable(t).forEach(a=>{const k=String(a.key||a.k||"").toLowerCase();x+=`${names[k]||a.name}: ${a.qty} × ${money(a.price)} = ${money(a.subtotal)}\n`});
+ if(discount>0)x+=`Subtotal: ${money(base)}\nDiscount (${Number(b.discountPct)?Number(b.discountPct)+"%":"Fixed amount"}): -${money(discount)}\n`;
+ x+=`----------------\nTOTAL${discount>0?" AFTER DISCOUNT":""}: ${money(due)}\nCash: ${money(paymentCashAmount(b,t))}\nCard: ${money(paymentCardAmount(b,t))}\nTip: ${money(tipForTable(t))}`;
+ return x;
+}
 function shareCurrent(){if(!isAdmin())return alert("Vetëm Admin.");if(total(current)<=0)return alert("Tavolina është bosh.");shareText(invoiceText(current))}
-function printCurrent(){if(!isAdmin())return alert("Vetëm Admin.");if(total(current)<=0&&people(current)<=0)return alert("Tavolina është bosh.");const b=db[current];const lines=linesForTable(current).map(a=>`<div class="invoice-line"><span>${a.name} × ${a.qty}${a.free?` <small>(${a.free} falas)</small>`:""}</span><b>${money(a.subtotal)}</b></div>`).join("");$("printPreviewBody").innerHTML=`<h2>Taste Home</h2><b>${b.position}${b.name?" — "+b.name:""}</b><div>👥 ${people(current)} persona${b.groupGuides?` · 🎁 ${b.groupGuides} guida falas`:""}</div><hr>${lines}<hr><h2>TOTALI ${money(total(current))}</h2><div>💵 Cash: ${money(paymentCashAmount(b,current))}</div><div>💳 Card: ${money(paymentCardAmount(b,current))}</div><div>🎁 Bakshish: ${money(tipForTable(current))}</div>`;$("printPreview").classList.remove("hidden")}
+function printCurrent(){
+ if(!isAdmin())return alert("Vetëm Admin.");
+ if(total(current)<=0&&people(current)<=0)return alert("Tavolina është bosh.");
+ const b=db[current],base=baseTotal(current),final=total(current),discount=Math.max(0,base-final);
+ const labels={normal:"Regular Menu",veg:"Vegetarian Menu",kids:"Kids Menu",group:"Group Menu",beer:"Beer",birre:"Beer",red:"Red Wine",white:"White Wine",juice:"Grape Juice"};
+ const lines=linesForTable(current).map(a=>{const k=String(a.key||a.k||"").toLowerCase();const name=labels[k]||String(a.name||"").replace(/birr[ëe]/ig,"Beer").replace(/verë e kuqe/ig,"Red Wine").replace(/verë e bardhë/ig,"White Wine").replace(/menu normale/ig,"Regular Menu").replace(/menu vegjetariane?/ig,"Vegetarian Menu").replace(/falas/ig,"Free");return `<div class="invoice-line"><span>${name} × ${a.qty}${a.free?` <small>(${a.free} complimentary)</small>`:""}</span><b>${money(a.subtotal)}</b></div>`}).join("");
+ const pct=Number(b.discountPct)||0,fix=Number(b.discountEuro)||0;
+ const discountType=pct?`${pct}%`:fix?`Fixed ${money(fix)}`:"Adjustment";
+ const discountRow=discount>0?`<div class="invoice-line"><span>Subtotal</span><b>${money(base)}</b></div><div class="invoice-line"><span>Discount (${discountType})</span><b>− ${money(discount)}</b></div>`:"";
+ $("printPreviewBody").innerHTML=`<h2>Taste Home</h2><b>Table: ${b.position}${b.name?" — "+b.name:""}</b><div>Guests: ${people(current)}${b.groupGuides?` · Complimentary guides: ${b.groupGuides}`:""}</div><hr>${lines}<hr>${discountRow}<h2>${discount>0?"TOTAL AFTER DISCOUNT":"TOTAL"}: ${money(final)}</h2><div>Cash: ${money(paymentCashAmount(b,current))}</div><div>Card: ${money(paymentCardAmount(b,current))}</div><div>Tip: ${money(tipForTable(current))}</div>`;
+ $("printPreview").classList.remove("hidden");
+}
 function closePrintPreview(){$("printPreview").classList.add("hidden")}
 function doPrintCurrent(){$("printArea").innerHTML=$("printPreviewBody").innerHTML;window.print()}
 function clearKitchenForTable(t){
@@ -1369,18 +1578,18 @@ function printDaily(){
 
  $("printArea").innerHTML=`
    <div style="font-family:Arial;max-width:760px;margin:auto;color:#111;font-size:31px;line-height:1.6">
-     <h1 style="font-size:48px;margin:0 0 10px">Taste Home — Xhiro Ditore</h1>
-     <div style="font-size:25px;margin-bottom:24px">Data: <b>${d}</b></div>
-     <div style="font-size:34px;margin:14px 0">Xhiro: <b>${money(grand)}</b></div>
+     <h1 style="font-size:48px;margin:0 0 10px">Taste Home — Daily Sales Report</h1>
+     <div style="font-size:25px;margin-bottom:24px">Date: <b>${d}</b></div>
+     <div style="font-size:34px;margin:14px 0">Total Sales: <b>${money(grand)}</b></div>
      <div style="margin:10px 0">Cash: <b>${money(cash)}</b></div>
      <div style="margin:10px 0">Card: <b>${money(card)}</b></div>
-     <div style="margin:10px 0">Card paguar: <b>${money(paid)}</b></div>
-     <div style="margin:10px 0">Card papaguar: <b>${money(unpaid)}</b></div>
-     <div style="margin:10px 0">Bakshishe: <b>${money(tips)}</b></div>
-     <div style="margin:10px 0">Persona: <b>${persons}</b></div>
+     <div style="margin:10px 0">Card Settled: <b>${money(paid)}</b></div>
+     <div style="margin:10px 0">Card Outstanding: <b>${money(unpaid)}</b></div>
+     <div style="margin:10px 0">Tips: <b>${money(tips)}</b></div>
+     <div style="margin:10px 0">Guests: <b>${persons}</b></div>
      <hr style="margin:22px 0;border:0;border-top:2px solid #111">
      <div style="font-size:36px"><b>JONA: ${money(jona)}</b></div>
-     <div style="margin-top:22px;font-size:20px;color:#444">Fatura të mbyllura: ${day.length}</div>
+     <div style="margin-top:22px;font-size:20px;color:#444">Closed Invoices: ${day.length}</div>
    </div>`;
  window.print();
 }
@@ -1644,6 +1853,172 @@ function startFirebaseSync(){startLiveServiceSync();
    firebaseReady=false;
  });
 }
+
+
+// ===== TASTE HOME CONFIG 2026 — unified configuration =====
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
+const AGENCY_KEY="taste_home_agencies_v1";
+let agencies=JSON.parse(localStorage.getItem(AGENCY_KEY)||"[]"); if(!Array.isArray(agencies))agencies=[];
+for(let t=1;t<=18;t++){normalize(t); const b=db[t]; if(b.agency==null)b.agency=""; if(b.agencyPaid==null)b.agencyPaid="unpaid"; if(b.tableIcon==null)b.tableIcon=["🌿","🌳","🌸","🪴","🍃","🏡"][((t-1)%6)];}
+function setAgency(v){db[current].agency=v||"";if(!db[current].agency)db[current].agencyPaid="unpaid";save();fillAgency();}
+function setAgencyPaid(v){db[current].agencyPaid=v||"unpaid";save();}
+function addAgency(){const n=prompt("Emri i agjensisë:");if(!n||!n.trim())return;const x=n.trim();if(!agencies.includes(x))agencies.push(x);localStorage.setItem(AGENCY_KEY,JSON.stringify(agencies));db[current].agency=x;db[current].agencyPaid="unpaid";save();fillAgency()}
+function fillAgency(){const el=$("agencySelect");if(!el)return;el.innerHTML='<option value="">🤝 Direkt</option>'+agencies.map(a=>`<option>${esc(a)}</option>`).join("");el.value=db[current]?.agency||"";const paid=$("agencyPaid");if(paid){paid.value=db[current]?.agencyPaid||"unpaid";paid.style.display=db[current]?.agency?"":"none";}}
+function setSimpleDiscount(p){if(!isAdmin())return;db[current].discountPct=p;db[current].discountEuro=0;db[current].adjustType="simple";save();drawCurrent();drawLive()}
+function setFixedDiscount(v){if(!isAdmin())return;db[current].discountEuro=Math.max(0,Number(v)||0);db[current].discountPct=0;db[current].adjustType="simple";save();drawCurrent();drawLive()}
+const __oldTotal=total;
+total=function(t){const b=db[t];if((b.adjustType||"")==="simple"){const base=baseTotal(t),pct=Math.max(0,Number(b.discountPct)||0),fix=Math.max(0,Number(b.discountEuro)||0);return Math.max(0,base-base*pct/100-fix)}return __oldTotal(t)};
+adjustmentLabel=function(t){const b=db[t];if((b.adjustType||"")==="simple"){if(Number(b.discountPct))return `-${Number(b.discountPct)}%`;if(Number(b.discountEuro))return `-${money(b.discountEuro)}`;return ""}const type=b.adjustType||"none";if(type==="discount10all")return "-10% gjithë faturës";if(type==="discount20all")return "-20% gjithë faturës";if(type==="discount10menu")return "-10% vetëm menutë";if(type==="discount20menu")return "-20% vetëm menutë";return ""};
+function saveTableTitle(){const v=$("extraTableName").value.trim();renameExtraTable(v);alert("Emri i tavolinës u ruajt.")}
+function editTableTitleFromGrid(t){event.stopPropagation();const v=prompt("Emri i tavolinës:",db[t].position||positionFor(t));if(v===null)return;db[t].position=v.trim()||positionFor(t);db[t].tableTitle=db[t].position;save();drawTables()}
+function chooseTableIcon(t){event.stopPropagation();const opts="🌿 🌳 🌸 🪴 🍃 🏡";const v=prompt("Zgjidh një ikonë: "+opts,db[t].tableIcon||"🌿");if(v===null)return;if(opts.includes(v.trim()))db[t].tableIcon=v.trim();save();drawTables()}
+drawTables=function(){
+ const host=$("tables"); if(!host)return; host.innerHTML="";
+ tableCount=18;
+ for(let t=1;t<=18;t++){
+  normalize(t); const p=pendingCount(t),wrap=document.createElement("div");
+  wrap.className="table "+(p?"alert":total(t)>0||people(t)>0?"active":"");
+  // The open control is a real button with a direct onclick. Edit/icon controls stay outside it.
+  const open=document.createElement("button");
+  open.type="button";
+  open.className="table-open-area";
+  open.style.cssText="display:block;width:100%;border:0;background:transparent;padding:0;text-align:left;color:inherit;cursor:pointer";
+  open.setAttribute("aria-label",`Hap ${db[t].position||positionFor(t)}`);
+  open.onclick=function(e){e.preventDefault();e.stopPropagation();openTableSafe(t)};
+  open.innerHTML=`<div class="position">${db[t].tableIcon||"🌿"} ${esc(db[t].position||positionFor(t))}</div><div class="guest">${esc(db[t].name||"Pa rezervim")}</div><div class="meta">👥 ${people(t)}${db[t].agency?` · ${esc(db[t].agency)}`:""}</div>${p?`<span class="urgent-badge">${p} për t'u çuar</span>`:""}`;
+  wrap.appendChild(open);
+  if(isAdmin()){
+   const tools=document.createElement("div");tools.className="table-grid-tools";tools.style.cssText="display:flex;justify-content:center;gap:4px;margin-top:4px";
+   const rename=document.createElement("button");rename.type="button";rename.textContent="✏️ Emri";rename.style.cssText="font-size:9px;padding:3px";rename.onclick=function(e){e.preventDefault();e.stopPropagation();editTableTitleFromGridSafe(t)};
+   const icon=document.createElement("button");icon.type="button";icon.textContent="🌿";icon.style.cssText="font-size:9px;padding:3px";icon.onclick=function(e){e.preventDefault();e.stopPropagation();chooseTableIconSafe(t)};
+   tools.append(rename,icon);wrap.appendChild(tools);
+  }
+  host.appendChild(wrap);
+ }
+ if($("extraInfo"))$("extraInfo").textContent="18 tavolina";
+};
+function editTableTitleFromGridSafe(t){const v=prompt("Emri i tavolinës:",db[t].position||positionFor(t));if(v===null)return;db[t].position=v.trim()||positionFor(t);db[t].tableTitle=db[t].position;save();drawTables()}
+function chooseTableIconSafe(t){const opts="🌿 🌳 🌸 🪴 🍃 🏡";const v=prompt("Zgjidh një ikonë: "+opts,db[t].tableIcon||"🌿");if(v===null)return;if(opts.includes(v.trim()))db[t].tableIcon=v.trim();save();drawTables()}
+function openTableSafe(t){
+ current=Number(t); isolateTableState(current);
+ if(currentRole==="waiter"&&!db[current].waiterName){db[current].waiterName=roleName();save();}
+ hideAll(); const view=$("tableView"); if(view)view.classList.remove("hidden");
+ if($("tableName"))$("tableName").value=db[current].name||"";
+ if($("notes"))$("notes").value=db[current].notes||"";
+ if($("cardNote"))$("cardNote").value=db[current].cardNote||"";
+ if($("received"))$("received").value=db[current].received!==""?db[current].received:"";
+ try{drawCurrent();fillAgency();}catch(err){console.error("Taste Home table render:",err);}
+ if($("extraTableName"))$("extraTableName").value=db[current].position||positionFor(current);
+}
+openTable=function(t){openTableSafe(t)};
+const __updateDetails=updateDetails;updateDetails=function(){__updateDetails();db[current].agency=$("agencySelect")?.value||db[current].agency||"";db[current].agencyPaid=$("agencyPaid")?.value||db[current].agencyPaid||"unpaid";save()};
+const __operationalTable=operationalTable;operationalTable=function(t){const x=__operationalTable(t);x.agency=db[t].agency||"";x.agencyPaid=db[t].agencyPaid||"unpaid";x.tableIcon=db[t].tableIcon||"🌿";return x};
+// shared live fields for agencies/icons
+const __startLiveServiceSync=startLiveServiceSync;
+startLiveServiceSync=function(){if(!fbdb||window.__liveServiceStarted)return;window.__liveServiceStarted=true;fbdb.ref("liveService").on("value",snap=>{const v=snap.val();if(!v||!v.tables)return;remoteApplying=true;tableCount=18;for(let t=1;t<=18;t++){normalize(t);const r=v.tables[t];if(!r)continue;["q","sent","served","priceSnapshot","name","reservedPeople","notes","stage","requests","workDate","position","tableTitle","groupGuides","freeDrinks","waiterName","agency","agencyPaid","tableIcon"].forEach(k=>{if(r[k]!==undefined)db[t][k]=r[k]})}localStorage.setItem(DB_KEY,JSON.stringify(db));remoteApplying=false;if(!$("tablesView").classList.contains("hidden"))drawTables();if(!$("tableView").classList.contains("hidden"))drawCurrent()},e=>console.warn("Live service read:",e))};
+// four menus only; Group behaves like a normal compact card + guides
+const __drawCurrentBase=drawCurrent;
+drawCurrent=function(){
+ drawHeaderOnly();drawPayment();fillAgency();
+ const ident=$("tableIdentityTitle"); if(ident)ident.innerHTML=`<span class="table-icon">${db[current].tableIcon||"🌿"}</span>${esc(db[current].position||positionFor(current))}`;
+ $("statusButtons").innerHTML="";STAGES.forEach((stg,n)=>{const b=document.createElement("button");b.className="status-btn "+(db[current].stage===n?"selected":"");b.innerHTML=stg.short;b.onclick=()=>{db[current].stage=n;db[current].workDate=db[current].workDate||isoDate();db[current].updated=stamp();save();drawCurrent()};$("statusButtons").appendChild(b)});
+ $("requestButtons").innerHTML="";REQUESTS.forEach(r=>{const b=document.createElement("button");b.className="reqbtn";b.textContent=r;b.onclick=()=>sendQuickTask(r);$("requestButtons").appendChild(b)});
+ $("menus").innerHTML="";["normal","veg","kids","group"].forEach((k,idx)=>{const i=ITEMS.find(x=>x.k===k);if(!i)return;const r=document.createElement("div");r.className="menu-compact";const price=isAdmin()&&k==="group"?`<button onclick="editTableItemPrice('group')" style="font-size:10px">✏️ ${money(unitPriceForTable(current,i))}</button>`:`<span>${isAdmin()?money(unitPriceForTable(current,i)):""}</span>`;if(k==="group"){r.innerHTML=`<div><div class="name">${idx+1}. Menu GRUP</div><div class="price">${price}</div></div><div class="group-mini"><button onclick="changeGroup(-1)">−</button><b>${db[current].q.group||0}</b><button onclick="changeGroup(1)">+</button><label style="font-size:9px">Guida</label><input type="number" min="0" value="${db[current].groupGuides||0}" onchange="setGroupGuides(this.value)"></div>`}else{r.innerHTML=`<div><div class="name">${idx+1}. ${i.n}</div><div class="price">${price}</div></div><div class="counter"><button class="minus" onclick="change('${k}',-1)">−</button><b>${db[current].q[k]||0}</b><button class="plus" onclick="change('${k}',1)">+</button></div>`}$("menus").appendChild(r)});drawDrinks();drawFreeDrinkSummary();
+ if($("discountFixed"))$("discountFixed").value=Number(db[current].discountEuro)||"";
+};
+function changeGroup(d){db[current].q.group=Math.max(0,(Number(db[current].q.group)||0)+d);db[current].groupNormal=db[current].q.group;db[current].groupVeg=0;db[current].workDate=db[current].workDate||isoDate();save();drawCurrent();drawLive();syncOpenKitchenOrderMeta(current)}
+function sendQuickTask(r){const b=db[current];if(!firebaseReady||!fbdb)return alert("Firebase nuk është lidhur ende.");const target=/ujë|bukë/i.test(r)?"KUZHINË":"KAMARIER";const ref=fbdb.ref("kitchenOrders").push();const clean=String(r).replace(/^[^A-Za-zÀ-ž]+/,"").trim().toUpperCase();ref.set({id:ref.key,table:current,position:b.position,name:b.name||"",people:people(current),stageLabel:"URGJENTE",instruction:`🚨 ${target}: ${clean}`,notes:b.notes||"",requests:[r],menuBreakdown:[],status:"pending",urgent:true,createdAt:Date.now()}).catch(e=>alert("Nuk u dërgua: "+e.message))}
+// payment always manual cash + card
+drawPayment=function(){const b=db[current],tot=total(current);["cashBtn","cardBtn","mixedBtn"].forEach(id=>$(id)?.classList.remove("selected"));if(b.payment==="Cash")$("cashBtn")?.classList.add("selected");if(b.payment==="Card")$("cardBtn")?.classList.add("selected");if(b.payment==="Mixed")$("mixedBtn")?.classList.add("selected");$("mixedBox")?.classList.remove("hidden");if($("mixedCash"))$("mixedCash").value=Number(b.cashAmount)||"";if($("mixedCard"))$("mixedCard").value=Number(b.cardAmount)||"";if($("mixedTotalCheck")){const got=(Number(b.cashAmount)||0)+(Number(b.cardAmount)||0);$("mixedTotalCheck").textContent=`Marrë ${money(got)} / Për t'u paguar ${money(tot)}${Math.abs(got-tot)<.01?" ✓":""}`;}$("cardBox")?.classList.toggle("hidden",!(Number(b.cardAmount)>0));if($("cardPaid"))$("cardPaid").checked=!!b.cardPaid;};
+setMixedCash=function(v){if(!isAdmin())return;db[current].cashAmount=Math.max(0,Number(v)||0);db[current].payment=(db[current].cashAmount>0&&Number(db[current].cardAmount)>0)?"Mixed":Number(db[current].cardAmount)>0?"Card":"Cash";db[current].received=db[current].cashAmount+(Number(db[current].cardAmount)||0);save();drawPayment();drawTip();drawLive()};
+setMixedCard=function(v){if(!isAdmin())return;db[current].cardAmount=Math.max(0,Number(v)||0);db[current].payment=(db[current].cardAmount>0&&Number(db[current].cashAmount)>0)?"Mixed":db[current].cardAmount>0?"Card":"Cash";db[current].received=(Number(db[current].cashAmount)||0)+db[current].cardAmount;save();drawPayment();drawTip();drawLive()};
+// closed invoice: preserve complete snapshot and reopen same invoice
+const __closeCurrentOriginal=closeCurrent;
+closeCurrent=function(){if(!isAdmin())return alert("Vetëm Admin mund ta mbyllë tavolinën.");if(total(current)<=0&&people(current)<=0)return alert("Tavolina është bosh.");const b=db[current],paid=(Number(b.cashAmount)||0)+(Number(b.cardAmount)||0);if(Math.abs(paid-total(current))>.009&&!confirm(`Fatura është ${money(total(current))}, por Cash + Card janë ${money(paid)}. Ta mbyllësh?`))return;if(!confirm(`Ta mbyll ${b.name||"Pa emër"}?`))return;const snap=JSON.parse(JSON.stringify(b)),id=b.reopenInvoiceId||Date.now();const rec={id,table:current,position:b.position,name:b.name||"",persons:people(current),notes:b.notes||"",agency:b.agency||"",agencyPaid:b.agencyPaid||"unpaid",groupGuides:Number(b.groupGuides)||0,discountPct:Number(b.discountPct)||0,discountEuro:Number(b.discountEuro)||0,adjustType:b.adjustType||"none",adjustLabel:adjustmentLabel(current),freeDrinks:{...(b.freeDrinks||{})},payment:b.payment,cashAmount:Number(b.cashAmount)||0,cardAmount:Number(b.cardAmount)||0,cardPaid:Number(b.cardAmount)>0?!!b.cardPaid:true,cardNote:b.cardNote||"",date:b.workDate||isoDate(),closedAt:stamp(),lines:linesForTable(current),total:total(current),received:paid,tip:Math.max(0,paid-total(current)),snapshot:snap};const ix=history.findIndex(x=>String(x.id)===String(id));if(ix>=0)history[ix]=rec;else history.unshift(rec);clearKitchenForTable(current);const pos=b.position,icon=b.tableIcon;db[current]=blank(current);db[current].position=pos;db[current].tableTitle=pos;db[current].tableIcon=icon;save();showTables()};
+editClosedInvoice=function(id){if(!isAdmin())return;const inv=history.find(x=>String(x.id)===String(id));if(!inv)return;if(!inv.snapshot){alert("Kjo faturë e vjetër nuk ka snapshot të plotë. Mund të modifikohet vetëm me të dhënat që janë ruajtur në faturë.");return}const t=Number(inv.table)||1;db[t]=JSON.parse(JSON.stringify(inv.snapshot));normalize(t);db[t].reopenInvoiceId=inv.id;db[t].workDate=inv.date;db[t].position=inv.position||db[t].position;db[t].name=inv.name||db[t].name;db[t].agency=inv.agency||"";db[t].agencyPaid=inv.agencyPaid||"unpaid";save();openTable(t)};
+// beer backward-compatible stats: count beer + birre, but use max when both coexist in same invoice
+function beerQtyHistory(arr){
+ return arr.reduce((sum,inv)=>{
+  const lines=historyLines(inv);
+  const isBeer=x=>[x.key,x.k,x.name].some(v=>/^(beer|birre|birrë)$/i.test(String(v||"").trim()));
+  const beerLines=lines.filter(isBeer);
+  // When both spellings describe the same invoice quantity, prefer the canonical
+  // "beer" entries rather than adding the same drinks twice.
+  const canonical=beerLines.filter(x=>[x.key,x.k].some(v=>String(v||"").toLowerCase()==="beer"));
+  const fromLines=(canonical.length?canonical:beerLines).reduce((n,x)=>n+(Number(x.qty)||0),0);
+  const q=inv.q||inv.snapshot?.q||{};
+  const legacy=Math.max(Number(q.beer)||0,Number(q.birre)||0,Number(q["birrë"])||0);
+  return sum+(beerLines.length?fromLines:legacy);
+ },0);
+}
+const __qtyHistory=qtyHistory;qtyHistory=function(arr,i){if(i&&i.k==="beer")return beerQtyHistory(arr);return __qtyHistory(arr,i)};
+
+
+// ===== Calm final workflow overrides =====
+function pocketCashToday(){
+ const d=$("workDate")?.value||isoDate();
+ const closed=history.filter(x=>x.date===d);
+ const closedCash=closed.reduce((s,x)=>s+paymentCashAmount(x),0);
+ let activeCash=0;
+ for(let t=1;t<=18;t++){normalize(t);if((db[t].workDate||d)===d)activeCash+=Math.max(0,Number(db[t].cashAmount)||0)}
+ return closedCash+activeCash;
+}
+const __drawLiveCalm=drawLive;
+drawLive=function(){__drawLiveCalm();if($("liveReceived"))$("liveReceived").textContent=money(pocketCashToday());};
+
+function toggleRevenueDetail(){const x=$("historyRevenueDetail");if(x)x.classList.toggle("hidden")}
+function openExpensesPanel(){const x=document.querySelector(".expense-card");if(!x)return;x.classList.add("panel-open");x.scrollIntoView({behavior:"smooth",block:"start"});const d=$("expenseDetails");if(d)d.classList.remove("hidden");if($("expenseChevron"))$("expenseChevron").textContent="⌄"}
+function openTablesHistory(){const x=$("historyBox");if(x)x.scrollIntoView({behavior:"smooth",block:"start"})}
+function drawHistorySummaryOnly(){
+ const d=$("historyDate").value,day=filtered(),grand=day.reduce((s,x)=>s+(Number(x.total)||0),0),tips=day.reduce((s,x)=>s+(Number(x.tip)||0),0),cash=day.reduce((s,x)=>s+paymentCashAmount(x),0),card=day.reduce((s,x)=>s+paymentCardAmount(x),0),paid=day.filter(x=>hasCardPart(x)&&x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),unpaid=day.filter(x=>hasCardPart(x)&&!x.cardPaid).reduce((s,x)=>s+paymentCardAmount(x),0),jona=jonaForDate(d),expenseTotal=expenseTotalForDate(d),net=grand-expenseTotal;
+ $("dailyTotal").innerHTML=`<div class="history-four-clean">
+ <button onclick="toggleRevenueDetail()"><b>💰 XHIROJA</b><span class="big">${money(grand)}</span><small>Cash ${money(cash)} · Card ${money(card)} · Jona ${money(jona)}</small></button>
+ <button onclick="openExpensesPanel()"><b>🧾 SHPENZIMET</b><span class="big">${money(expenseTotal)}</span><small>Neto ${money(net)} · prek për detaje</small></button>
+ <button onclick="openCardList()"><b>💳 REGJISTRI CARD</b><span class="big">${money(card)}</span><small>Paguar ${money(paid)} · Pa likuiduar ${money(unpaid)}</small></button>
+ <button onclick="openTablesHistory()"><b>🪑 TAVOLINAT</b><span class="big">${day.length} fatura</span><small>Prek për të parë të gjitha detajet</small></button>
+ </div><div id="historyRevenueDetail" class="history-revenue-detail hidden"><div class="row"><span>Xhiro</span><b>${money(grand)}</b></div><div class="row"><span>Cash</span><b>${money(cash)}</b></div><div class="row"><span>Card</span><b>${money(card)}</b></div><div class="row"><span>Bakshish</span><b>${money(tips)}</b></div><div class="row"><span>Jona</span><b>${money(jona)}</b></div><div class="row"><span>Shpenzime</span><b>− ${money(expenseTotal)}</b></div><div class="row"><span>Neto</span><b>${money(net)}</b></div></div>`;
+ if($("jonaAmount")&&document.activeElement!==$("jonaAmount"))$("jonaAmount").value=jonaDaily[d]??"";
+ drawCardRegisterSummary();drawExpenses();
+}
+
+function historyQtyByKeys(arr,keys){const kk=keys.map(x=>x.toLowerCase());return arr.reduce((sum,inv)=>{const ls=historyLines(inv);return sum+ls.filter(x=>kk.includes(String(x.key||x.name||"").toLowerCase())).reduce((a,x)=>a+(Number(x.qty)||0),0)},0)}
+function groupDailyInfo(arr){let groups=0,persons=0,guides=0;arr.forEach(inv=>{const ls=historyLines(inv);const g=ls.filter(x=>String(x.key||"").toLowerCase()==="group").reduce((s,x)=>s+(Number(x.qty)||0),0);if(g>0){groups++;persons+=g;guides+=Number(inv.groupGuides)||0}});return{groups,persons,guides}}
+function drawDailyStats(){
+ const d=$("statsDay")?.value||isoDate(),arr=history.filter(x=>x.date===d),g=groupDailyInfo(arr),persons=arr.reduce((s,x)=>s+(Number(x.persons)||inferPeople(x)),0);
+ const normal=historyQtyByKeys(arr,["normal"]),veg=historyQtyByKeys(arr,["veg"]),kids=historyQtyByKeys(arr,["kids"]),beer=beerQtyHistory(arr),red=historyQtyByKeys(arr,["red"]),white=historyQtyByKeys(arr,["white"]),juice=historyQtyByKeys(arr,["juice"]);
+ $("statsCards").innerHTML=`<div class="daily-stats-card" style="grid-column:1/-1"><div class="daily-stats-grid">
+ ${[["Fatura",arr.length],["Persona",persons],["Normale",normal],["Vegjetariane",veg],["Kids",kids],["Grupe",g.groups],["Persona grup",g.persons],["Guida",g.guides],["Birrë",beer],["Verë kuqe",red],["Verë bardhë",white],["Grape Juice",juice]].map(x=>`<div class="daily-stat"><b>${x[1]}</b><span>${x[0]}</span></div>`).join("")}
+ </div>${g.groups?`<div class="meta" style="margin-top:8px;text-align:center">Grupe: ${g.persons} persona + ${g.guides} guida</div>`:""}</div>`;
+ $("statsPeriodLabel").textContent=`${d} · ${arr.length} fatura`;
+ ["tipsPeriodTotal","tipsPeriodText","tipsPeriodAverage","sourceStatsCard","peopleChart","revenueChart","tipsChart"].forEach(id=>{const e=$(id);if(e){const c=e.closest?.(".card");if(c)c.style.display="none";else e.style.display="none"}})
+}
+const __drawStatsCalm=drawStats;
+drawStats=function(){if(statsMode==="day")return drawDailyStats();document.querySelectorAll("#statsView .card").forEach(x=>x.style.display="");return __drawStatsCalm()};
+const __setStatsModeCalm=setStatsMode;
+setStatsMode=function(m){if(m!=="day")return __setStatsModeCalm(m);statsMode="day";["statsYearBtn","statsMonthBtn","statsWeekBtn"].forEach(id=>$(id)?.classList.remove("selected"));$("statsDayBtn")?.classList.add("selected");$("statsYearBox")?.classList.add("hidden");$("statsMonthBox")?.classList.add("hidden");$("statsWeekBox")?.classList.add("hidden");$("statsDayBox")?.classList.remove("hidden");drawStats()};
+function ensureDailyStatsUI(){const modes=document.querySelector("#statsView .stats-modes");if(modes&&!$("statsDayBtn")){const b=document.createElement("button");b.id="statsDayBtn";b.textContent="Ditore";b.onclick=()=>setStatsMode("day");modes.prepend(b);const box=document.createElement("div");box.id="statsDayBox";box.className="hidden";box.innerHTML=`<label>Data</label><input id="statsDay" type="date" value="${isoDate()}" onchange="drawStats()">`;modes.parentElement.insertBefore(box,modes.nextSibling)}}
+const __showStatsCalm=showStats;
+showStats=function(){__showStatsCalm();ensureDailyStatsUI();setStatsMode("day")};
+
+
+ensureDailyStatsUI();
+
+
+
+// Taste Home heritage daily overview; uses existing history data, never modifies it.
+let heritageStatTab="menus";
+function setHeritageStatTab(v){heritageStatTab=v;drawDailyStats()}
+const drawDailyStatsBeforeHeritage=drawDailyStats;
+drawDailyStats=function(){
+ drawDailyStatsBeforeHeritage();
+ const d=$("statsDay")?.value||isoDate(),arr=history.filter(x=>x.date===d);
+ const rev=arr.reduce((v,x)=>v+(Number(x.total)||0),0),ex=expenses.filter(x=>x.date===d).reduce((v,x)=>v+(Number(x.amount)||0),0);
+ const guests=arr.reduce((v,x)=>v+(Number(x.persons)||inferPeople(x)),0),group=groupDailyInfo(arr);
+ const quantities=[historyQtyByKeys(arr,["normal"]),historyQtyByKeys(arr,["veg"]),historyQtyByKeys(arr,["kids"]),group.groups,beerQtyHistory(arr),historyQtyByKeys(arr,["red"]),historyQtyByKeys(arr,["white"]),historyQtyByKeys(arr,["juice","grape","grape juice"])];
+ const row=(label,val)=>`<div class="hs-line"><span>${label}</span><b>${val}</b></div>`;
+ let details=heritageStatTab==="menus"?[row("🍽️ Normale",quantities[0]),row("🌿 Vegjetariane",quantities[1]),row("🧒 Kids",quantities[2]),row("👥 Grupe",quantities[3]),group.groups?row("Pjesëmarrës në grupe",`${group.persons} persona + ${group.guides} guida`):""].join(""):heritageStatTab==="drinks"?[row("🍺 Beer / Birrë",quantities[4]),row("🍷 Red Wine",quantities[5]),row("🥂 White Wine",quantities[6]),row("🍇 Grape Juice",quantities[7])].join(""):[row("Rezervime me agjensi",arr.filter(x=>x.agency).length),row("Likuiduar",arr.filter(x=>x.agency&&x.agencyPaid==="paid").length),row("Pa likuiduar",arr.filter(x=>x.agency&&x.agencyPaid!=="paid").length)].join("");
+ $("statsCards").innerHTML=`<div class="heritage-stats"><div class="hs-hero"><div class="hs-kicker">TASTE HOME · XHIRO DITORE</div><div class="hs-money">${money(rev)}</div><div class="hs-sub"><span>Shpenzime ${money(ex)}</span><span>Neto ${money(rev-ex)}</span></div></div><div class="hs-tiles"><div class="hs-tile"><strong>${guests}</strong><span>Persona</span></div><div class="hs-tile"><strong>${arr.length}</strong><span>Fatura</span></div><div class="hs-tile"><strong>${guests?money(rev/guests):money(0)}</strong><span>Mes. / person</span></div></div><div class="hs-tabs">${[["menus","Menutë"],["drinks","Pijet"],["agencies","Agjensitë"]].map(([k,n])=>`<button type="button" class="${heritageStatTab===k?"selected":""}" onclick="setHeritageStatTab('${k}')">${n}</button>`).join("")}</div><div class="hs-detail">${details}</div></div>`;
+};
 
 save();drawTables();
 
